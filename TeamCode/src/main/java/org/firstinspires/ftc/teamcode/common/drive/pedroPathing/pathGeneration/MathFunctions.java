@@ -81,6 +81,21 @@ public class MathFunctions {
     }
 
     /**
+     * This normalizes an angle to be between -pi and pi radians, inclusive.
+     *
+     * IMPORTANT NOTE: This method operates in radians.
+     * @param angleRadians the angle to be normalized.
+     * @return returns the normalized angle.
+     */
+    public static double normalizeAngleDelta(double angleRadians){
+        double angle = normalizeAngle(angleRadians);
+        if(angle > Math.PI){
+            angle -= 2*Math.PI;
+        }
+        return angle;
+    }
+
+    /**
      * This returns the smallest angle between two angles. This operates in radians.
      *
      * @param one one of the angles.
