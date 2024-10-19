@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.localizers;
+/*package org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.localizers;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.V
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Localizer;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.NanoTimer;
+import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
 /**
  * This is the ThreeWheelIMULocalizer class. This class extends the Localizer superclass and is a
@@ -42,21 +43,21 @@ import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.NanoTimer;
  */
 @Config
 public class ThreeWheelIMULocalizer extends Localizer {
-    private HardwareMap hardwareMap;
+    private Robot robot;
     private Pose startPose;
     private Pose displacementPose;
     private Pose currentVelocity;
     private Matrix prevRotationMatrix;
     private NanoTimer timer;
     private long deltaTimeNano;
-    private Encoder leftEncoder;
-    private Encoder rightEncoder;
-    private Encoder strafeEncoder;
+//    private Encoder leftEncoder;
+//    private Encoder rightEncoder;
+//    private Encoder strafeEncoder;
     private Pose leftEncoderPose;
     private Pose rightEncoderPose;
     private Pose strafeEncoderPose;
 
-    public final IMU imu;
+//    public final IMU imu;
     private double previousIMUOrientation;
     private double deltaRadians;
     private double totalHeading;
@@ -87,11 +88,12 @@ public class ThreeWheelIMULocalizer extends Localizer {
      * @param setStartPose the Pose to start from
      */
     public ThreeWheelIMULocalizer(HardwareMap map, Pose setStartPose) {
-        hardwareMap = map;
-        imu = hardwareMap.get(IMU.class, "imu");
+        robot = Robot.getInstance();
+//        hardwareMap = map;
+//        imu = hardwareMap.get(IMU.class, "imu");
 
         // TODO: replace this with your IMU's orientation
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)));
+//        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)));
 
         // TODO: replace these with your encoder positions
         leftEncoderPose = new Pose(leftX, leftY, 0);
@@ -100,14 +102,14 @@ public class ThreeWheelIMULocalizer extends Localizer {
 
 
         // TODO: replace these with your encoder ports
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
-        strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
+//        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
+//        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
+//        strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
 
         // TODO: reverse any encoders necessary
-        leftEncoder.setDirection(Encoder.FORWARD);
-        rightEncoder.setDirection(Encoder.REVERSE);
-        strafeEncoder.setDirection(Encoder.REVERSE);
+//        leftEncoder.setDirection(Encoder.FORWARD);
+//        rightEncoder.setDirection(Encoder.REVERSE);
+//        strafeEncoder.setDirection(Encoder.REVERSE);
 
         setStartPose(setStartPose);
         timer = new NanoTimer();
@@ -241,6 +243,8 @@ public class ThreeWheelIMULocalizer extends Localizer {
      * This resets the Encoders.
      */
     public void resetEncoders() {
+        Encoder za = new Encoder(null);
+        za.reset();
         leftEncoder.reset();
         rightEncoder.reset();
         strafeEncoder.reset();
@@ -307,3 +311,4 @@ public class ThreeWheelIMULocalizer extends Localizer {
         return TURN_TICKS_TO_RADIANS;
     }
 }
+*/

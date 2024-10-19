@@ -17,7 +17,7 @@ public class EncoderWrapper implements HardwareDevice {
 
     @Override
     public String getDeviceName() {
-        return "mason was here";
+        return encoder.toString();
     }
 
     @Override

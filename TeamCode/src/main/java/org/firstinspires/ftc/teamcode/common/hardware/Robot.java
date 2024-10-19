@@ -3,13 +3,17 @@ package org.firstinspires.ftc.teamcode.common.hardware;
 import androidx.annotation.GuardedBy;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Encoder;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 //import org.firstinspires.ftc.teamcode.common.utils.ConfigMenu;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
@@ -25,12 +29,18 @@ import java.util.List;
 @Config
 public class Robot extends SubsystemWrapper{
 
+
     //TODO: ADD COMMENTS TO CLASS
 
     public HashMap<Sensors.SensorType, Object> sensorValues;
 
     private ArrayList<SubsystemWrapper> subsystems;
     //public ConfigMenu configMenu;
+
+    public Encoder leftEncoder;
+    public Encoder rightEncoder;
+    public Encoder strafeEncoder;
+
 
     private final Object imuLock = new Object();
     @GuardedBy("imuLock")
@@ -80,6 +90,14 @@ public class Robot extends SubsystemWrapper{
     public void init(final HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         sensorValues = new HashMap<>();
+
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
+        strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
+
+        leftEncoder.setDirection(Encoder.FORWARD);
+        rightEncoder.setDirection(Encoder.REVERSE);
+        strafeEncoder.setDirection(Encoder.REVERSE);
 
         // Retrieve hubs and enable bulk caching
         hubs = hardwareMap.getAll(LynxModule.class);
