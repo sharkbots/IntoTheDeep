@@ -8,14 +8,9 @@ import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
-//import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-//import org.firstinspires.ftc.teamcode.common.hardware.Sensors;
-//import org.firstinspires.ftc.teamcode.common.util.MathUtils;
-
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.profile.AsymmetricMotionProfile;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.profile.ProfileConstraints;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.profile.ProfileState;
+import org.firstinspires.ftc.teamcode.common.utils.math.geometry.profile.AsymmetricMotionProfile;
+import org.firstinspires.ftc.teamcode.common.utils.math.geometry.profile.ProfileConstraints;
+import org.firstinspires.ftc.teamcode.common.utils.math.geometry.profile.ProfileState;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.hardware.Sensors;
 
