@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 public class IntakeClawCommand extends InstantCommand {
     public IntakeClawCommand(Robot robot, IntakeSubsystem.ClawState state) {
         super(
-                () -> robot.intake.updateState(state)
+                () -> robot.intake.setClawState(state)
         );
     }
 }
