@@ -56,6 +56,16 @@ public class LiftSubsystem extends SubsystemWrapper {
         robot.depositClawRotationServo.setPosition(getClawRotationPosition(liftState));
     }
 
+    /**
+     * Updates the claw state and sets the servo positions.
+     *
+     * @param state The desired claw state.
+     */
+    public void updateState(@NotNull ClawState state) {
+        this.clawState = state;
+        robot.depositClawServo.setPosition(state.getPosition());
+    }
+
     public LiftState getLiftState() {
         return liftState;
     }

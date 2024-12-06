@@ -12,16 +12,33 @@ public class IntakeSubsystem extends SubsystemWrapper {
     public PivotState pivotState = PivotState.TRANSFER;
     public ClawState clawState = ClawState.OPEN;
 
+    public int extendoTargetPos = 1500;
+
     public enum PivotState{
         HOVERING,
         INTAKING,
         TRANSFER
     }
 
+    public enum ClawRotationState{
+        TRANSFER(0.54),
+        FULLY_LEFT(0.88),
+        FULLY_RIGHT(0.195);
+
+        private final double position;
+        ClawRotationState(double position) {
+            this.position = position;
+        }
+
+        public double getPosition() {
+            return position;
+        }
+    }
+
     public enum ClawState{
-        OPEN(0.0),
-        MICRO_OPEN(0.0),
-        CLOSED(1.0);
+        OPEN(0.75),
+        MICRO_OPEN(0.553),
+        CLOSED(0.5);
 
         private final double position;
         ClawState(double position) {
@@ -35,41 +52,41 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     public IntakeSubsystem (){
         this.robot = Robot.getInstance();
+        robot.extendoActuator.setTargetPosition(0);
+        setPivotState(PivotState.TRANSFER);
+        setClawState(ClawState.OPEN);
+        setClawRotation(ClawRotationState.TRANSFER);
+    }
 
 
+    public void setExtendoTarget(int pos){
+        this.extendoTargetPos = pos;
+        robot.extendoActuator.setTargetPosition(pos);
     }
 
     /**
      * Sets the pivot state for the arm and claw.
+     * @param state Pivot state
      */
     public void setPivotState(@NotNull PivotState state) {
         this.pivotState = state;
-
-        robot.intakeArmPivotActuator.setTargetPosition(getArmPivotPosition(state));
-        robot.intakeClawPivotActuator.setTargetPosition(getClawPivotPosition(state));
+        robot.intakeArmPivotLeftServo.setPosition(getArmPivotPosition(state));
+        robot.intakeArmPivotRightServo.setPosition(getArmPivotPosition(state));
+        robot.intakeClawPivotServo.setPosition(getClawPivotPosition(state));
     }
 
     /**
      * Sets the claw state (OPEN or CLOSED).
+     * @param state Claw State
      */
     public void setClawState(@NotNull ClawState state) {
         this.clawState = state;
         robot.intakeClawServo.setPosition(state.getPosition());
     }
 
-    /**
-     * Sets the claw rotation state.
-     */
-    public void setClawRotationState(double position) {
-        robot.intakeClawRotationServo.setPosition(position);
-    }
 
-    public PivotState getPivotState() {
-        return pivotState;
-    }
-
-    public ClawState getClawState() {
-        return clawState;
+    public void setClawRotation(@NotNull ClawRotationState state) {
+        robot.intakeClawRotationServo.setPosition(state.getPosition());
     }
 
     /**
@@ -82,7 +99,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
             case HOVERING:
                 return 0.95;
             case INTAKING:
-                return 0.91;
+                return 0.89;
             default: throw new IllegalArgumentException("Unknown PivotState: " + state);
         }
     }
@@ -97,34 +114,50 @@ public class IntakeSubsystem extends SubsystemWrapper {
             case HOVERING:
                 return 0.74;
             case INTAKING:
-                return 0.78;
+                return 0.79;
             default: throw new IllegalArgumentException("Unknown PivotState: " + state);
         }
     }
 
+    public boolean pivotReached(){
+        return robot.intakeArmPivotActuator.hasReached() && robot.intakeClawPivotActuator.hasReached();
+    }
+
+    public boolean extendoReached(){
+        return robot.extendoActuator.hasReached();
+    }
+
     @Override
     public void periodic() {
+        //robot.extendoActuator.setTargetPosition(extendoTargetPos);
+//        if (pivotState == PivotState.TRANSFER){
+//            robot.extendoActuator.setTargetPosition(0);
+//        }
         robot.extendoActuator.periodic();
-        robot.intakeArmPivotActuator.periodic();
-        robot.intakeClawPivotActuator.periodic();
+//        robot.intakeArmPivotActuator.periodic();
+//        robot.intakeClawPivotActuator.periodic();
     }
+
 
     @Override
     public void read() {
         robot.extendoActuator.read();
-        robot.intakeArmPivotActuator.read();
-        robot.intakeClawPivotActuator.read();
+//        robot.intakeArmPivotActuator.read();
+//        robot.intakeClawPivotActuator.read();
     }
 
     @Override
     public void write() {
         robot.extendoActuator.write();
-        robot.intakeArmPivotActuator.write();
-        robot.intakeClawPivotActuator.write();
+//        robot.intakeArmPivotActuator.write();
+//        robot.intakeClawPivotActuator.write();
     }
 
     @Override
     public void reset() {
-
+        robot.extendoActuator.setTargetPosition(0);
+        setPivotState(PivotState.TRANSFER);
+        setClawState(ClawState.OPEN);
+        setClawRotation(ClawRotationState.TRANSFER);
     }
 }

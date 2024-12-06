@@ -28,15 +28,16 @@ public class MathUtils {
         return MathUtils.getRadRotDist(start, end);
     }
 
-    public static double joystickScalar(double num, double min) {
-        return joystickScalar(num, min, 0.66, 4);
+//    public static double joystickScalar(double num, double min) {
+//        return joystickScalar(num, min, 0.1, 3.5);
+//    }
+
+    public static double joystickScalar(double joystick, double minPower, double deadzone, double scale) {
+        if (joystick<0) minPower *= -1;
+        if (Math.abs(joystick) < deadzone) return 0;
+
+        return joystick + Math.pow(Math.pow((1-minPower), (1/scale)-1), scale)+minPower;
     }
 
-    private static double joystickScalar(double n, double m, double l, double a) {
-        return Math.signum(n) * m
-                + (1 - m) *
-                (Math.abs(n) > l ?
-                        Math.pow(Math.abs(n), Math.log(l / a) / Math.log(l)) * Math.signum(n) :
-                        n / a);
-    }
+
 }

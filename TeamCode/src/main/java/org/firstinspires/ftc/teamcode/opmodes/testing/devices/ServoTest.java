@@ -7,9 +7,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.teamcode.common.utils.wrappers.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ServoWrapper;
 
 import java.util.ArrayList;
@@ -22,6 +24,11 @@ public class ServoTest extends OpMode {
     private ServoWrapper depositPivotServo, depositClawServo, depositClawRotationServo;
 
     private ArrayList<ServoWrapper> servos = new ArrayList<>();
+
+    public AnalogInput intakeArmPivotLeftEnc, intakeArmPivotRightEnc, intakeClawPivotEnc;
+    public AbsoluteAnalogEncoder intakeArmPivotLeftEncoder, intakeArmPivotRightEncoder, intakeClawPivotEncoder;
+
+    private ArrayList<AbsoluteAnalogEncoder> analogEncoders = new ArrayList<>();
 
     public static double incrementStep = 0.05;
     public static double targetPos = 0.0;
@@ -61,8 +68,31 @@ public class ServoTest extends OpMode {
         depositClawRotationServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositClawRotationServo"));
         servos.add(depositClawRotationServo);
 
+        intakeArmPivotLeftEnc = hardwareMap.analogInput.get("intakeArmPivotLeftEncoder");
+        intakeArmPivotLeftEncoder = new AbsoluteAnalogEncoder(intakeArmPivotLeftEnc)
+                .zero(0.0)
+                .setWraparound(false);
+        analogEncoders.add(intakeArmPivotLeftEncoder);
+
+        intakeArmPivotRightEnc = hardwareMap.analogInput.get("intakeArmPivotRightEncoder");
+        intakeArmPivotRightEncoder = new AbsoluteAnalogEncoder(intakeArmPivotRightEnc)
+                .zero(0.0)
+                .setInverted(true)
+                .setWraparound(false);
+        analogEncoders.add(intakeArmPivotRightEncoder);
+
+        intakeClawPivotEnc = hardwareMap.analogInput.get("intakeClawPivotEncoder");
+        intakeClawPivotEncoder = new AbsoluteAnalogEncoder(intakeClawPivotEnc)
+                .zero(0.0)
+                .setWraparound(false);
+        analogEncoders.add(intakeClawPivotEncoder);
+
         for (ServoWrapper servo : servos) {
             servo.resolveName(hardwareMap);
+        }
+
+        for (AbsoluteAnalogEncoder enc : analogEncoders){
+            enc.resolveName(hardwareMap);
         }
     }
 
@@ -107,6 +137,11 @@ public class ServoTest extends OpMode {
         telemetry.addData("Servo", servos.get(servoID).getConfigName());
         telemetry.addData("Position", targetPos);
         telemetry.addData("Holding position", holdPosition);
+
+        for (AbsoluteAnalogEncoder enc : analogEncoders){
+            telemetry.addData("Analog encoder", enc.getConfigName());
+            telemetry.addData("Analog position", enc.getCurrentPosition());
+        }
         telemetry.update();
     }
 }

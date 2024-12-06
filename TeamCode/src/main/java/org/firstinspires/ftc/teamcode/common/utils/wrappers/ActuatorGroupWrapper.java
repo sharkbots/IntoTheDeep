@@ -54,6 +54,8 @@ public class ActuatorGroupWrapper {
     private boolean reached = false;
     private boolean floating = false;
 
+    private boolean manualMode = false;
+
     private FeedforwardMode mode = FeedforwardMode.NONE;
 
     private Sensors.SensorType sensorType;
@@ -123,6 +125,11 @@ public class ActuatorGroupWrapper {
      * some tolerance given by a specified value.
      */
     public void periodic() {
+        if (manualMode) {
+            this.targetPosition = this.position;
+            return;
+        }
+
         if (timer == null) {
             timer = new ElapsedTime();
         }
@@ -158,6 +165,13 @@ public class ActuatorGroupWrapper {
      * values calculated and saved. Runs different methods based on the given actuation group.
      */
     public void write() {
+        if (manualMode){
+            for (HardwareDevice device : devices.values()){
+                if (device instanceof DcMotor) {
+                    ((DcMotor) device).setPower(power);
+                }
+            }
+        }
         if (Math.abs(targetPosition - pTargetPosition) > 0.005 ||
                 Math.abs(power - pPower) > 0.005) {
             for (HardwareDevice device : devices.values()) {
@@ -175,6 +189,16 @@ public class ActuatorGroupWrapper {
         }
     }
 
+    public void enableManualPower(){
+        manualMode = true;
+    }
+    public void disableManualPower(){
+        manualMode = false;
+    }
+
+    public void setManualPower(double power){
+        this.power = power;
+    }
     /**
      * Will set the target position for the actuator group. In the case of a motion profile
      * being used, the profile will be reset and created again with the new target position.

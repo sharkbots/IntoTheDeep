@@ -3,10 +3,13 @@ package org.firstinspires.ftc.teamcode.common.utils.wrappers;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 
 import java.lang.Math;
+import java.util.Set;
 
 @Config
 public class AbsoluteAnalogEncoder implements HardwareDevice {
@@ -17,6 +20,7 @@ public class AbsoluteAnalogEncoder implements HardwareDevice {
     private boolean inverted;
     private boolean wraparound;
 
+    private String name;
     public AbsoluteAnalogEncoder(AnalogInput enc){
         this(enc, DEFAULT_RANGE);
     }
@@ -74,6 +78,20 @@ public class AbsoluteAnalogEncoder implements HardwareDevice {
     public String getDeviceName() {
         return "AbsoluteAnalogEncoder";
     }
+
+    public void resolveName(HardwareMap hwmap){
+        this.name = fetchDeviceName(hwmap, this.encoder);
+    }
+
+    private static String fetchDeviceName(HardwareMap hardwareMap, AnalogInput analogInput) {
+        Set<String> names = hardwareMap.getNamesOf(analogInput);
+        return names.isEmpty() ? "Unknown" : names.iterator().next();
+    }
+
+    public String getConfigName(){
+        return name;
+    }
+
     @Override
     public String getConnectionInfo() {
         return null;

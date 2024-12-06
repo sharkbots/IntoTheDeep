@@ -12,6 +12,7 @@ public class Globals {
     public static boolean IS_AUTO = false;
     public static boolean COMING_FROM_AUTONOMOUS = false;
     public static boolean IS_FIELD_CENTRIC = true;
+    public static boolean INTAKING = false;
 
     public static Pose END_OF_AUTO_POSE = new Pose();
 }

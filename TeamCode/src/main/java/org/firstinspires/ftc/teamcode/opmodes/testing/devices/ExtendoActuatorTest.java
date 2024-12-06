@@ -28,8 +28,8 @@ public class ExtendoActuatorTest extends OpMode {
 
     private GamepadEx gamepadEx;
 
-    public static int targetPos = 400;
-    public static double ekP = 0.000;
+    public static int targetPos;
+    public static double ekP = 0.005;
     public static double ekI = 0.0;
     public static double ekD = 0.0;
     public static int lTolerance = 20;

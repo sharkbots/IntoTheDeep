@@ -12,7 +12,7 @@ public class DepositClawCommand extends ConditionalCommand {
     public DepositClawCommand(Robot robot, LiftSubsystem.ClawState state) {
         super(
                 // Run if claw control is allowed
-                new InstantCommand(() -> robot.depositClawServo.setPosition(state.getPosition())),
+                new InstantCommand(() -> robot.lift.updateState(state)),
 
                 // Do nothing otherwise
                 new InstantCommand(),

@@ -182,11 +182,13 @@ public class Robot extends SubsystemWrapper{
 
         // EXTENDO
         this.extendoMotor = hardwareMap.get(DcMotorEx.class, "extendoMotor");
+        extendoMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         extendoMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
+        extendoMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "extendoMotor").encoder);
 
-        double ekP = 0.0;
+        double ekP = 0.005;
         double ekI = 0.0;
         double ekD = 0.0;
         int eTolerance = 20;
