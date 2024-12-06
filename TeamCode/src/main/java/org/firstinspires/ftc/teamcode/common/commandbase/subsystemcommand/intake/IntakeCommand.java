@@ -16,8 +16,8 @@ public class IntakeCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot  .intake.setPivotState(IntakeSubsystem.PivotState.INTAKING)),
                 new WaitCommand(100),
                 /*new WaitUntilCommand(robot.intake::pivotReached),*/
-                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.CLOSED)),
-                new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.MICRO_OPEN)),
+                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.MICRO_OPEN)),
+                new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
                 new WaitCommand(100),
                 new InstantCommand(() -> robot.intake.setExtendoTarget(200)),
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.TRANSFER)),

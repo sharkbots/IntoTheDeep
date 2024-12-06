@@ -35,7 +35,7 @@ public class LiftSubsystemTest extends CommandOpMode {
 
         robot.init(hardwareMap);
         lift = new LiftSubsystem();
-        robot.addSubsystem(lift);
+        robot.addSubsystem(robot.lift);
 
         // Map button X to reset the lift subsystem
         gamepadEx2.getGamepadButton(GamepadKeys.Button.X)
