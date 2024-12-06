@@ -39,5 +39,19 @@ public class MathUtils {
         return joystick + Math.pow(Math.pow((1-minPower), (1/scale)-1), scale)+minPower;
     }
 
+    /**
+     * Scales the right stick x input from [-1.0, 1.0] to [0, 2π].
+     *
+     * @param rot The raw x-axis input from the right stick (-1.0 to 1.0).
+     * @return The scaled value between 0 and 2π.
+     */
+    public static double rotationJoystickScalar(double rot){
+        // Clamp the input value to ensure it's within the range [-1, 1]
+        rot = Math.max(-1.0, Math.min(1.0, rot));
+
+        // Scale using the formula
+        return (rot + 1) * Math.PI;
+    }
+
 
 }

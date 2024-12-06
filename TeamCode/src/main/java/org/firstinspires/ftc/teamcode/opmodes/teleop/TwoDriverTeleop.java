@@ -7,17 +7,19 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositClawCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
+import org.firstinspires.ftc.teamcode.common.utils.math.geometry.Pose;
 
 @Config
 @TeleOp(name = "Two Driver Teleop", group = "Teleop")
@@ -27,6 +29,8 @@ public class TwoDriverTeleop extends CommandOpMode {
 
     private GamepadEx gamepadEx;
     private GamepadEx gamepadEx2;
+
+    TriggerReader leftTrigger, rightTrigger;
 
     private double loopTime = 0.0;
 
@@ -48,6 +52,13 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.init(hardwareMap);
         robot.addSubsystem(robot.intake);
         robot.addSubsystem(robot.lift);
+        robot.addSubsystem(robot.drivetrain);
+
+        leftTrigger = new TriggerReader(gamepadEx2, GamepadKeys.Trigger.LEFT_TRIGGER);
+        rightTrigger = new TriggerReader(gamepadEx2, GamepadKeys.Trigger.RIGHT_TRIGGER);
+
+        leftTrigger.readValue();
+        rightTrigger.readValue();
 
         // shoot out intake
         gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
@@ -67,11 +78,16 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         // Map button B to set lift state to DEPOSIT_HIGH_BASKET
         gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET));
+                .whenPressed(new ConditionalCommand(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET),
+                        new InstantCommand(), () -> !Globals.INTAKING)
+                );
+
 
         // Map button Y to set lift state to DEPOSIT_HIGH_RUNG
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG));
+                .whenPressed(new ConditionalCommand(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG),
+                        new InstantCommand(), () -> !Globals.INTAKING)
+                );
 
         // Map left bumper to toggle the claw state
         gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -100,14 +116,26 @@ public class TwoDriverTeleop extends CommandOpMode {
         if (Math.abs(gamepad2.left_stick_x)>= 0.2 &&
                 robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING){
             robot.extendoActuator.enableManualPower();
-            robot.extendoActuator.setManualPower(1);
+            robot.extendoActuator.setManualPower(gamepad2.left_stick_x);
         }
         robot.periodic();
         robot.write();
 
-        robot.drivetrain.set(new Pose(-gamepad1.right_stick_x,
-                MathUtils.joystickScalar(gamepad1.right_stick_y, dtMinPower, dtDeadzone, dtScale),
-                gamepad1.right_stick_x), 0);
+        robot.drivetrain.set(new Pose(-gamepad1.left_stick_x,
+                gamepad1.left_stick_y,
+                -gamepad1.right_stick_x), 0);
+
+        leftTrigger.readValue();
+        if (leftTrigger.wasJustPressed()) {
+            telemetry.addLine("Left Trigger Pressed!");
+            robot.intake.moveLeft();
+        }
+
+        rightTrigger.readValue();
+        if (rightTrigger.wasJustPressed()) {
+            telemetry.addLine("Right Trigger Pressed!");
+            robot.intake.moveRight();
+        }
 
 
         double loop = System.nanoTime();

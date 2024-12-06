@@ -6,9 +6,9 @@ import com.arcrobotics.ftclib.drivebase.RobotDrive;
 import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
+import org.firstinspires.ftc.teamcode.common.utils.math.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
 
 public class MecanumDrivetrain extends SubsystemWrapper implements Drivetrain {
@@ -66,7 +66,7 @@ public class MecanumDrivetrain extends SubsystemWrapper implements Drivetrain {
     }
 
     public void set(Pose pose, double angle) {
-        set(pose.getX(), pose.getY(), pose.getHeading(), angle);
+        set(pose.getX(), pose.getY(), pose.heading, angle);
     }
 
     @Override

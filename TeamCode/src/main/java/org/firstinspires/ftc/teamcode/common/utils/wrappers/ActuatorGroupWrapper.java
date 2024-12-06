@@ -50,6 +50,8 @@ public class ActuatorGroupWrapper {
     private double currentFeedforward = 0.0;
     private double targetPositionOffset = 0.0;
     private double offset = 0.0;
+    private int minPos = 0;
+    private int maxPos = 2200;
 
     private boolean reached = false;
     private boolean floating = false;
@@ -166,9 +168,11 @@ public class ActuatorGroupWrapper {
      */
     public void write() {
         if (manualMode){
-            for (HardwareDevice device : devices.values()){
-                if (device instanceof DcMotor) {
-                    ((DcMotor) device).setPower(power);
+            if (position - minPos >= tolerance || maxPos - position >= tolerance){
+                for (HardwareDevice device : devices.values()){
+                    if (device instanceof DcMotor) {
+                        ((DcMotor) device).setPower(power);
+                    }
                 }
             }
         }

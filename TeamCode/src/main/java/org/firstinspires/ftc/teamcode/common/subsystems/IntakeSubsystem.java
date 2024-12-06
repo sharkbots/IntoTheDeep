@@ -11,6 +11,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     public PivotState pivotState = PivotState.TRANSFER;
     public ClawState clawState = ClawState.OPEN;
+    public ClawRotationState clawRotationState = ClawRotationState.TRANSFER;
 
     public int extendoTargetPos = 1500;
 
@@ -23,7 +24,11 @@ public class IntakeSubsystem extends SubsystemWrapper {
     public enum ClawRotationState{
         TRANSFER(0.54),
         FULLY_LEFT(0.88),
-        FULLY_RIGHT(0.195);
+        LEFT_30_DEGREES(TRANSFER.getPosition()+1*(FULLY_LEFT.getPosition()-TRANSFER.getPosition())/3),
+        LEFT_60_DEGREES(TRANSFER.getPosition()+2*(FULLY_LEFT.getPosition()-TRANSFER.getPosition())/3),
+        FULLY_RIGHT(0.195),
+        RIGHT_30_DEGREES(TRANSFER.getPosition()+1*(FULLY_RIGHT.getPosition()-TRANSFER.getPosition())/3),
+        RIGHT_60_DEGREES(TRANSFER.getPosition()+2*(FULLY_RIGHT.getPosition()-TRANSFER.getPosition())/3);
 
         private final double position;
         ClawRotationState(double position) {
@@ -52,12 +57,48 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     public IntakeSubsystem (){
         this.robot = Robot.getInstance();
-        robot.extendoActuator.setTargetPosition(0);
-        setPivotState(PivotState.TRANSFER);
-        setClawState(ClawState.OPEN);
-        setClawRotation(ClawRotationState.TRANSFER);
+        reset();
     }
 
+    public void moveLeft() {
+        switch (clawRotationState) {
+            case TRANSFER:
+                clawRotationState = ClawRotationState.LEFT_30_DEGREES;
+                break;
+            case LEFT_30_DEGREES:
+                clawRotationState = ClawRotationState.LEFT_60_DEGREES;
+                break;
+            case LEFT_60_DEGREES:
+                clawRotationState = ClawRotationState.FULLY_LEFT;
+                break;
+            case FULLY_LEFT:
+                // Do nothing if already at the extreme
+                break;
+            default:
+                break;
+        }
+        robot.intakeClawRotationServo.setPosition(clawRotationState.getPosition());
+    }
+
+    public void moveRight() {
+        switch (clawRotationState) {
+            case TRANSFER:
+                clawRotationState = ClawRotationState.RIGHT_30_DEGREES;
+                break;
+            case RIGHT_30_DEGREES:
+                clawRotationState = ClawRotationState.RIGHT_60_DEGREES;
+                break;
+            case RIGHT_60_DEGREES:
+                clawRotationState = ClawRotationState.FULLY_RIGHT;
+                break;
+            case FULLY_RIGHT:
+                // Do nothing if already at the extreme
+                break;
+            default:
+                break;
+        }
+        robot.intakeClawRotationServo.setPosition(clawRotationState.getPosition());
+    }
 
     public void setExtendoTarget(int pos){
         this.extendoTargetPos = pos;
