@@ -33,7 +33,8 @@ public class LiftSubsystem extends SubsystemWrapper {
         TRANSFER,
         INTAKE_WALL,
         DEPOSIT_LOW_RUNG,
-        DEPOSIT_HIGH_RUNG,
+        DEPOSIT_HIGH_RUNG_SETUP,
+        DEPOSIT_HIGH_RUNG_DOWN,
         DEPOSIT_LOW_BASKET,
         DEPOSIT_HIGH_BASKET,
         LOW_HANG
@@ -42,6 +43,7 @@ public class LiftSubsystem extends SubsystemWrapper {
     public LiftSubsystem() {
         this.robot = Robot.getInstance();
         updateState(liftState);
+        updateState(ClawState.MICRO_OPEN);
     }
 
     /**
@@ -77,7 +79,7 @@ public class LiftSubsystem extends SubsystemWrapper {
     public boolean isClawControlAllowed() {
         return liftState == LiftState.INTAKE_WALL
                 || liftState == LiftState.DEPOSIT_LOW_RUNG
-                || liftState == LiftState.DEPOSIT_HIGH_RUNG
+                || liftState == LiftState.DEPOSIT_HIGH_RUNG_SETUP
                 || liftState == LiftState.DEPOSIT_LOW_BASKET
                 || liftState == LiftState.DEPOSIT_HIGH_BASKET;
     }
@@ -92,9 +94,10 @@ public class LiftSubsystem extends SubsystemWrapper {
             case INTAKE_WALL:
                 return 0;
             case DEPOSIT_LOW_RUNG: return 85;
-            case DEPOSIT_HIGH_RUNG: return 785;
+            case DEPOSIT_HIGH_RUNG_SETUP: return 785;
+            case DEPOSIT_HIGH_RUNG_DOWN: return 620;
             case DEPOSIT_LOW_BASKET: return 925;
-            case DEPOSIT_HIGH_BASKET: return 1850;
+            case DEPOSIT_HIGH_BASKET: return 1925;
             case LOW_HANG: return 600;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
@@ -111,7 +114,8 @@ public class LiftSubsystem extends SubsystemWrapper {
                 return 0.045;
             case INTAKE_WALL: return 0.96;
             case DEPOSIT_LOW_RUNG:
-            case DEPOSIT_HIGH_RUNG:
+            case DEPOSIT_HIGH_RUNG_DOWN:
+            case DEPOSIT_HIGH_RUNG_SETUP:
                 return 0.88;
             case DEPOSIT_LOW_BASKET:
             case DEPOSIT_HIGH_BASKET:
@@ -130,7 +134,8 @@ public class LiftSubsystem extends SubsystemWrapper {
             case LOW_HANG:
             case INTAKE_WALL:
             case DEPOSIT_LOW_RUNG:
-            case DEPOSIT_HIGH_RUNG:
+            case DEPOSIT_HIGH_RUNG_SETUP:
+            case DEPOSIT_HIGH_RUNG_DOWN:
                 return 0.35;
             case DEPOSIT_LOW_BASKET:
             case DEPOSIT_HIGH_BASKET:

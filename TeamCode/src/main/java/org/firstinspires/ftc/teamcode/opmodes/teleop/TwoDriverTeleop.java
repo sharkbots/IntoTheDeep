@@ -5,20 +5,18 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositClawCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
-import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.teamcode.common.utils.math.geometry.Pose;
 
 @Config
@@ -30,7 +28,7 @@ public class TwoDriverTeleop extends CommandOpMode {
     private GamepadEx gamepadEx;
     private GamepadEx gamepadEx2;
 
-    TriggerReader leftTrigger, rightTrigger;
+    //TriggerReader leftTrigger, rightTrigger;
 
     private double loopTime = 0.0;
 
@@ -54,11 +52,26 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.addSubsystem(robot.lift);
         robot.addSubsystem(robot.drivetrain);
 
-        leftTrigger = new TriggerReader(gamepadEx2, GamepadKeys.Trigger.LEFT_TRIGGER);
-        rightTrigger = new TriggerReader(gamepadEx2, GamepadKeys.Trigger.RIGHT_TRIGGER);
+//        leftTrigger = new TriggerReader(gamepadEx2, GamepadKeys.Trigger.LEFT_TRIGGER);
+//        rightTrigger = new TriggerReader(gamepadEx2, GamepadKeys.Trigger.RIGHT_TRIGGER);
+//
+//        leftTrigger.readValue();
+//        rightTrigger.readValue();
 
-        leftTrigger.readValue();
-        rightTrigger.readValue();
+        // rotate claw left
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                        .whenPressed(new ConditionalCommand(
+                                new InstantCommand(() -> robot.intake.moveLeft()),
+                                new InstantCommand(),
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING
+                        ));
+        // rotate claw right
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(new ConditionalCommand(
+                        new InstantCommand(() -> robot.intake.moveRight()),
+                        new InstantCommand(),
+                        () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING
+                ));
 
         // shoot out intake
         gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
@@ -72,9 +85,14 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         // Map button X to reset the lift subsystem
         gamepadEx2.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(new InstantCommand(() -> {
-                    robot.lift.reset();
-                }));
+                .whenPressed(new SequentialCommandGroup(
+                    new InstantCommand(() -> {
+                        robot.lift.reset();
+                    }),
+                                new ConditionalCommand(new HoverCommand(robot), new InstantCommand(),
+                                        () ->robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER)
+                )
+                        );
 
         // Map button B to set lift state to DEPOSIT_HIGH_BASKET
         gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
@@ -85,7 +103,11 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         // Map button Y to set lift state to DEPOSIT_HIGH_RUNG
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(new ConditionalCommand(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG),
+                .whenPressed(new ConditionalCommand(
+                        new ConditionalCommand(
+                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_DOWN),
+                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP),
+                                () -> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP ),
                         new InstantCommand(), () -> !Globals.INTAKING)
                 );
 
@@ -100,6 +122,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                     robot.depositClawServo.setPosition(newClawState.getPosition());
                 }));
 
+
         robot.read();
         while (opModeInInit()) {
             telemetry.addLine("Robot Initialized.");
@@ -113,29 +136,37 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.clearBulkCache();
         robot.read();
         robot.extendoActuator.disableManualPower();
-        if (Math.abs(gamepad2.left_stick_x)>= 0.2 &&
+        if (Math.abs(gamepad2.right_stick_y)>= 0.2 &&
                 robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING){
             robot.extendoActuator.enableManualPower();
-            robot.extendoActuator.setManualPower(gamepad2.left_stick_x);
+            robot.extendoActuator.setManualPower(-gamepad2.right_stick_y);
         }
         robot.periodic();
         robot.write();
 
-        robot.drivetrain.set(new Pose(-gamepad1.left_stick_x,
-                gamepad1.left_stick_y,
-                -gamepad1.right_stick_x), 0);
-
-        leftTrigger.readValue();
-        if (leftTrigger.wasJustPressed()) {
-            telemetry.addLine("Left Trigger Pressed!");
-            robot.intake.moveLeft();
+        double forward = gamepad1.left_stick_y;
+        double strafe = -gamepad1.left_stick_x;
+        double rotation = -gamepad1.right_stick_x;
+        if (gamepadEx.isDown(GamepadKeys.Button.LEFT_BUMPER)){
+            forward *= 0.3;
+            strafe *= 0.3;
+            rotation *= 0.3;
         }
+        robot.drivetrain.set(new Pose(strafe,
+                forward,
+                rotation), 0);
 
-        rightTrigger.readValue();
-        if (rightTrigger.wasJustPressed()) {
-            telemetry.addLine("Right Trigger Pressed!");
-            robot.intake.moveRight();
-        }
+//        leftTrigger.readValue();
+//        if (leftTrigger.wasJustPressed() && robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING) {
+//            telemetry.addLine("Left Trigger Pressed!");
+//            robot.intake.moveLeft();
+//        }
+//
+//        rightTrigger.readValue();
+//        if (rightTrigger.wasJustPressed() && robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING) {
+//            telemetry.addLine("Right Trigger Pressed!");
+//            robot.intake.moveRight();
+//        }
 
 
         double loop = System.nanoTime();

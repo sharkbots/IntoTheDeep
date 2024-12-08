@@ -197,7 +197,9 @@ public class Robot extends SubsystemWrapper{
                 .setPIDController(new PIDController(ekP, ekI, ekD))
                 .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, 0.0)
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
-                .setErrorTolerance(eTolerance);
+                .setErrorTolerance(eTolerance)
+                .setMinPos(0)
+                .setMaxPos(1850);
 
 
         // INTAKE

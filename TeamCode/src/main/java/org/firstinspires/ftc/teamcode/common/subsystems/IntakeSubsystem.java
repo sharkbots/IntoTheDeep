@@ -62,14 +62,29 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     public void moveLeft() {
         switch (clawRotationState) {
+            case FULLY_RIGHT:
+                clawRotationState = ClawRotationState.RIGHT_60_DEGREES;
+                setClawRotation(ClawRotationState.RIGHT_60_DEGREES);
+                break;
+            case RIGHT_60_DEGREES:
+                clawRotationState = ClawRotationState.RIGHT_30_DEGREES;
+                setClawRotation(ClawRotationState.RIGHT_30_DEGREES);
+                break;
+            case RIGHT_30_DEGREES:
+                clawRotationState = ClawRotationState.TRANSFER;
+                setClawRotation(ClawRotationState.TRANSFER);
+                break;
             case TRANSFER:
                 clawRotationState = ClawRotationState.LEFT_30_DEGREES;
+                setClawRotation(ClawRotationState.LEFT_30_DEGREES);
                 break;
             case LEFT_30_DEGREES:
                 clawRotationState = ClawRotationState.LEFT_60_DEGREES;
+                setClawRotation(ClawRotationState.LEFT_60_DEGREES);
                 break;
             case LEFT_60_DEGREES:
                 clawRotationState = ClawRotationState.FULLY_LEFT;
+                setClawRotation(ClawRotationState.FULLY_LEFT);
                 break;
             case FULLY_LEFT:
                 // Do nothing if already at the extreme
@@ -77,19 +92,34 @@ public class IntakeSubsystem extends SubsystemWrapper {
             default:
                 break;
         }
-        robot.intakeClawRotationServo.setPosition(clawRotationState.getPosition());
+        //setClawRotation(clawRotationState);
     }
 
     public void moveRight() {
         switch (clawRotationState) {
+            case FULLY_LEFT:
+                clawRotationState = ClawRotationState.LEFT_60_DEGREES;
+                setClawRotation(ClawRotationState.LEFT_60_DEGREES);
+                break;
+            case LEFT_60_DEGREES:
+                clawRotationState = ClawRotationState.LEFT_30_DEGREES;
+                setClawRotation(ClawRotationState.LEFT_30_DEGREES);
+                break;
+            case LEFT_30_DEGREES:
+                clawRotationState = ClawRotationState.TRANSFER;
+                setClawRotation(ClawRotationState.TRANSFER);
+                break;
             case TRANSFER:
                 clawRotationState = ClawRotationState.RIGHT_30_DEGREES;
+                setClawRotation(ClawRotationState.RIGHT_30_DEGREES);
                 break;
             case RIGHT_30_DEGREES:
                 clawRotationState = ClawRotationState.RIGHT_60_DEGREES;
+                setClawRotation(ClawRotationState.RIGHT_60_DEGREES);
                 break;
             case RIGHT_60_DEGREES:
                 clawRotationState = ClawRotationState.FULLY_RIGHT;
+                setClawRotation(ClawRotationState.FULLY_RIGHT);
                 break;
             case FULLY_RIGHT:
                 // Do nothing if already at the extreme
@@ -97,7 +127,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
             default:
                 break;
         }
-        robot.intakeClawRotationServo.setPosition(clawRotationState.getPosition());
+        //setClawRotation(clawRotationState);
     }
 
     public void setExtendoTarget(int pos){
@@ -127,6 +157,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
 
     public void setClawRotation(@NotNull ClawRotationState state) {
+        this.clawRotationState = state;
         robot.intakeClawRotationServo.setPosition(state.getPosition());
     }
 
@@ -153,9 +184,9 @@ public class IntakeSubsystem extends SubsystemWrapper {
             case TRANSFER:
                 return 0.47;
             case HOVERING:
-                return 0.74;
+                return 0.74+0.015;
             case INTAKING:
-                return 0.79;
+                return 0.79+0.015;
             default: throw new IllegalArgumentException("Unknown PivotState: " + state);
         }
     }

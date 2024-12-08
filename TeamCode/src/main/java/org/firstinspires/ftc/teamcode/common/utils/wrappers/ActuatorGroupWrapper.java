@@ -51,7 +51,7 @@ public class ActuatorGroupWrapper {
     private double targetPositionOffset = 0.0;
     private double offset = 0.0;
     private int minPos = 0;
-    private int maxPos = 2200;
+    private int maxPos = 100000;
 
     private boolean reached = false;
     private boolean floating = false;
@@ -201,8 +201,25 @@ public class ActuatorGroupWrapper {
     }
 
     public void setManualPower(double power){
+        if (position - minPos <= tolerance && power < 0){
+            power = 0;
+        }
+        if (maxPos - position <= tolerance && power > 0){
+            power = 0;
+        }
         this.power = power;
     }
+
+    public ActuatorGroupWrapper setMinPos(int pos){
+        this.minPos = pos;
+        return this;
+    }
+
+    public ActuatorGroupWrapper setMaxPos(int pos){
+        this.maxPos = pos;
+        return this;
+    }
+
     /**
      * Will set the target position for the actuator group. In the case of a motion profile
      * being used, the profile will be reset and created again with the new target position.

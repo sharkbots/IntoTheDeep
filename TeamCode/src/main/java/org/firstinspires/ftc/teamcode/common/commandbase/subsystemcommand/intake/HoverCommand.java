@@ -13,6 +13,7 @@ public class HoverCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> Globals.INTAKING = true),
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING)),
+                new InstantCommand(() -> robot.extendoActuator.setTargetPosition(100)),
                 new WaitCommand(600)
         );
     }

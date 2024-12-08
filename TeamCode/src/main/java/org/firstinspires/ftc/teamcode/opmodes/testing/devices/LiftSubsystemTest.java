@@ -49,7 +49,7 @@ public class LiftSubsystemTest extends CommandOpMode {
 
         // Map button Y to set lift state to DEPOSIT_HIGH_RUNG
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG));
+                .whenPressed(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP));
 
         // Map left bumper to toggle the claw state
         gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)

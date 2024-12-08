@@ -22,13 +22,13 @@ public class IntakeCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.intake.setExtendoTarget(200)),
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.TRANSFER)),
                 new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
-                new WaitCommand(1000),
+                new WaitCommand(300),
                 new WaitUntilCommand(() -> /*robot.intake.pivotReached() &&*/robot.intake.extendoReached()),
                 new InstantCommand(() -> robot.intake.setExtendoTarget(0)),
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.MICRO_OPEN)),
                 new WaitCommand(350),
                 new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.CLOSED)),
-                new WaitCommand(350),
+                new WaitCommand(200),
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN)),
                 new InstantCommand(() -> Globals.INTAKING = false)
         );
