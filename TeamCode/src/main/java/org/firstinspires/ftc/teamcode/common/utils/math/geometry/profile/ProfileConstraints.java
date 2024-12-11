@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.profile;
+package org.firstinspires.ftc.teamcode.common.utils.math.geometry.profile;
 
 public class ProfileConstraints {
     public double accel;

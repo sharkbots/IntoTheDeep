@@ -11,9 +11,22 @@
 
 // Custom definitions may go here
 
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url = 'https://www.matthewo.tech/maven/'
+        }
+    }
+    dependencies {
+        classpath 'org.team11260:fast-load-plugin:0.1.2'
+    }
+}
+
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+apply plugin: 'org.team11260.fast-load-plugin'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -26,11 +39,13 @@ android {
 repositories {
     maven {
         url = 'https://maven.brott.dev/'
+        url = 'https://www.matthewo.tech/maven/'
     }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'com.google.ar:core:1.46.0'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
     // RoadRunner
@@ -49,4 +64,7 @@ dependencies {
     // Pedro Pathing
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.21'
+
+    // Fast load
+    implementation 'org.team11260:fast-load:0.1.2'
 }

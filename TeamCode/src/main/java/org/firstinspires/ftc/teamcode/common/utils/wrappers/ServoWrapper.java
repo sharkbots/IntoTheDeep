@@ -1,16 +1,35 @@
 package org.firstinspires.ftc.teamcode.common.utils.wrappers;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
+
+import java.util.Set;
+
 
 public class ServoWrapper implements Servo {
 
-    private Servo servo;
+    private ServoImplEx servo;
+    private String name;
     private double offset = 0.0;
 
-    public ServoWrapper(Servo servo) {
+
+    public ServoWrapper(ServoImplEx servo) {
         this.servo = servo;
+        this.name = "Unknown";
     }
+
+    public void resolveName(HardwareMap hardwareMap) {
+        this.name = fetchDeviceName(hardwareMap, this.servo);
+    }
+
+    private static String fetchDeviceName(HardwareMap hardwareMap, Servo servo) {
+        Set<String> names = hardwareMap.getNamesOf(servo);
+        return names.isEmpty() ? "Unknown" : names.iterator().next();
+    }
+
+    public String getConfigName() {return name;}
 
     public void setOffset(double offset) {
         this.offset = offset;
@@ -83,5 +102,13 @@ public class ServoWrapper implements Servo {
     @Override
     public void scaleRange(double min, double max) {
         this.servo.scaleRange(min, max);
+    }
+
+    public void setPwmDisable(){
+        this.servo.setPwmDisable();
+    }
+
+    public void setPwmEnable(){
+        this.servo.setPwmEnable();
     }
 }

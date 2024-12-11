@@ -8,14 +8,9 @@ import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
-//import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-//import org.firstinspires.ftc.teamcode.common.hardware.Sensors;
-//import org.firstinspires.ftc.teamcode.common.util.MathUtils;
-
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.profile.AsymmetricMotionProfile;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.profile.ProfileConstraints;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.profile.ProfileState;
+import org.firstinspires.ftc.teamcode.common.utils.math.geometry.profile.AsymmetricMotionProfile;
+import org.firstinspires.ftc.teamcode.common.utils.math.geometry.profile.ProfileConstraints;
+import org.firstinspires.ftc.teamcode.common.utils.math.geometry.profile.ProfileState;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.hardware.Sensors;
 
@@ -55,9 +50,13 @@ public class ActuatorGroupWrapper {
     private double currentFeedforward = 0.0;
     private double targetPositionOffset = 0.0;
     private double offset = 0.0;
+    private int minPos = 0;
+    private int maxPos = 100000;
 
     private boolean reached = false;
     private boolean floating = false;
+
+    private boolean manualMode = false;
 
     private FeedforwardMode mode = FeedforwardMode.NONE;
 
@@ -128,6 +127,11 @@ public class ActuatorGroupWrapper {
      * some tolerance given by a specified value.
      */
     public void periodic() {
+        if (manualMode) {
+            this.targetPosition = this.position;
+            return;
+        }
+
         if (timer == null) {
             timer = new ElapsedTime();
         }
@@ -163,6 +167,15 @@ public class ActuatorGroupWrapper {
      * values calculated and saved. Runs different methods based on the given actuation group.
      */
     public void write() {
+        if (manualMode){
+            if (position - minPos >= tolerance || maxPos - position >= tolerance){
+                for (HardwareDevice device : devices.values()){
+                    if (device instanceof DcMotor) {
+                        ((DcMotor) device).setPower(power);
+                    }
+                }
+            }
+        }
         if (Math.abs(targetPosition - pTargetPosition) > 0.005 ||
                 Math.abs(power - pPower) > 0.005) {
             for (HardwareDevice device : devices.values()) {
@@ -178,6 +191,33 @@ public class ActuatorGroupWrapper {
                 }
             }
         }
+    }
+
+    public void enableManualPower(){
+        manualMode = true;
+    }
+    public void disableManualPower(){
+        manualMode = false;
+    }
+
+    public void setManualPower(double power){
+        if (position - minPos <= tolerance && power < 0){
+            power = 0;
+        }
+        if (maxPos - position <= tolerance && power > 0){
+            power = 0;
+        }
+        this.power = power;
+    }
+
+    public ActuatorGroupWrapper setMinPos(int pos){
+        this.minPos = pos;
+        return this;
+    }
+
+    public ActuatorGroupWrapper setMaxPos(int pos){
+        this.maxPos = pos;
+        return this;
     }
 
     /**
