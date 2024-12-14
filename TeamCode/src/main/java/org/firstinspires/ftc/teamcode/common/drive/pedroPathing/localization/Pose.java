@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization;
 
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
+import androidx.annotation.NonNull;
+
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Vector;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 
 /**
  * This is the Pose class. It defines poses in 2D space, like the Pose2D class in Road Runner except
@@ -44,7 +46,7 @@ public class Pose {
      * This creates a new Pose with no inputs and 0 for all values.
      */
     public Pose() {
-        this(0,0,0);
+        this(0, 0, 0);
     }
 
     /**
@@ -207,5 +209,11 @@ public class Pose {
      */
     public Pose copy() {
         return new Pose(getX(), getY(), getHeading());
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "(" + getX() + ", " + getY() + ", " + Math.toDegrees(getHeading()) + ")";
     }
 }

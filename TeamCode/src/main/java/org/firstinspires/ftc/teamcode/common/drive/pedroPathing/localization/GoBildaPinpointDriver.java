@@ -1,3 +1,4 @@
+
 /*   MIT License
  *   Copyright (c) [2024] [Base 10 Assets, LLC]
  *
@@ -20,7 +21,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization;
 
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 

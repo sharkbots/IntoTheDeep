@@ -85,13 +85,9 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         // Map button X to reset the lift subsystem
         gamepadEx2.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(new SequentialCommandGroup(
-                    new InstantCommand(() -> {
+                .whenPressed(new InstantCommand(() -> {
                         robot.lift.reset();
-                    }),
-                                new ConditionalCommand(new HoverCommand(robot), new InstantCommand(),
-                                        () ->robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER)
-                )
+                    })
                         );
 
         // Map button B to set lift state to DEPOSIT_HIGH_BASKET
@@ -144,9 +140,9 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.periodic();
         robot.write();
 
-        double forward = gamepad1.left_stick_y;
-        double strafe = -gamepad1.left_stick_x;
-        double rotation = -gamepad1.right_stick_x;
+        double forward = -gamepad1.left_stick_y;
+        double strafe = gamepad1.left_stick_x;
+        double rotation = gamepad1.right_stick_x;
         if (gamepadEx.isDown(GamepadKeys.Button.LEFT_BUMPER)){
             forward *= 0.3;
             strafe *= 0.3;
@@ -171,7 +167,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addData("lift position", robot.liftActuator.getPosition() / 26);
+        telemetry.addData("lift position", robot.liftActuator.getPosition());
         loopTime = loop;
         telemetry.update();
     }

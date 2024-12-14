@@ -53,9 +53,9 @@ public class LiftActuatorTest extends OpMode {
         liftTopMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         liftTopMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        liftBottomEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
-        liftCenterEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
-        liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftTopMotor").encoder);
+
+        liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
+        liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
 
         this.liftActuator = new ActuatorGroupWrapper(liftTopEncoder, liftTopMotor, liftCenterMotor, liftBottomMotor)
                 .setPIDController(new PIDController(lkP, lkI, lkD))
@@ -74,8 +74,6 @@ public class LiftActuatorTest extends OpMode {
         liftActuator.write();
 
         telemetry.addData("top lift ticks", liftTopEncoder.getPosition());
-        telemetry.addData("middle lift ticks", liftCenterEncoder.getPosition());
-        telemetry.addData("bottom lift ticks", liftBottomEncoder.getPosition());
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         telemetry.addData("lift position", liftActuator.getPosition() / 26);

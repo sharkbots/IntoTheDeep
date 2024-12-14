@@ -19,7 +19,7 @@ Why use Pedro Pathing? Why not something else like Road Runner or Pure Pursuit?
   * Pure Pursuit searches for the farthest point on the path that's within a certain radius from the robot. Pure Pursuit will then go in a straight line to that point. This poses several problems, as a small search radius will cause some oscillations on corners, and a large search radius will cut corners on paths, which makes the paths inaccurate to real life.
   * Pedro Pathing instead corrects to the closest point on the path while still following the path. This ensures that the follower will stay on the path while still being able to move forward along the path without cutting corners or encountering oscillation issues.
 * Why not Road Runner?
-  * Road Runner is a motion profile based follower, which means that a set of instructions for motor powers are calculated for each path beforehand and then run. After reaching the end of this motion profile, Road Runner corrects. This can be sufficient for most situations, but if the robot encounters an obstacle or wheel slippage, it may be unable to correct in time.
+  * Road Runner is a motion profile based follower, which means that a set of instructions for motor powers are calculated for each path beforehand and then run. During this motion profile, Road Runner can struggle to correct. This can be sufficient for many situations, but if the robot encounters an obstacle or wheel slippage, it may be unable to correct in time.
   * Pedro Pathing instead dynamically corrects throughout the path. The movement vectors are calculated at every point along the path, and because of this, the path can even be changed midway through and Pedro Pathing will still be able to correct. Since correction occurs throughout the path, the error correction isn't concentrated on the end of the path and therefore the robot is able to better minimize error.
 
 ## How Does Pedro Path?
@@ -68,27 +68,18 @@ calculate the force necessary to keep the robot on the path, and then tune a sca
 that force into a corresponding power for the robot.
 
 ### Translational Correction
-This is as simple as it sounds: this corrects error in the robot's position only. However, the
-robot's translational error is actually used within two different PIDs to move the robot. A large
-PID and a small PID are used. The large PID is used when error exceeds a certain limit. and the small
-PID is used when the error is within that limit.
-
-When the robot encounters error, the large PID, if applicable, is used to bring the robot within the
-small PID error range without much overshoot to avoid oscillations. Then, the small PID is used to
-bring the robot to within acceptable error ranges. The reason for this double PID is to allow for 
-aggressive correction to bring the robot within tight tolerances, while not correcting too
-aggressively at larger ranges, which would've caused oscillations.
+This is as simple as it sounds: this corrects error in the robot's position only. The robot's translational
+error is corrected with a PID control. The translational correction does not act along the path the
+robot takes, but instead moves the robot back to the closest point on the path.
 
 ### Heading Correction
 The heading correction operates very similarly to the translational correction, except this corrects
-the direction the robot is facing. It also uses a small and large PID rather than a single PID, like
-the translational correction. The heading correction will turn in the closest direction from the
+the direction the robot is facing. The heading correction will turn in the closest direction from the
 robot's current heading to the target heading.
 
 ### Drive Vector
 The drive vector points in the direction of the tangent of the path and it is responsible for moving
-the robot along the path. Similar to the translational and heading corrections, the drive vector
-uses a large and small PID. Using basic kinematics equations, we can use the velocity of the robot
+the robot along the path. Using basic kinematics equations, we can use the velocity of the robot
 along the path, the length of path left, and a specified target rate of deceleration to calculate
 the velocity we should be moving at. Additionally, after finding out the rate of deceleration of the
 robot under 0 power, we can compensate for that with another kinematics equation. Combining these
@@ -114,4 +105,5 @@ of the curvature formula, we can estimate a centripetal force correction and app
 control.
 
 ## Questions?
-If you still have more questions, feel free to contact us at `scottsbots10158@gmail.com`
+If you still have more questions, feel free to contact us at `scottsbots10158@gmail.com` or
+within our discord linked here(https://discord.gg/2GfC4qBP5s)

@@ -22,9 +22,8 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Encoder;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 //import org.firstinspires.ftc.teamcode.common.utils.ConfigMenu;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
@@ -60,7 +59,7 @@ public class Robot extends SubsystemWrapper{
     // lift
     public DcMotorEx liftBottomMotor, liftCenterMotor, liftTopMotor;
 
-    public EncoderWrapper liftBottomEncoder, liftCenterEncoder, liftTopEncoder;
+    public EncoderWrapper liftTopEncoder;
 
     public ActuatorGroupWrapper liftActuator;
 
@@ -93,10 +92,6 @@ public class Robot extends SubsystemWrapper{
 
     //public ConfigMenu configMenu;
 
-    // pedro pathing
-    public Encoder leftEncoder;
-    public Encoder rightEncoder;
-    public Encoder strafeEncoder;
 
 
     private final Object imuLock = new Object();
@@ -166,18 +161,18 @@ public class Robot extends SubsystemWrapper{
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
         dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtBackLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         this.dtBackRightMotor = hardwareMap.get(DcMotorEx.class, "dtBackRightMotor");
         dtBackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        dtBackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.dtFrontLeftMotor = hardwareMap.get(DcMotorEx.class, "dtFrontLeftMotor");
         dtFrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtFrontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.dtFrontRightMotor = hardwareMap.get(DcMotorEx.class, "dtFrontRightMotor");
         dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        dtFrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         // EXTENDO
@@ -186,7 +181,7 @@ public class Robot extends SubsystemWrapper{
         extendoMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         extendoMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "extendoMotor").encoder);
+        this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
 
         double ekP = 0.005;
         double ekI = 0.0;
@@ -259,9 +254,8 @@ public class Robot extends SubsystemWrapper{
         liftTopMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         liftTopMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.liftBottomEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
-        this.liftCenterEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
-        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftTopMotor").encoder);
+        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
+        liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
 
         double lkP = 0.005;
         double lkI = 0.0;
@@ -326,8 +320,6 @@ public class Robot extends SubsystemWrapper{
         sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_LEFT_ENCODER, intakeArmPivotLeftEncoder.getCurrentPosition());
         sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_RIGHT_ENCODER, intakeArmPivotRightEncoder.getCurrentPosition());
         sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_ROTATION_ENCODER, intakeClawPivotEncoder.getCurrentPosition());
-        sensorValues.put(Sensors.SensorType.LIFT_BOTTOM_ENCODER, liftBottomEncoder.getPosition());
-        sensorValues.put(Sensors.SensorType.LIFT_CENTER_ENCODER, liftCenterEncoder.getPosition());
         sensorValues.put(Sensors.SensorType.LIFT_TOP_ENCODER, liftTopEncoder.getPosition());
 
         for (SubsystemWrapper subsystem : subsystems){
