@@ -160,19 +160,19 @@ public class Robot extends SubsystemWrapper{
 
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
-        dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         dtBackLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         this.dtBackRightMotor = hardwareMap.get(DcMotorEx.class, "dtBackRightMotor");
-        dtBackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtBackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         this.dtFrontLeftMotor = hardwareMap.get(DcMotorEx.class, "dtFrontLeftMotor");
-        dtFrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtFrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         dtFrontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.dtFrontRightMotor = hardwareMap.get(DcMotorEx.class, "dtFrontRightMotor");
-        dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
 
         // EXTENDO
@@ -278,7 +278,7 @@ public class Robot extends SubsystemWrapper{
         // Retrieve hubs and enable bulk caching
         modules = hardwareMap.getAll(LynxModule.class);
         for (LynxModule m : modules){
-            m.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             if (m.isParent() && LynxConstants.isEmbeddedSerialNumber(m.getSerialNumber())) CONTROL_HUB = m;
 
         }

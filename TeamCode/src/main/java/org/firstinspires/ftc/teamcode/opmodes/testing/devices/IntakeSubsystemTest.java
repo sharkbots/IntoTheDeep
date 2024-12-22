@@ -54,7 +54,7 @@ public class IntakeSubsystemTest extends CommandOpMode {
 
         // shoot out intake
         gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new ConditionalCommand(new HoverCommand(robot), new InstantCommand(),
+                .whenPressed(new ConditionalCommand(new HoverCommand(robot, 100), new InstantCommand(),
                         () ->robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER));
 
         // Grab sample

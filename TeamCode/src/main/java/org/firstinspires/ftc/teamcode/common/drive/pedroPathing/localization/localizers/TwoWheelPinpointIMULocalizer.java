@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Pos
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Vector;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.NanoTimer;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
+import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
 
 /**
@@ -46,6 +47,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.M
 @Config
 public class TwoWheelPinpointIMULocalizer extends Localizer {
     private HardwareMap hardwareMap;
+    private Robot robot = Robot.getInstance();
     private GoBildaPinpointDriver pinpoint;
     private Pose startPose;
     private Pose displacementPose;
