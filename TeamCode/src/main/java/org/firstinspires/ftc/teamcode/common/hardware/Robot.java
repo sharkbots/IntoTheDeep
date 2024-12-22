@@ -23,6 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
 //import org.firstinspires.ftc.teamcode.common.utils.ConfigMenu;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
@@ -88,6 +89,8 @@ public class Robot extends SubsystemWrapper{
     public IntakeSubsystem intake;
     public LiftSubsystem lift;
     public MecanumDrivetrain drivetrain;
+
+    public Follower follower;
 
 
     //public ConfigMenu configMenu;
@@ -286,7 +289,14 @@ public class Robot extends SubsystemWrapper{
         subsystems = new ArrayList<>();
         intake = new IntakeSubsystem();
         lift = new LiftSubsystem();
-        drivetrain = new MecanumDrivetrain();
+        addSubsystem(intake, lift);
+        if (!Globals.IS_AUTO) {
+            drivetrain = new MecanumDrivetrain();
+            addSubsystem(drivetrain);
+        }
+
+        follower = new Follower(hardwareMap);
+
 
 
         if(Globals.IS_AUTO){
@@ -362,6 +372,10 @@ public class Robot extends SubsystemWrapper{
             hub.clearBulkCache();
         }
         imuYawOffset = imuYaw;
+    }
+
+    public void clearChubCache(){
+        CONTROL_HUB.clearBulkCache();
     }
 
     /**

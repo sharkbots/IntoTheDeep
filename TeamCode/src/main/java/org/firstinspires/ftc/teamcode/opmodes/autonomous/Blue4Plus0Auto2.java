@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierCurve;
@@ -44,7 +45,6 @@ public class Blue4Plus0Auto2 extends CommandOpMode {
     private Telemetry telemetryA;
 
     private final Robot robot = Robot.getInstance();
-    private Follower follower;
 
     private final Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
     private double loopTime = 0.0;
@@ -56,16 +56,17 @@ public class Blue4Plus0Auto2 extends CommandOpMode {
     private DashboardPoseTracker dashboardPoseTracker;
 
     public void generatePaths(){
-        follower.setStartingPose(allianceColor.convertPose(Globals.preloadSampleStartPose));
+        robot.follower.setStartingPose(allianceColor.convertPose(Globals.preloadSampleStartPose));
 
         SampleCycleGenerator sampleCyclePaths = new SampleCycleGenerator()
                 .setAlliance(allianceColor)
-                .setFollower(follower);
+                .setFollower(robot.follower);
 
         paths.add(
-                follower.pathBuilder()
-                        .addPath(new BezierLine(
+                robot.follower.pathBuilder()
+                        .addPath(new BezierCurve(
                                 new Point(6.595, 101.105, Point.CARTESIAN),
+                                new Point(22.486, 117.189, Point.CARTESIAN),
                                 new Point(12.386, 128.573, Point.CARTESIAN)
                         ))
                         //.addParametricCallback(0.5, () -> follower.setMaxPower(0.66))
@@ -94,17 +95,28 @@ public class Blue4Plus0Auto2 extends CommandOpMode {
 
         super.reset();
 
-        follower = new Follower(hardwareMap);
-        follower.setMaxPower(0.44);
+        robot.init(hardwareMap);
+
+        robot.follower.setMaxPower(0.44);
 
         generatePaths();
 
         schedule(
-            new RunCommand(follower::update),
+            new RunCommand(robot.follower::update),
+            new RunCommand(robot::clearChubCache),
             new SequentialCommandGroup(
                     //new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET),
-                    new FollowPathCommand(follower, paths.get(0)).setHoldEnd(false),
+                    new FollowPathCommand(robot.follower, paths.get(0)).setHoldEnd(true),
+                    new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET),
                     new WaitCommand(1500),
+                    new FollowPathCommand(robot.follower, paths.get(1)).setHoldEnd(true)
+                            .alongWith(new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)),
+                    new WaitCommand(1000),
+                    new HoverCommand(robot, 1000),
+                    new WaitCommand(1500),
+                    new IntakeCommand(robot)
+
+                    /*new WaitCommand(1500),
                     new FollowPathCommand(follower, paths.get(1)).setHoldEnd(false),
                     new WaitCommand(1500),
                     new FollowPathCommand(follower, paths.get(2)).setHoldEnd(false),
@@ -115,13 +127,13 @@ public class Blue4Plus0Auto2 extends CommandOpMode {
                     new WaitCommand(1500),
                     new FollowPathCommand(follower, paths.get(5)).setHoldEnd(false),
                     new WaitCommand(1500),
-                    new FollowPathCommand(follower, paths.get(6)).setHoldEnd(false)
+                    new FollowPathCommand(follower, paths.get(6)).setHoldEnd(false)*/
 
             )
         );
 
-        dashboardPoseTracker = new DashboardPoseTracker(follower.poseUpdater);
-        Drawing.drawRobot(follower.poseUpdater.getPose(), "4CAF50");
+        dashboardPoseTracker = new DashboardPoseTracker(robot.follower.poseUpdater);
+        Drawing.drawRobot(robot.follower.poseUpdater.getPose(), "4CAF50");
         Drawing.sendPacket();
 
     }
@@ -130,11 +142,20 @@ public class Blue4Plus0Auto2 extends CommandOpMode {
     public void run(){
         super.run();
 
-        telemetryA.addData("Robot Pose", follower.getPose());
+        telemetryA.addData("Robot Pose", robot.follower.getPose());
+        double loop = System.nanoTime();
+        telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
+        telemetryA.addLine(robot.follower.getPose().toString());
+        telemetryA.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
         telemetryA.update();
 
         dashboardPoseTracker.update();
-        Drawing.drawRobot(follower.poseUpdater.getPose(), "4CAF50");
+        Drawing.drawRobot(robot.follower.poseUpdater.getPose(), "4CAF50");
         Drawing.sendPacket();
+
+        robot.clearChubCache();
+        robot.read();
+        robot.periodic();
+        robot.write();
     }
 }

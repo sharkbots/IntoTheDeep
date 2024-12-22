@@ -48,9 +48,6 @@ public class TwoDriverTeleop extends CommandOpMode {
         gamepadEx2 = new GamepadEx(gamepad2);
 
         robot.init(hardwareMap);
-        robot.addSubsystem(robot.intake);
-        robot.addSubsystem(robot.lift);
-        robot.addSubsystem(robot.drivetrain);
 
 //        leftTrigger = new TriggerReader(gamepadEx2, GamepadKeys.Trigger.LEFT_TRIGGER);
 //        rightTrigger = new TriggerReader(gamepadEx2, GamepadKeys.Trigger.RIGHT_TRIGGER);

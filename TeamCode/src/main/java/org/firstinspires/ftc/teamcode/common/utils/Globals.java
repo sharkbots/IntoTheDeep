@@ -30,7 +30,7 @@ public class Globals {
     public static boolean IS_FIELD_CENTRIC = true;
     public static boolean INTAKING = false;
 
-    public static final Pose preloadSampleStartPose = new Pose(6.595,101.105, Math.toRadians(270));
+    public static final Pose preloadSampleStartPose = new Pose(6.595-6.595,101.105, Math.toRadians(270));
 
     public static Pose END_OF_AUTO_POSE = new Pose();
 }

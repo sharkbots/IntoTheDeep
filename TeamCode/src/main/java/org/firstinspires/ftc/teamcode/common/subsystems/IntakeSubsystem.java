@@ -13,7 +13,8 @@ public class IntakeSubsystem extends SubsystemWrapper {
     public ClawState clawState = ClawState.OPEN;
     public ClawRotationState clawRotationState = ClawRotationState.TRANSFER;
 
-    public int extendoTargetPos = 1500;
+    public int extendoTargetPos = 0;
+    private final int MAX_EXTENDO_EXTENSION = 1890;
 
     public enum PivotState{
         HOVERING,
@@ -131,8 +132,8 @@ public class IntakeSubsystem extends SubsystemWrapper {
     }
 
     public void setExtendoTarget(int pos){
-        this.extendoTargetPos = pos;
-        robot.extendoActuator.setTargetPosition(pos);
+        this.extendoTargetPos = Math.max(Math.min(pos, MAX_EXTENDO_EXTENSION), 0);
+        robot.extendoActuator.setTargetPosition(this.extendoTargetPos);
     }
 
     /**

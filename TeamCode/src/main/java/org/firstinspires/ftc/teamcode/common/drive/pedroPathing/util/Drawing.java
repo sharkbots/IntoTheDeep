@@ -53,7 +53,8 @@ public class Drawing {
         if (packet == null) packet = new TelemetryPacket();
 
         packet.fieldOverlay().setStroke(color);
-        Drawing.drawRobotOnCanvas(packet.fieldOverlay(), pose.copy());
+        // translate + rotate to move 0,0 being in center to bottom left corner
+        Drawing.drawRobotOnCanvas(packet.fieldOverlay().setTranslation(72, 72), pose.copy());
     }
 
     /**
