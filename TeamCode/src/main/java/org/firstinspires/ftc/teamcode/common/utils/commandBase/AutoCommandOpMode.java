@@ -45,10 +45,6 @@ public abstract class AutoCommandOpMode extends CommandOpMode {
             initialize();
 
             while (opModeInInit() || opModeIsActive()) {
-//                robot.clearBulkCache();
-//                robot.read();
-//                robot.periodic();
-//                robot.write();
                 run();
             }
 

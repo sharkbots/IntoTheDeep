@@ -58,7 +58,6 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     public IntakeSubsystem (){
         this.robot = Robot.getInstance();
-        reset();
     }
 
     public void moveLeft() {

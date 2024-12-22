@@ -42,8 +42,6 @@ public class LiftSubsystem extends SubsystemWrapper {
 
     public LiftSubsystem() {
         this.robot = Robot.getInstance();
-        updateState(liftState);
-        updateState(ClawState.MICRO_OPEN);
     }
 
     /**
@@ -98,7 +96,7 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_HIGH_RUNG_DOWN: return 620;
             case DEPOSIT_LOW_BASKET: return 925;
             case DEPOSIT_HIGH_BASKET: return 1875;
-            case LOW_HANG: return 600;
+            case LOW_HANG: return 725;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
     }
@@ -164,8 +162,10 @@ public class LiftSubsystem extends SubsystemWrapper {
 
     @Override
     public void reset() {
+        robot.liftActuator.updateFeedforward(0);
         robot.liftActuator.setTargetPosition(0);
         this.liftState = LiftState.RETRACTED;
         updateState(LiftState.RETRACTED);
+        updateState(ClawState.MICRO_OPEN);
     }
 }

@@ -20,7 +20,7 @@ public class LiftCommand extends CommandBase {
     @Override
     public void initialize(){
         robot.lift.updateState(liftState);
-        robot.liftActuator.updateFeedforward(0.25);
+        robot.liftActuator.updateFeedforward(0.35);
         if (liftState == LiftSubsystem.LiftState.RETRACTED) robot.liftActuator.updateFeedforward(0);
     }
 

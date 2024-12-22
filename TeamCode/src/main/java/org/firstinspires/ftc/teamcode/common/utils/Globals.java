@@ -9,14 +9,15 @@ public class Globals {
         RED;
 
         public Pose convertPose(Pose pose) {
-            if (this == BLUE)
-                return pose;
-            else
-                return new Pose(144 - pose.getX(), pose.getY(), Math.PI - pose.getHeading());
+            return this == BLUE ? pose : new Pose(144 - pose.getX(), 144 - pose.getY(), Math.PI - pose.getHeading());
         }
 
         public Point convertPoint(Point point) {
-            return this == BLUE ? point : new Point(144 - point.getX(), point.getY(), Point.CARTESIAN);
+            return this == BLUE ? point : new Point(144 - point.getX(), 144 - point.getY(), Point.CARTESIAN);
+        }
+
+        public double convertHeading(double heading){
+            return this == BLUE ? heading : Math.PI - heading;
         }
 
 //        public Pose getStartingPose() {

@@ -36,6 +36,8 @@ public class TwoDriverTeleop extends CommandOpMode {
     public static double dtDeadzone = 0.1;
     public static double dtScale = 3.5;
 
+    private boolean reset = false;
+
 
 
     @Override
@@ -49,13 +51,6 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         robot.init(hardwareMap);
 
-//        leftTrigger = new TriggerReader(gamepadEx2, GamepadKeys.Trigger.LEFT_TRIGGER);
-//        rightTrigger = new TriggerReader(gamepadEx2, GamepadKeys.Trigger.RIGHT_TRIGGER);
-//
-//        leftTrigger.readValue();
-//        rightTrigger.readValue();
-
-        // rotate claw left
         gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                         .whenPressed(new ConditionalCommand(
                                 new InstantCommand(() -> robot.intake.moveLeft()),
@@ -133,6 +128,10 @@ public class TwoDriverTeleop extends CommandOpMode {
                 robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING){
             robot.extendoActuator.enableManualPower();
             robot.extendoActuator.setManualPower(-gamepad2.right_stick_y);
+        }
+        if (!reset){
+            robot.reset();
+            reset = true;
         }
         robot.periodic();
         robot.write();

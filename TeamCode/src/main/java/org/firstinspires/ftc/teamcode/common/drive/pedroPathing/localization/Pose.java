@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Vector;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 
@@ -115,6 +116,9 @@ public class Pose {
         return returnVector;
     }
 
+    public Point getPoint(){
+        return new Point (x, y, Point.CARTESIAN);
+    }
     /**
      * This returns a new Vector with magnitude 1 pointing in the direction of the heading.
      *
