@@ -50,7 +50,7 @@ public class SampleCycleGenerator {
             builder.addPath(new BezierLine(
                     allianceColor.convertPoint(bucketLocation),
                     allianceColor.convertPoint(insideSampleLocation)))
-                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(345));
+                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(339));
 
         else if (sampleLocation == SampleLocation.MIDDLE)
             builder.addPath(new BezierLine(
@@ -64,7 +64,7 @@ public class SampleCycleGenerator {
                     allianceColor.convertPoint(middleSampleLocation)))
                     .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(23.11));
 
-        return builder.build();
+        return builder.setZeroPowerAccelerationMultiplier(1).build();
     }
 
     public PathChain getBucketPath(SampleLocation sampleLocation) throws IllegalStateException {

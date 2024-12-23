@@ -172,7 +172,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
             case HOVERING:
                 return 0.95;
             case INTAKING:
-                return 0.89;
+                return 0.9;
             default: throw new IllegalArgumentException("Unknown PivotState: " + state);
         }
     }

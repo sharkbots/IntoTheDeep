@@ -97,7 +97,7 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_HIGH_RUNG_SETUP: return 785;
             case DEPOSIT_HIGH_RUNG_DOWN: return 620;
             case DEPOSIT_LOW_BASKET: return 925;
-            case DEPOSIT_HIGH_BASKET: return 1925;
+            case DEPOSIT_HIGH_BASKET: return 1875;
             case LOW_HANG: return 600;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
