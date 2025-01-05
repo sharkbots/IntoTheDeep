@@ -13,9 +13,8 @@ public class LiftSubsystem extends SubsystemWrapper {
     public ClawState clawState = ClawState.OPEN;
 
     public enum ClawState {
-        OPEN(0.65),
-        MICRO_OPEN(0.71),
-        CLOSED(0.9);
+        OPEN(0.71),
+        CLOSED(0.96);
 
         private final double position;
 
@@ -31,13 +30,14 @@ public class LiftSubsystem extends SubsystemWrapper {
     public enum LiftState {
         RETRACTED,
         TRANSFER,
-        INTAKE_WALL,
+        INTAKE_SPECIMEN,
+        HOLDING_SPECIMEN,
         DEPOSIT_LOW_RUNG,
         DEPOSIT_HIGH_RUNG_SETUP,
         DEPOSIT_HIGH_RUNG_DOWN,
         DEPOSIT_LOW_BASKET,
         DEPOSIT_HIGH_BASKET,
-        LOW_HANG
+        LVL1_HANG
     }
 
     public LiftSubsystem() {
@@ -75,8 +75,7 @@ public class LiftSubsystem extends SubsystemWrapper {
     }
 
     public boolean isClawControlAllowed() {
-        return liftState == LiftState.INTAKE_WALL
-                || liftState == LiftState.DEPOSIT_LOW_RUNG
+        return liftState == LiftState.DEPOSIT_LOW_RUNG
                 || liftState == LiftState.DEPOSIT_HIGH_RUNG_SETUP
                 || liftState == LiftState.DEPOSIT_LOW_BASKET
                 || liftState == LiftState.DEPOSIT_HIGH_BASKET;
@@ -89,14 +88,16 @@ public class LiftSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
             case RETRACTED:
-            case INTAKE_WALL:
+            case INTAKE_SPECIMEN:
                 return 0;
+            case HOLDING_SPECIMEN:
+                return 50;
             case DEPOSIT_LOW_RUNG: return 85;
             case DEPOSIT_HIGH_RUNG_SETUP: return 785;
-            case DEPOSIT_HIGH_RUNG_DOWN: return 620;
+            case DEPOSIT_HIGH_RUNG_DOWN: return 540;
             case DEPOSIT_LOW_BASKET: return 925;
             case DEPOSIT_HIGH_BASKET: return 1875;
-            case LOW_HANG: return 725;
+            case LVL1_HANG: return 725;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
     }
@@ -108,12 +109,13 @@ public class LiftSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
             case RETRACTED:
-            case LOW_HANG:
+            case LVL1_HANG:
                 return 0.045;
-            case INTAKE_WALL: return 0.96;
+            case INTAKE_SPECIMEN: return 0.96;
             case DEPOSIT_LOW_RUNG:
             case DEPOSIT_HIGH_RUNG_DOWN:
             case DEPOSIT_HIGH_RUNG_SETUP:
+            case HOLDING_SPECIMEN:
                 return 0.88;
             case DEPOSIT_LOW_BASKET:
             case DEPOSIT_HIGH_BASKET:
@@ -129,11 +131,12 @@ public class LiftSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
             case RETRACTED:
-            case LOW_HANG:
-            case INTAKE_WALL:
+            case LVL1_HANG:
+            case INTAKE_SPECIMEN:
             case DEPOSIT_LOW_RUNG:
             case DEPOSIT_HIGH_RUNG_SETUP:
             case DEPOSIT_HIGH_RUNG_DOWN:
+            case HOLDING_SPECIMEN:
                 return 0.35;
             case DEPOSIT_LOW_BASKET:
             case DEPOSIT_HIGH_BASKET:
@@ -143,6 +146,9 @@ public class LiftSubsystem extends SubsystemWrapper {
         }
     }
 
+    public boolean liftReached(){
+        return robot.liftActuator.hasReached();
+    }
 
     @Override
     public void periodic() {
@@ -166,6 +172,6 @@ public class LiftSubsystem extends SubsystemWrapper {
         robot.liftActuator.setTargetPosition(0);
         this.liftState = LiftState.RETRACTED;
         updateState(LiftState.RETRACTED);
-        updateState(ClawState.MICRO_OPEN);
+        updateState(ClawState.OPEN);
     }
 }

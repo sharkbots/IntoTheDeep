@@ -11,10 +11,10 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class HoverCommand extends SequentialCommandGroup {
     public HoverCommand(Robot robot, double extension) {
         super(
-                new InstantCommand(() -> Globals.INTAKING = true),
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING)),
                 new InstantCommand(() -> robot.extendoActuator.setTargetPosition(extension)),
-                new WaitCommand(600)
+                new WaitCommand(600),
+                new InstantCommand(() -> Globals.INTAKING_SAMPLES = true)
         );
     }
 }

@@ -8,12 +8,10 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
@@ -59,7 +57,7 @@ public class IntakeSubsystemTest extends CommandOpMode {
 
         // Grab sample
         gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(new ConditionalCommand(new IntakeCommand(robot), new InstantCommand(),
+                .whenPressed(new ConditionalCommand(new IntakeSampleCommand(robot), new InstantCommand(),
                         () ->robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING));
 
         // rotate claw left

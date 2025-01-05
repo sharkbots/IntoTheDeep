@@ -47,7 +47,7 @@ public class LocalizationTest extends OpMode {
     @Override
     public void init() {
         poseUpdater = new PoseUpdater(hardwareMap);
-        poseUpdater.setPose(new Pose(6.595,101.105, Math.toRadians(270)));
+        poseUpdater.setPose(new Pose(6.465,63.715, Math.toRadians(180)));
 
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 

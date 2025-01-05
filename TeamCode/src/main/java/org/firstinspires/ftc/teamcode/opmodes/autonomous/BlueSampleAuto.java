@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositClawCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierLine;
@@ -32,8 +32,8 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SampleCycleGener
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "A🔵 Blue 4+0 Auto", group = "blue auto")
-public class Blue4Plus0Auto extends CommandOpMode {
+@Autonomous(name = "A🔵 Blue sample (0+4) Auto", group = "blue auto")
+public class BlueSampleAuto extends CommandOpMode {
     private Telemetry telemetryA;
 
     private final Robot robot = Robot.getInstance();
@@ -49,13 +49,14 @@ public class Blue4Plus0Auto extends CommandOpMode {
 
     public void generatePaths(){
         //robot.follower.setStartingPose(allianceColor.convertPose(Globals.preloadSampleStartPose));
-        robot.follower.setPose(allianceColor.convertPose(Globals.preloadSampleStartPose));
+        robot.follower.setPose(allianceColor.convertPose(Globals.sampleAutoStartPose));
 
 
         SampleCycleGenerator sampleCyclePaths = new SampleCycleGenerator()
                 .setAlliance(allianceColor)
                 .setFollower(robot.follower);
 
+        // sample preload
         paths.add(
                 robot.follower.pathBuilder()
                         .addPath(new BezierCurve(
@@ -68,6 +69,7 @@ public class Blue4Plus0Auto extends CommandOpMode {
                         //.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
                         .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
                         .setPathEndTValueConstraint(0.9)
+                        .setPathEndVelocityConstraint(3)
                         .build()
         );
 
@@ -81,6 +83,7 @@ public class Blue4Plus0Auto extends CommandOpMode {
         paths.add(sampleCyclePaths.getSamplePath(SampleCycleGenerator.SampleLocation.OUTSIDE));
         paths.add(sampleCyclePaths.getBucketPath(SampleCycleGenerator.SampleLocation.OUTSIDE));
 
+        // park
         paths.add(
                 robot.follower.pathBuilder()
                         .addPath(
@@ -101,6 +104,7 @@ public class Blue4Plus0Auto extends CommandOpMode {
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(90))
                         .addParametricCallback(0.9, ()-> robot.follower.setMaxPower(0.8))
+                        .setPathEndTimeoutConstraint(750)
                         .build()
         );
     }
@@ -137,7 +141,7 @@ public class Blue4Plus0Auto extends CommandOpMode {
                                 )
                         ),
                         new WaitCommand(200),
-                        new DepositClawCommand(robot, LiftSubsystem.ClawState.OPEN),
+                        new DepositSampleCommand(robot),
 
                         // Pickup inside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
@@ -149,7 +153,7 @@ public class Blue4Plus0Auto extends CommandOpMode {
                                 )
                         ),
                         new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.59)),
-                        new IntakeCommand(robot),
+                        new IntakeSampleCommand(robot),
 
                         // Deposit inside sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
@@ -160,7 +164,7 @@ public class Blue4Plus0Auto extends CommandOpMode {
 
                         ),
                         new WaitCommand(200),
-                        new DepositClawCommand(robot, LiftSubsystem.ClawState.OPEN),
+                        new DepositSampleCommand(robot),
 
                         // Pickup middle sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
@@ -171,7 +175,7 @@ public class Blue4Plus0Auto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-                        new IntakeCommand(robot),
+                        new IntakeSampleCommand(robot),
 
                         // Deposit middle sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
@@ -182,7 +186,7 @@ public class Blue4Plus0Auto extends CommandOpMode {
 
                         ),
                         new WaitCommand(200),
-                        new DepositClawCommand(robot, LiftSubsystem.ClawState.OPEN),
+                        new DepositSampleCommand(robot),
 
                         // Pickup outside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
@@ -194,7 +198,7 @@ public class Blue4Plus0Auto extends CommandOpMode {
                                 )
                         ),
                         new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.4)),
-                        new IntakeCommand(robot),
+                        new IntakeSampleCommand(robot),
 
                         // Deposit outside sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
@@ -205,14 +209,14 @@ public class Blue4Plus0Auto extends CommandOpMode {
 
                         ),
                         new WaitCommand(200),
-                        new DepositClawCommand(robot, LiftSubsystem.ClawState.OPEN),
+                        new DepositSampleCommand(robot),
 
                         // Park
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new FollowPathCommand(robot.follower, paths.get(7)).setHoldEnd(false).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(500),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.LOW_HANG)
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_HANG)
                                 )
                         )
             )

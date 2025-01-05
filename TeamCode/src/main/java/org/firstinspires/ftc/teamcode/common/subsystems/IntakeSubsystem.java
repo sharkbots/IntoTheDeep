@@ -42,9 +42,9 @@ public class IntakeSubsystem extends SubsystemWrapper {
     }
 
     public enum ClawState{
-        OPEN(0.75),
-        MICRO_OPEN(0.553),
-        CLOSED(0.5);
+        OPEN(0.73),
+        MICRO_OPEN(0.95),
+        CLOSED(0.98);
 
         private final double position;
         ClawState(double position) {
