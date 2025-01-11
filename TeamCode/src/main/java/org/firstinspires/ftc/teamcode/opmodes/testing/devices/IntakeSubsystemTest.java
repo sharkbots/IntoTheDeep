@@ -58,21 +58,21 @@ public class IntakeSubsystemTest extends CommandOpMode {
         // Grab sample
         gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new ConditionalCommand(new IntakeSampleCommand(robot), new InstantCommand(),
-                        () ->robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING));
+                        () ->robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE));
 
         // rotate claw left
         gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(new ConditionalCommand(
                         new InstantCommand(() -> robot.intake.moveLeft()),
                         new InstantCommand(),
-                        () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING
+                        () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
                 ));
         // rotate claw right
         gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(new ConditionalCommand(
                         new InstantCommand(() -> robot.intake.moveRight()),
                         new InstantCommand(),
-                        () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING
+                        () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
                 ));
 
         robot.read();
@@ -89,7 +89,7 @@ public class IntakeSubsystemTest extends CommandOpMode {
         robot.read();
         robot.extendoActuator.disableManualPower();
         if (Math.abs(gamepad2.right_stick_y)>= 0.2
-                && robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING){
+                && robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE){
             robot.extendoActuator.enableManualPower();
             robot.extendoActuator.setManualPower(-gamepad2.right_stick_y);
         }

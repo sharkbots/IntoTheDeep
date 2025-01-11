@@ -13,6 +13,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.IntakeSpecimenCommand;
@@ -61,55 +64,73 @@ public class TwoDriverTeleop extends CommandOpMode {
                         .whenPressed(new ConditionalCommand(
                                 new InstantCommand(() -> robot.intake.moveLeft()),
                                 new InstantCommand(),
-                                () -> Globals.INTAKING_SAMPLES
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
                         ));
         // rotate claw right
         operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(new ConditionalCommand(
                         new InstantCommand(() -> robot.intake.moveRight()),
                         new InstantCommand(),
-                        () -> Globals.INTAKING_SAMPLES
+                        () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
                 ));
 
-        // shoot out intake
+        // Shoot out intake
         operator.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new ConditionalCommand(new HoverCommand(robot,100), new InstantCommand(),
-                        () -> !Globals.HOLDING_SPECIMEN && !Globals.HOLDING_SAMPLE && !Globals.INTAKING_SPECIMENS
-                ));
+                .whenPressed(
+                        new ConditionalCommand(
+                                new TransferCommand(robot),
+                                new ConditionalCommand(new HoverCommand(robot,100), new InstantCommand(),
+                                        () -> !Globals.HOLDING_SPECIMEN && !Globals.HOLDING_SAMPLE && !Globals.INTAKING_SPECIMENS &&
+                                                robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER),
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
+                        )
+
+                );
 
         // Grab sample
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(new IntakeSampleCommand(robot)
-                                .alongWith(new InstantCommand(()-> gamepad1.rumble(250))),
+                                .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
                                 new InstantCommand(),
-                                () -> Globals.INTAKING_SAMPLES
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
                             ));
 
-        // Map button X to reset the lift subsystem
+        // ReGrab sample in case of failed grab
+        operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(
+                        new ConditionalCommand(new ReGrabSampleCommand(robot),
+                                new InstantCommand(),
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
+                        ));
+
+        // Reset lift
         operator.getGamepadButton(GamepadKeys.Button.X)
                 .whenPressed(
                         new ResetLiftCommand(robot)
+                                .alongWith(new ResetIntakeCommand(robot))
                         );
 
 
-        // Map button B to set lift state to DEPOSIT_HIGH_BASKET
+        // Deposit high basket setup
         operator.getGamepadButton(GamepadKeys.Button.B)
                 .whenPressed(new ConditionalCommand(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET),
                         new InstantCommand(), () -> Globals.HOLDING_SAMPLE)
                 );
 
-
-
-        // Map button Y to deposit specimen on high rung
-        operator.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(new ConditionalCommand(
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP),
-                        new InstantCommand(),
-                        () -> robot.lift.getLiftState() == LiftSubsystem.LiftState.HOLDING_SPECIMEN)
+        // Deposit sample
+        operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new DepositSampleCommand(robot)
+                                        .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
+                                new InstantCommand(),
+                                ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET
+                                        || robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_LOW_BASKET
+                        )
                 );
 
-        // Map button DPAD UP to setup for wall specimen pickup
+        // Specimen pick off wall setup
         operator.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(
                         new ConditionalCommand(
@@ -120,7 +141,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                         new InstantCommand(), () -> !Globals.INTAKING_SAMPLES && !Globals.HOLDING_SAMPLE && !Globals.HOLDING_SPECIMEN)
                 );
 
-        //Intake specimen
+        // Intake specimen
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(
@@ -131,16 +152,12 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
-        // Deposit sample
-        operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(
-                        new ConditionalCommand(
-                            new DepositSampleCommand(robot)
-                                    .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
-                            new InstantCommand(),
-                            ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET
-                                || robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_LOW_BASKET
-                        )
+        // Deposit high rung setup
+        operator.getGamepadButton(GamepadKeys.Button.Y)
+                .whenPressed(new ConditionalCommand(
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP),
+                        new InstantCommand(),
+                        () -> robot.lift.getLiftState() == LiftSubsystem.LiftState.HOLDING_SPECIMEN)
                 );
 
         // Deposit specimen
@@ -181,7 +198,8 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         robot.extendoActuator.disableManualPower();
         if (Math.abs(gamepad2.right_stick_y)>= 0.2 &&
-                robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING){
+                (robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
+                || robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)){
             robot.extendoActuator.enableManualPower();
             robot.extendoActuator.setManualPower(-gamepad2.right_stick_y);
         }

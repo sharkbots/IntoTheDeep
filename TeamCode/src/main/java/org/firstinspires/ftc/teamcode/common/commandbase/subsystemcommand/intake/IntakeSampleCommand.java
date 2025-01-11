@@ -3,34 +3,18 @@ package org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intak
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
-import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 public class IntakeSampleCommand extends SequentialCommandGroup {
     public IntakeSampleCommand(Robot robot) {
         super(
-                new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.INTAKING)),
+                new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.INTAKE)),
                 new WaitCommand(100),
-                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.MICRO_OPEN)),
-                new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
+                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.CLOSED)),
                 new WaitCommand(200),
-                new InstantCommand(() -> robot.intake.setExtendoTarget(200)),
-                new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.TRANSFER)),
-                new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
-                new WaitCommand(300),
-                new WaitUntilCommand(() -> /*robot.intake.pivotReached() &&*/robot.intake.extendoReached()),
-                new InstantCommand(() -> robot.intake.setExtendoTarget(0)),
-                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.MICRO_OPEN)),
-                new WaitCommand(350),
-                new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.CLOSED)),
-                new WaitCommand(200),
-                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN)),
-                new InstantCommand(() -> Globals.INTAKING_SAMPLES = false),
-                new InstantCommand(() -> Globals.HOLDING_SAMPLE = true)
+                new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE))
         );
     }
 }

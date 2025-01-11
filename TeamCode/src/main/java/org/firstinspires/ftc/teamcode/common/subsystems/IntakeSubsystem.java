@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
-import org.ejml.dense.row.misc.RrefGaussJordanRowPivot_DDRM;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +16,9 @@ public class IntakeSubsystem extends SubsystemWrapper {
     private final int MAX_EXTENDO_EXTENSION = 1890;
 
     public enum PivotState{
-        HOVERING,
-        INTAKING,
+        HOVERING_NO_SAMPLE,
+        HOVERING_WITH_SAMPLE,
+        INTAKE,
         TRANSFER
     }
 
@@ -92,7 +92,6 @@ public class IntakeSubsystem extends SubsystemWrapper {
             default:
                 break;
         }
-        //setClawRotation(clawRotationState);
     }
 
     public void moveRight() {
@@ -168,9 +167,11 @@ public class IntakeSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
                 return 0.24;
-            case HOVERING:
+            case HOVERING_NO_SAMPLE:
                 return 0.95;
-            case INTAKING:
+            case HOVERING_WITH_SAMPLE:
+                return 1;
+            case INTAKE:
                 return 0.9;
             default: throw new IllegalArgumentException("Unknown PivotState: " + state);
         }
@@ -183,10 +184,12 @@ public class IntakeSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
                 return 0.47;
-            case HOVERING:
-                return 0.74+0.015;
-            case INTAKING:
-                return 0.79+0.015;
+            case HOVERING_NO_SAMPLE:
+                return 0.75;
+            case HOVERING_WITH_SAMPLE:
+                return 0.7;
+            case INTAKE:
+                return 0.79;
             default: throw new IllegalArgumentException("Unknown PivotState: " + state);
         }
     }
