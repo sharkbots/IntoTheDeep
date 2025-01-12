@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+
 
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 
@@ -58,7 +58,7 @@ public class AbsoluteAnalogEncoder implements HardwareDevice {
             pos -= Math.PI * 2;
         }
         //checks for crazy values when the encoder is close to zero
-        if(!VALUE_REJECTION || Math.abs(MathFunctions.normalizeAngleDelta(pastPosition)) > 0.1 || Math.abs(MathFunctions.normalizeAngle(pos)) < 1) pastPosition = pos;
+        if(!VALUE_REJECTION || Math.abs(MathFunctions.normalizeAngle(pastPosition)) > 0.1 || Math.abs(MathFunctions.normalizeAngle(pos)) < 1) pastPosition = pos;
         return pastPosition;
     }
 

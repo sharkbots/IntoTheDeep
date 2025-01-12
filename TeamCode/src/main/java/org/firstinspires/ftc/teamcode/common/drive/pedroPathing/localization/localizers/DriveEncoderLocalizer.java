@@ -5,12 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Encoder;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.tuning.FollowerConstants;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.NanoTimer;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Localizer;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Matrix;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Vector;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Localizer;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.NanoTimer;
 
 /**
  * This is the DriveEncoderLocalizer class. This class extends the Localizer superclass and is a
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.NanoTimer;
  * @version 1.0, 4/2/2024
  */
 @Config
-public class DriveEncoderLocalizer extends Localizer { // todo: make drive encoders work
+public class DriveEncoderLocalizer extends Localizer {
     private HardwareMap hardwareMap;
     private Pose startPose;
     private Pose displacementPose;
@@ -59,16 +60,15 @@ public class DriveEncoderLocalizer extends Localizer { // todo: make drive encod
     public DriveEncoderLocalizer(HardwareMap map, Pose setStartPose) {
         hardwareMap = map;
 
-        // TODO: replace these with your encoder ports
-        leftFront = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
-        rightFront = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFront"));
-        leftRear = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
-        rightRear = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRear"));
+        leftFront = new Encoder(hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName));
+        leftRear = new Encoder(hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName));
+        rightRear = new Encoder(hardwareMap.get(DcMotorEx.class, FollowerConstants.rightRearMotorName));
+        rightFront = new Encoder(hardwareMap.get(DcMotorEx.class, FollowerConstants.rightFrontMotorName));
 
         // TODO: reverse any encoders necessary
         leftFront.setDirection(Encoder.REVERSE);
-        rightRear.setDirection(Encoder.REVERSE);
-        leftRear.setDirection(Encoder.FORWARD);
+        leftRear.setDirection(Encoder.REVERSE);
+        rightFront.setDirection(Encoder.FORWARD);
         rightRear.setDirection(Encoder.FORWARD);
 
         setStartPose(setStartPose);
@@ -178,7 +178,7 @@ public class DriveEncoderLocalizer extends Localizer { // todo: make drive encod
         globalDeltas = Matrix.multiply(Matrix.multiply(prevRotationMatrix, transformation), robotDeltas);
 
         displacementPose.add(new Pose(globalDeltas.get(0, 0), globalDeltas.get(1, 0), globalDeltas.get(2, 0)));
-        currentVelocity = new Pose(globalDeltas.get(0, 0) / (deltaTimeNano * Math.pow(10.0, 9)), globalDeltas.get(1, 0) / (deltaTimeNano * Math.pow(10.0, 9)), globalDeltas.get(2, 0) / (deltaTimeNano * Math.pow(10.0, 9)));
+        currentVelocity = new Pose(globalDeltas.get(0, 0) / (deltaTimeNano / Math.pow(10.0, 9)), globalDeltas.get(1, 0) / (deltaTimeNano / Math.pow(10.0, 9)), globalDeltas.get(2, 0) / (deltaTimeNano / Math.pow(10.0, 9)));
 
         totalHeading += globalDeltas.get(2, 0);
     }
@@ -258,5 +258,11 @@ public class DriveEncoderLocalizer extends Localizer { // todo: make drive encod
      */
     public double getTurningMultiplier() {
         return TURN_TICKS_TO_RADIANS;
+    }
+
+    /**
+     * This does nothing since this localizer does not use the IMU.
+     */
+    public void resetIMU() {
     }
 }

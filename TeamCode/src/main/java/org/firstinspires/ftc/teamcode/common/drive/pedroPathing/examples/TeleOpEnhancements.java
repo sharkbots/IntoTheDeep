@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.tuning.FollowerConstants;
 
 /**
  * This is the TeleOpEnhancements OpMode. It is an example usage of the TeleOp enhancements that
@@ -32,10 +33,10 @@ public class TeleOpEnhancements extends OpMode {
     public void init() {
         follower = new Follower(hardwareMap);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
+        leftRear = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName);
+        rightRear = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightRearMotorName);
+        rightFront = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightFrontMotorName);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

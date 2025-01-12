@@ -11,7 +11,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.PoseUpdater;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.tuning.FollowerConstants;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.DashboardPoseTracker;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.Drawing;
 
@@ -45,17 +47,17 @@ public class LocalizationTest extends OpMode {
     @Override
     public void init() {
         poseUpdater = new PoseUpdater(hardwareMap);
+        poseUpdater.setPose(new Pose(6.465,63.715, Math.toRadians(180)));
 
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        leftFront = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
+        leftRear = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName);
+        rightRear = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightRearMotorName);
+        rightFront = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightFrontMotorName);
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
 

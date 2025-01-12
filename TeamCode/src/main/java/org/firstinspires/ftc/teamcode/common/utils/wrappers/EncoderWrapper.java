@@ -5,11 +5,24 @@ import com.qualcomm.robotcore.hardware.HardwareDevice;
 
 public class EncoderWrapper implements HardwareDevice {
     public Motor.Encoder encoder;
+    public EncoderDirection direction = EncoderDirection.FORWARD;
 
     public EncoderWrapper(Motor.Encoder encoder) {
         this.encoder = encoder;
     }
 
+    public enum EncoderDirection{
+        FORWARD(1),
+        REVERSE(-1);
+        final int v;
+
+        EncoderDirection(int v) {
+            this.v = v;
+        }
+        public int getMultiplier(){
+            return v;
+        }
+    }
     @Override
     public Manufacturer getManufacturer() {
         return null;
@@ -35,20 +48,24 @@ public class EncoderWrapper implements HardwareDevice {
 
     }
 
+    public void setDirection(EncoderDirection direction){
+        this.direction = direction;
+    }
+
     @Override
     public void close() {
 
     }
 
     public double getPosition() {
-        return this.encoder.getPosition();
+        return this.encoder.getPosition()*direction.getMultiplier();
     }
 
     public double getRawVelocity() {
-        return this.encoder.getRawVelocity();
+        return this.encoder.getRawVelocity()*direction.getMultiplier();
     }
 
     public double getCorrectedVelocity() {
-        return this.encoder.getCorrectedVelocity();
+        return this.encoder.getCorrectedVelocity()*direction.getMultiplier();
     }
 }

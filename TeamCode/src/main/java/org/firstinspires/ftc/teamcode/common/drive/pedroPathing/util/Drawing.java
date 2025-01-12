@@ -5,12 +5,12 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Vector;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 
 /**
  * This is the Drawing class. It handles the drawing of stuff on FTC Dashboard, like the robot.
@@ -20,11 +20,14 @@ import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.V
  * @version 1.0, 4/22/2024
  */
 public class Drawing {
+    public static final double ROBOT_RADIUS = 9;
+
     private static TelemetryPacket packet;
 
     /**
      * This draws everything that will be used in the Follower's telemetryDebug() method. This takes
      * a Follower as an input, so an instance of the DashbaordDrawingHandler class is not needed.
+     *
      * @param follower
      */
     public static void drawDebug(Follower follower) {
@@ -35,6 +38,7 @@ public class Drawing {
         }
         drawPoseHistory(follower.getDashboardPoseTracker(), "#4CAF50");
         drawRobot(follower.getPose(), "#4CAF50");
+
         sendPacket();
     }
 
@@ -49,7 +53,8 @@ public class Drawing {
         if (packet == null) packet = new TelemetryPacket();
 
         packet.fieldOverlay().setStroke(color);
-        Drawing.drawRobotOnCanvas(packet.fieldOverlay(), pose.copy());
+        // translate + rotate to move 0,0 being in center to bottom left corner
+        Drawing.drawRobotOnCanvas(packet.fieldOverlay().setTranslation(72, 72), pose.copy());
     }
 
     /**
@@ -114,12 +119,10 @@ public class Drawing {
      * @param t the Point to draw at
      */
     public static void drawRobotOnCanvas(Canvas c, Point t) {
-        final double ROBOT_RADIUS = 9;
-
         c.setStrokeWidth(1);
         c.strokeCircle(t.getX(), t.getY(), ROBOT_RADIUS);
 
-        Vector halfv = new Vector(0.5*ROBOT_RADIUS, t.getTheta());
+        Vector halfv = new Vector(0.5 * ROBOT_RADIUS, t.getTheta());
         Vector p1 = MathFunctions.addVectors(halfv, new Vector(t.getR(), t.getTheta()));
         Vector p2 = MathFunctions.addVectors(p1, halfv);
         c.strokeLine(p1.getXComponent(), p1.getYComponent(), p2.getXComponent(), p2.getYComponent());
@@ -133,8 +136,6 @@ public class Drawing {
      * @param t the Pose to draw at
      */
     public static void drawRobotOnCanvas(Canvas c, Pose t) {
-        final double ROBOT_RADIUS = 9;
-
         c.strokeCircle(t.getX(), t.getY(), ROBOT_RADIUS);
         Vector v = t.getHeadingVector();
         v.setMagnitude(v.getMagnitude() * ROBOT_RADIUS);

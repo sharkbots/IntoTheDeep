@@ -6,15 +6,13 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
-public class HoverCommand extends SequentialCommandGroup {
-    public HoverCommand(Robot robot, double extension) {
+public class ReGrabSampleCommand extends SequentialCommandGroup {
+    public ReGrabSampleCommand(Robot robot){
         super(
+                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN)),
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE)),
-                new InstantCommand(() -> robot.extendoActuator.setTargetPosition(extension)),
-                new WaitCommand(600),
-                new InstantCommand(() -> Globals.INTAKING_SAMPLES = true)
+                new WaitCommand(100)
         );
     }
 }

@@ -10,27 +10,23 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
-public class IntakeCommand extends SequentialCommandGroup {
-    public IntakeCommand(Robot robot) {
+public class TransferCommand extends SequentialCommandGroup {
+    public TransferCommand(Robot robot){
         super(
-                new InstantCommand(() -> robot  .intake.setPivotState(IntakeSubsystem.PivotState.INTAKING)),
-                new WaitCommand(100),
-                /*new WaitUntilCommand(robot.intake::pivotReached),*/
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.MICRO_OPEN)),
                 new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
-                new WaitCommand(100),
-                new InstantCommand(() -> robot.intake.setExtendoTarget(200)),
+                new InstantCommand(() -> robot.intake.setExtendoTarget(100)),
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.TRANSFER)),
                 new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
                 new WaitCommand(300),
-                new WaitUntilCommand(() -> /*robot.intake.pivotReached() &&*/robot.intake.extendoReached()),
+                new WaitUntilCommand(() -> robot.intake.extendoReached()),
                 new InstantCommand(() -> robot.intake.setExtendoTarget(0)),
-                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.MICRO_OPEN)),
                 new WaitCommand(350),
                 new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.CLOSED)),
                 new WaitCommand(200),
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN)),
-                new InstantCommand(() -> Globals.INTAKING = false)
+                new InstantCommand(() -> Globals.INTAKING_SAMPLES = false),
+                new InstantCommand(() -> Globals.HOLDING_SAMPLE = true)
         );
     }
 }

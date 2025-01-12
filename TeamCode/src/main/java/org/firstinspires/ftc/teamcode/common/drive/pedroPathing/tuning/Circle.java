@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Point;
 

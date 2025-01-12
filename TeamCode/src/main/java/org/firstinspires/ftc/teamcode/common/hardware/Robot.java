@@ -22,9 +22,9 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Encoder;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 //import org.firstinspires.ftc.teamcode.common.utils.ConfigMenu;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
@@ -60,7 +60,7 @@ public class Robot extends SubsystemWrapper{
     // lift
     public DcMotorEx liftBottomMotor, liftCenterMotor, liftTopMotor;
 
-    public EncoderWrapper liftBottomEncoder, liftCenterEncoder, liftTopEncoder;
+    public EncoderWrapper liftTopEncoder;
 
     public ActuatorGroupWrapper liftActuator;
 
@@ -90,13 +90,11 @@ public class Robot extends SubsystemWrapper{
     public LiftSubsystem lift;
     public MecanumDrivetrain drivetrain;
 
+    public Follower follower;
+
 
     //public ConfigMenu configMenu;
 
-    // pedro pathing
-    public Encoder leftEncoder;
-    public Encoder rightEncoder;
-    public Encoder strafeEncoder;
 
 
     private final Object imuLock = new Object();
@@ -165,19 +163,19 @@ public class Robot extends SubsystemWrapper{
 
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
-        dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        dtBackLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         this.dtBackRightMotor = hardwareMap.get(DcMotorEx.class, "dtBackRightMotor");
-        dtBackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        dtBackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        dtBackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         this.dtFrontLeftMotor = hardwareMap.get(DcMotorEx.class, "dtFrontLeftMotor");
-        dtFrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtFrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        dtFrontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.dtFrontRightMotor = hardwareMap.get(DcMotorEx.class, "dtFrontRightMotor");
-        dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        dtFrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
 
         // EXTENDO
@@ -186,7 +184,7 @@ public class Robot extends SubsystemWrapper{
         extendoMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         extendoMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "extendoMotor").encoder);
+        this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
 
         double ekP = 0.005;
         double ekI = 0.0;
@@ -259,9 +257,8 @@ public class Robot extends SubsystemWrapper{
         liftTopMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         liftTopMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.liftBottomEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
-        this.liftCenterEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
-        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftTopMotor").encoder);
+        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
+        liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
 
         double lkP = 0.005;
         double lkI = 0.0;
@@ -270,7 +267,7 @@ public class Robot extends SubsystemWrapper{
         this.liftActuator = new ActuatorGroupWrapper(
                 () -> intSubscriber(Sensors.SensorType.LIFT_TOP_ENCODER), liftTopMotor, liftCenterMotor, liftBottomMotor)
                 .setPIDController(new PIDController(lkP, lkI, lkD))
-                .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, 0.0)
+                .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, 0.25)
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(lTolerance);
 
@@ -284,7 +281,7 @@ public class Robot extends SubsystemWrapper{
         // Retrieve hubs and enable bulk caching
         modules = hardwareMap.getAll(LynxModule.class);
         for (LynxModule m : modules){
-            m.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             if (m.isParent() && LynxConstants.isEmbeddedSerialNumber(m.getSerialNumber())) CONTROL_HUB = m;
 
         }
@@ -292,7 +289,14 @@ public class Robot extends SubsystemWrapper{
         subsystems = new ArrayList<>();
         intake = new IntakeSubsystem();
         lift = new LiftSubsystem();
-        drivetrain = new MecanumDrivetrain();
+        addSubsystem(intake, lift);
+        if (!Globals.IS_AUTO) {
+            drivetrain = new MecanumDrivetrain();
+            addSubsystem(drivetrain);
+        }
+
+        follower = new Follower(hardwareMap);
+
 
 
         if(Globals.IS_AUTO){
@@ -326,8 +330,6 @@ public class Robot extends SubsystemWrapper{
         sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_LEFT_ENCODER, intakeArmPivotLeftEncoder.getCurrentPosition());
         sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_RIGHT_ENCODER, intakeArmPivotRightEncoder.getCurrentPosition());
         sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_ROTATION_ENCODER, intakeClawPivotEncoder.getCurrentPosition());
-        sensorValues.put(Sensors.SensorType.LIFT_BOTTOM_ENCODER, liftBottomEncoder.getPosition());
-        sensorValues.put(Sensors.SensorType.LIFT_CENTER_ENCODER, liftCenterEncoder.getPosition());
         sensorValues.put(Sensors.SensorType.LIFT_TOP_ENCODER, liftTopEncoder.getPosition());
 
         for (SubsystemWrapper subsystem : subsystems){
@@ -370,6 +372,10 @@ public class Robot extends SubsystemWrapper{
             hub.clearBulkCache();
         }
         imuYawOffset = imuYaw;
+    }
+
+    public void clearChubCache(){
+        CONTROL_HUB.clearBulkCache();
     }
 
     /**

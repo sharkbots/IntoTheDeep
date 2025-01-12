@@ -5,9 +5,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.localizers.PinpointLocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.localizers.TwoWheelLocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.localizers.TwoWheelPinpointIMULocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Vector;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.localizers.ThreeWheelIMULocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.localizers.ThreeWheelLocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
 
 /**
  * This is the PoseUpdater class. This class handles getting pose data from the localizer and returning
@@ -58,6 +61,7 @@ public class PoseUpdater {
         }
 
         this.localizer = localizer;
+        imu = localizer.getIMU();
     }
 
     /**
@@ -67,7 +71,7 @@ public class PoseUpdater {
      */
     public PoseUpdater(HardwareMap hardwareMap) {
         // TODO: replace the second argument with your preferred localizer
-        this(hardwareMap, new ThreeWheelIMULocalizer(hardwareMap));
+        this(hardwareMap, new TwoWheelPinpointIMULocalizer(hardwareMap));
     }
 
     /**
@@ -259,9 +263,10 @@ public class PoseUpdater {
      */
     public Vector getVelocity() {
         if (currentVelocity == null) {
-            currentVelocity = new Vector();
-            currentVelocity.setOrthogonalComponents(getPose().getX() - previousPose.getX(), getPose().getY() - previousPose.getY());
-            currentVelocity.setMagnitude(MathFunctions.distance(getPose(), previousPose) / ((currentPoseTime - previousPoseTime) / Math.pow(10.0, 9)));
+//            currentVelocity = new Vector();
+//            currentVelocity.setOrthogonalComponents(getPose().getX() - previousPose.getX(), getPose().getY() - previousPose.getY());
+//            currentVelocity.setMagnitude(MathFunctions.distance(getPose(), previousPose) / ((currentPoseTime - previousPoseTime) / Math.pow(10.0, 9)));
+            currentVelocity = localizer.getVelocityVector();
             return MathFunctions.copyVector(currentVelocity);
         } else {
             return MathFunctions.copyVector(currentVelocity);
@@ -298,7 +303,9 @@ public class PoseUpdater {
      * This resets the heading of the robot to the IMU's heading, using Road Runner's pose reset.
      */
     public void resetHeadingToIMU() {
-        localizer.setPose(new Pose(getPose().getX(), getPose().getY(), getNormalizedIMUHeading() + startingPose.getHeading()));
+        if (imu != null) {
+            localizer.setPose(new Pose(getPose().getX(), getPose().getY(), getNormalizedIMUHeading() + startingPose.getHeading()));
+        }
     }
 
     /**
@@ -307,7 +314,9 @@ public class PoseUpdater {
      * method.
      */
     public void resetHeadingToIMUWithOffsets() {
-        setCurrentPoseWithOffset(new Pose(getPose().getX(), getPose().getY(), getNormalizedIMUHeading() + startingPose.getHeading()));
+        if (imu != null) {
+            setCurrentPoseWithOffset(new Pose(getPose().getX(), getPose().getY(), getNormalizedIMUHeading() + startingPose.getHeading()));
+        }
     }
 
     /**
@@ -316,7 +325,10 @@ public class PoseUpdater {
      * @return returns the normalized IMU heading.
      */
     public double getNormalizedIMUHeading() {
-        return MathFunctions.normalizeAngle(-imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        if (imu != null) {
+            return MathFunctions.normalizeAngle(-imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        }
+        return 0;
     }
 
     /**
@@ -335,5 +347,12 @@ public class PoseUpdater {
      */
     public Localizer getLocalizer() {
         return localizer;
+    }
+
+    /**
+     *
+     */
+    public void resetIMU() throws InterruptedException {
+        localizer.resetIMU();
     }
 }

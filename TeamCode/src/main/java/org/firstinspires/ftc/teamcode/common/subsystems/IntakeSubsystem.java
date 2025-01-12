@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
-import org.ejml.dense.row.misc.RrefGaussJordanRowPivot_DDRM;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -13,11 +12,13 @@ public class IntakeSubsystem extends SubsystemWrapper {
     public ClawState clawState = ClawState.OPEN;
     public ClawRotationState clawRotationState = ClawRotationState.TRANSFER;
 
-    public int extendoTargetPos = 1500;
+    public int extendoTargetPos = 0;
+    private final int MAX_EXTENDO_EXTENSION = 1890;
 
     public enum PivotState{
-        HOVERING,
-        INTAKING,
+        HOVERING_NO_SAMPLE,
+        HOVERING_WITH_SAMPLE,
+        INTAKE,
         TRANSFER
     }
 
@@ -41,9 +42,9 @@ public class IntakeSubsystem extends SubsystemWrapper {
     }
 
     public enum ClawState{
-        OPEN(0.75),
-        MICRO_OPEN(0.553),
-        CLOSED(0.5);
+        OPEN(0.73),
+        MICRO_OPEN(0.95),
+        CLOSED(0.98);
 
         private final double position;
         ClawState(double position) {
@@ -57,7 +58,6 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     public IntakeSubsystem (){
         this.robot = Robot.getInstance();
-        reset();
     }
 
     public void moveLeft() {
@@ -92,7 +92,6 @@ public class IntakeSubsystem extends SubsystemWrapper {
             default:
                 break;
         }
-        //setClawRotation(clawRotationState);
     }
 
     public void moveRight() {
@@ -131,8 +130,8 @@ public class IntakeSubsystem extends SubsystemWrapper {
     }
 
     public void setExtendoTarget(int pos){
-        this.extendoTargetPos = pos;
-        robot.extendoActuator.setTargetPosition(pos);
+        this.extendoTargetPos = Math.max(Math.min(pos, MAX_EXTENDO_EXTENSION), 0);
+        robot.extendoActuator.setTargetPosition(this.extendoTargetPos);
     }
 
     /**
@@ -168,10 +167,12 @@ public class IntakeSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
                 return 0.24;
-            case HOVERING:
+            case HOVERING_NO_SAMPLE:
                 return 0.95;
-            case INTAKING:
-                return 0.89;
+            case HOVERING_WITH_SAMPLE:
+                return 1;
+            case INTAKE:
+                return 0.9;
             default: throw new IllegalArgumentException("Unknown PivotState: " + state);
         }
     }
@@ -183,10 +184,12 @@ public class IntakeSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
                 return 0.47;
-            case HOVERING:
-                return 0.74+0.015;
-            case INTAKING:
-                return 0.79+0.015;
+            case HOVERING_NO_SAMPLE:
+                return 0.75;
+            case HOVERING_WITH_SAMPLE:
+                return 0.7;
+            case INTAKE:
+                return 0.79;
             default: throw new IllegalArgumentException("Unknown PivotState: " + state);
         }
     }

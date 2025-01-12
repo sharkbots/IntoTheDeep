@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import java.util.function.Supplier;
+
 /**
  * This is the Encoder class. This tracks the position of a motor of class DcMotorEx. The motor
  * must have an encoder attached. It can also get changes in position.
@@ -16,6 +18,7 @@ public class Encoder {
     private double previousPosition;
     private double currentPosition;
     private double multiplier;
+    private Supplier<Object> topic;
 
     public final static double FORWARD = 1, REVERSE = -1;
 
@@ -30,6 +33,22 @@ public class Encoder {
         reset();
     }
 
+    public Encoder(Supplier<Object> topic, DcMotorEx setMotor){
+        this.topic = topic;
+        motor = setMotor;
+        multiplier = FORWARD;
+        reset();
+    }
+
+    private int getCurrentPosition(){
+        if (topic != null){
+            Object val = topic.get();
+            if (val instanceof Integer){
+                return (int) val;
+            }
+        }
+        return motor.getCurrentPosition();
+    }
     /**
      * This sets the direction/multiplier of the Encoder. Setting 1 or -1 will make the Encoder track
      * forward or in reverse, respectively. Any multiple of either one will scale the Encoder's output
@@ -46,8 +65,8 @@ public class Encoder {
      */
     public void reset() {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        previousPosition = motor.getCurrentPosition();
-        currentPosition = motor.getCurrentPosition();
+        previousPosition = getCurrentPosition();
+        currentPosition = getCurrentPosition();
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
@@ -56,7 +75,7 @@ public class Encoder {
      */
     public void update() {
         previousPosition = currentPosition;
-        currentPosition = motor.getCurrentPosition();
+        currentPosition = getCurrentPosition();
     }
 
     /**
