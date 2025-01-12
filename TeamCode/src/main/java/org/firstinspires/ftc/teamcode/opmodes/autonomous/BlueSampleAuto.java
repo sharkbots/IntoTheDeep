@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierCurve;
@@ -32,7 +33,7 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SampleCycleGener
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "A🔵 Blue sample (0+4) Auto", group = "blue auto")
+@Autonomous(name = "A🔵 Blue sample (0+4) Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
 public class BlueSampleAuto extends CommandOpMode {
     private Telemetry telemetryA;
 
@@ -154,6 +155,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         ),
                         new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.59)),
                         new IntakeSampleCommand(robot),
+                        new TransferCommand(robot),
 
                         // Deposit inside sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
@@ -176,6 +178,7 @@ public class BlueSampleAuto extends CommandOpMode {
                                 )
                         ),
                         new IntakeSampleCommand(robot),
+                        new TransferCommand(robot),
 
                         // Deposit middle sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
@@ -199,6 +202,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         ),
                         new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.4)),
                         new IntakeSampleCommand(robot),
+                        new TransferCommand(robot),
 
                         // Deposit outside sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(

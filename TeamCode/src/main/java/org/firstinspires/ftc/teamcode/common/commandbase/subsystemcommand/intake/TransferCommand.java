@@ -15,7 +15,7 @@ public class TransferCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.MICRO_OPEN)),
                 new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
-                new InstantCommand(() -> robot.intake.setExtendoTarget(200)),
+                new InstantCommand(() -> robot.intake.setExtendoTarget(100)),
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.TRANSFER)),
                 new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
                 new WaitCommand(300),

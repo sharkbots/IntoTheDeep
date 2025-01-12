@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -164,8 +165,12 @@ public class TwoDriverTeleop extends CommandOpMode {
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(
-                                new DepositSpecimenCommand(robot)
-                                        .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
+                                new SequentialCommandGroup(
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_DOWN),
+                                        new DepositSpecimenCommand(robot)
+                                                .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
+                                        new WaitCommand(300)
+                                ),
                                 new InstantCommand(),
                                 ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP
                         )
@@ -196,6 +201,7 @@ public class TwoDriverTeleop extends CommandOpMode {
             gamepad2.rumble(500);
         }
 
+
         robot.extendoActuator.disableManualPower();
         if (Math.abs(gamepad2.right_stick_y)>= 0.2 &&
                 (robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
@@ -218,18 +224,6 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.drivetrain.set(new Pose(strafe,
                 forward,
                 rotation), 0);
-
-//        leftTrigger.readValue();
-//        if (leftTrigger.wasJustPressed() && robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING) {
-//            telemetry.addLine("Left Trigger Pressed!");
-//            robot.intake.moveLeft();
-//        }
-//
-//        rightTrigger.readValue();
-//        if (rightTrigger.wasJustPressed() && robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING) {
-//            telemetry.addLine("Right Trigger Pressed!");
-//            robot.intake.moveRight();
-//        }
 
 
         double loop = System.nanoTime();

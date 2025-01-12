@@ -7,11 +7,13 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 
-public class IntakeSampleCommand extends SequentialCommandGroup {
-    public IntakeSampleCommand(Robot robot) {
+public class AutoIntakeSampleCommand extends SequentialCommandGroup {
+    public AutoIntakeSampleCommand(Robot robot) {
         super(
-                new AutoIntakeSampleCommand(robot),
-                new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE))
+                new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.INTAKE)),
+                new WaitCommand(100),
+                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.CLOSED)),
+                new WaitCommand(200)
         );
     }
 }
