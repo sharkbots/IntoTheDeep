@@ -19,10 +19,6 @@ public class Globals {
         public double convertHeading(double heading){
             return this == BLUE ? heading : Math.PI - heading;
         }
-
-//        public Pose getStartingPose() {
-//            return this.convertPose(startingPose);
-//        }
     }
 
     public static AllianceColor ALLIANCE = Globals.ALLIANCE.RED;
@@ -40,5 +36,5 @@ public class Globals {
     public static final Pose specAutoStartPose = new Pose(6.465,63.715, Math.toRadians(180));
 
 
-    public static Pose END_OF_AUTO_POSE = new Pose();
+    public static Pose END_OF_AUTO_POSE = new Pose(0, 0, Math.toRadians(0));
 }

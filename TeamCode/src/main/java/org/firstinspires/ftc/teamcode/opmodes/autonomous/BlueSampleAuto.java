@@ -227,12 +227,6 @@ public class BlueSampleAuto extends CommandOpMode {
         );
         robot.reset();
         robot.lift.updateState(LiftSubsystem.ClawState.CLOSED);
-
-
-        dashboardPoseTracker = new DashboardPoseTracker(robot.follower.poseUpdater);
-        Drawing.drawRobot(robot.follower.poseUpdater.getPose(), "4CAF50");
-        Drawing.sendPacket();
-
     }
 
     @Override
@@ -248,10 +242,7 @@ public class BlueSampleAuto extends CommandOpMode {
         telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
         telemetryA.update();
 
-        //dashboardPoseTracker.update();
-        //Drawing.drawRobot(robot.follower.poseUpdater.getPose(), "4CAF50");
-        //Drawing.sendPacket();
-
         loopTime = loop;
+        Globals.END_OF_AUTO_POSE = robot.follower.poseUpdater.getPose();
     }
 }
