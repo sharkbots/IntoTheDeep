@@ -53,7 +53,8 @@ public class SpecimenCycleGenerator {
                                 allianceColor.convertPoint(
                                         new Point(depositLocation.getX(), depositLocation.getY()-cycleNum*1.5))))
                 .setPathEndVelocityConstraint(3)
-                .setConstantHeadingInterpolation(Math.toRadians(180));
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setPathEndTimeoutConstraint(500);
 
         return builder
                 .build();

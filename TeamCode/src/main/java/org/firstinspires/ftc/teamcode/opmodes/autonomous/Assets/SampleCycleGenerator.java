@@ -64,7 +64,7 @@ public class SampleCycleGenerator {
             builder.addPath(new BezierLine(
                     allianceColor.convertPoint(bucketLocation.getPoint()),
                     allianceColor.convertPoint(middleSampleLocation.getPoint())))
-                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(20.11));
+                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(22.11));
 
         return builder.setZeroPowerAccelerationMultiplier(1).build();
     }

@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
@@ -164,6 +165,19 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
+        // Failed specimen pickup
+        operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new SequentialCommandGroup(
+                                        new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
+                                        new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true)),
+                                new InstantCommand(),
+                                ()-> robot.lift.getLiftState() == LiftSubsystem.LiftState.HOLDING_SPECIMEN
+                        )
+                );
+
         // Deposit high rung setup
         operator.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(new ConditionalCommand(
@@ -213,7 +227,7 @@ public class TwoDriverTeleop extends CommandOpMode {
             gamepad2.rumble(500);
         }
 
-
+        // manual extendo control
         robot.extendoActuator.disableManualPower();
         if (Math.abs(gamepad2.right_stick_y)>= 0.2 &&
                 (robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
@@ -221,6 +235,17 @@ public class TwoDriverTeleop extends CommandOpMode {
             robot.extendoActuator.enableManualPower();
             robot.extendoActuator.setManualPower(-gamepad2.right_stick_y);
         }
+
+        // emergency lift override
+        robot.liftActuator.disableManualPower();
+        if (gamepad2.left_trigger > 0.75 && gamepad2.right_trigger > 0.75){
+            robot.liftActuator.enableManualPower();
+            robot.liftActuator.setManualPower(-gamepad2.left_stick_y);
+        }
+        telemetry.addData("left trigger", gamepad2.left_trigger);
+        telemetry.addData("right trigger", gamepad2.right_trigger);
+
+
 
         robot.periodic();
         robot.write();
@@ -237,23 +262,23 @@ public class TwoDriverTeleop extends CommandOpMode {
             rotation *= 0.3;
         }
 
-        // flick 180
-        if (driver.wasJustPressed(GamepadKeys.Button.B) || flicking){
-            flicking = true;
-            double alignmentHeading = ((int) Math.round(currentHeading / Math.PI)) * Math.PI;
-
-            if (Math.abs(alignmentHeading-currentHeading) > Math.toRadians(0.5)){
-                rotation = dtHeadingLockOn.calculate(currentHeading, alignmentHeading);
-                rotation = MathUtils.clamp(rotation,-1, 1);
-            }
-            else {
-                flicking = false;
-            }
-            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
-            robot.follower.update();
-        }
+//        // flick 180
+//        if (driver.wasJustPressed(GamepadKeys.Button.B) || flicking){
+//            flicking = true;
+//            double alignmentHeading = ((int) Math.round(currentHeading / Math.PI)) * Math.PI;
+//
+//            if (Math.abs(alignmentHeading-currentHeading) > Math.toRadians(0.5)){
+//                rotation = dtHeadingLockOn.calculate(currentHeading, alignmentHeading);
+//                rotation = MathUtils.clamp(rotation,-1, 1);
+//            }
+//            else {
+//                flicking = false;
+//            }
+//            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
+//            robot.follower.update();
+//        }
         // align to closest cardinal point
-        else if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
+        if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
             double alignmentHeading = ((int) Math.round(currentHeading / (Math.PI/2))) * (Math.PI/2);
 
             if (Math.abs(alignmentHeading-currentHeading) > Math.toRadians(0.5)){
