@@ -220,7 +220,7 @@ public class BlueSpecAuto extends CommandOpMode {
 
                         new InstantCommand(()-> robot.follower.setMaxPower(0.7)),
                         // Deposit specimen 2
-                        new FollowPathCommand(robot.follower, paths.get(2)).setHoldEnd(true).alongWith(
+                        new FollowPathCommand(robot.follower, paths.get(2)).setHoldEnd(false).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(200),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
@@ -232,6 +232,7 @@ public class BlueSpecAuto extends CommandOpMode {
                         // Pickup specimen 3
                         new FollowPathCommand(robot.follower, paths.get(3)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
+                                        new WaitCommand(200),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
                         ),
@@ -239,7 +240,7 @@ public class BlueSpecAuto extends CommandOpMode {
                         new IntakeSpecimenCommand(robot),
 
                         // Deposit specimen 3
-                        new FollowPathCommand(robot.follower, paths.get(4)).setHoldEnd(true).alongWith(
+                        new FollowPathCommand(robot.follower, paths.get(4)).setHoldEnd(false).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(200),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
@@ -251,6 +252,7 @@ public class BlueSpecAuto extends CommandOpMode {
                         // Pickup specimen 4
                         new FollowPathCommand(robot.follower, paths.get(5)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
+                                        new WaitCommand(200),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
                         ),
@@ -258,7 +260,7 @@ public class BlueSpecAuto extends CommandOpMode {
                         new IntakeSpecimenCommand(robot),
 
                         // Deposit specimen 4
-                        new FollowPathCommand(robot.follower, paths.get(6)).setHoldEnd(true).setCompletionThreshold(0.996).alongWith(
+                        new FollowPathCommand(robot.follower, paths.get(6)).setHoldEnd(false).setCompletionThreshold(0.995).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(200),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
