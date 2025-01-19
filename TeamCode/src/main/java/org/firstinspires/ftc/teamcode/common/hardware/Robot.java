@@ -269,7 +269,9 @@ public class Robot extends SubsystemWrapper{
                 .setPIDController(new PIDController(lkP, lkI, lkD))
                 .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, 0.25)
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
-                .setErrorTolerance(lTolerance);
+                .setErrorTolerance(lTolerance)
+                .setMinPos(0)
+                .setMaxPos(1900);
 
         // DEPOSIT
         depositPivotServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositPivotServo"));

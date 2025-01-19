@@ -104,8 +104,9 @@ public class BlueSampleAuto extends CommandOpMode {
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(90))
-                        .addParametricCallback(0.9, ()-> robot.follower.setMaxPower(0.8))
-                        .setPathEndTimeoutConstraint(750)
+                        .addParametricCallback(0.9, ()-> robot.follower.setMaxPower(0.7))
+                        .setPathEndTValueConstraint(0.99)
+                        .setPathEndTimeoutConstraint(250)
                         .build()
         );
     }
@@ -146,7 +147,7 @@ public class BlueSampleAuto extends CommandOpMode {
 
                         // Pickup inside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new HoverCommand(robot, 1300),
+                        new HoverCommand(robot, 1320),
                         new FollowPathCommand(robot.follower, paths.get(1)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
@@ -170,7 +171,7 @@ public class BlueSampleAuto extends CommandOpMode {
 
                         // Pickup middle sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new HoverCommand(robot, 1440),
+                        new HoverCommand(robot, 1480),
                         new FollowPathCommand(robot.follower, paths.get(3)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
@@ -193,14 +194,14 @@ public class BlueSampleAuto extends CommandOpMode {
 
                         // Pickup outside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new HoverCommand(robot, 1550),
+                        new HoverCommand(robot, 1650),
                         new FollowPathCommand(robot.follower, paths.get(5)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-                        new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.4)),
+                        new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.45)),
                         new IntakeSampleCommand(robot),
                         new TransferCommand(robot),
 
