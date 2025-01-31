@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
@@ -136,7 +136,7 @@ public class BlueSampleAuto extends CommandOpMode {
 
                 new SequentialCommandGroup(
                         // Deposit preload sample
-                        new FollowPathCommand(robot.follower, paths.get(0)).setHoldEnd(true).alongWith(
+                        new FollowPathChainCommand(robot.follower, paths.get(0)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(1000),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET)
@@ -148,7 +148,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         // Pickup inside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new HoverCommand(robot, 1320),
-                        new FollowPathCommand(robot.follower, paths.get(1)).setHoldEnd(true).alongWith(
+                        new FollowPathChainCommand(robot.follower, paths.get(1)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
@@ -162,7 +162,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(800),
-                                        new FollowPathCommand(robot.follower, paths.get(2)).setHoldEnd(true)
+                                        new FollowPathChainCommand(robot.follower, paths.get(2)).setHoldEnd(true)
                                 )
 
                         ),
@@ -172,7 +172,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         // Pickup middle sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new HoverCommand(robot, 1480),
-                        new FollowPathCommand(robot.follower, paths.get(3)).setHoldEnd(true).alongWith(
+                        new FollowPathChainCommand(robot.follower, paths.get(3)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
@@ -185,7 +185,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(800),
-                                        new FollowPathCommand(robot.follower, paths.get(4)).setHoldEnd(true)
+                                        new FollowPathChainCommand(robot.follower, paths.get(4)).setHoldEnd(true)
                                 )
 
                         ),
@@ -195,7 +195,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         // Pickup outside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new HoverCommand(robot, 1650),
-                        new FollowPathCommand(robot.follower, paths.get(5)).setHoldEnd(true).alongWith(
+                        new FollowPathChainCommand(robot.follower, paths.get(5)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
@@ -209,7 +209,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(800),
-                                        new FollowPathCommand(robot.follower, paths.get(6)).setHoldEnd(true)
+                                        new FollowPathChainCommand(robot.follower, paths.get(6)).setHoldEnd(true)
                                 )
 
                         ),
@@ -218,7 +218,7 @@ public class BlueSampleAuto extends CommandOpMode {
 
                         // Park
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new FollowPathCommand(robot.follower, paths.get(7)).setHoldEnd(false).alongWith(
+                        new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(500),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_HANG)
