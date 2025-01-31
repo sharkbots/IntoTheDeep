@@ -8,6 +8,12 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,12 +24,6 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierLine;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.PathChain;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Point;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.DashboardPoseTracker;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.Drawing;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
@@ -50,7 +50,7 @@ public class BlueSampleAuto extends CommandOpMode {
 
     public void generatePaths(){
         //robot.follower.setStartingPose(allianceColor.convertPose(Globals.preloadSampleStartPose));
-        robot.follower.setPose(allianceColor.convertPose(Globals.sampleAutoStartPose));
+        robot.follower.setPose(allianceColor.convert(Globals.sampleAutoStartPose, Pose.class));
 
 
         SampleCycleGenerator sampleCyclePaths = new SampleCycleGenerator()
@@ -61,9 +61,9 @@ public class BlueSampleAuto extends CommandOpMode {
         paths.add(
                 robot.follower.pathBuilder()
                         .addPath(new BezierCurve(
-                                allianceColor.convertPoint(new Point(6.595, 101.105, Point.CARTESIAN)),
-                                allianceColor.convertPoint(new Point(22.486, 117.189, Point.CARTESIAN)),
-                                allianceColor.convertPoint(new Point(12.386, 128.573, Point.CARTESIAN))
+                                allianceColor.convert(new Point(6.595, 101.105, Point.CARTESIAN)),
+                                allianceColor.convert(new Point(22.486, 117.189, Point.CARTESIAN)),
+                                allianceColor.convert(new Point(12.386, 128.573, Point.CARTESIAN))
                         ))
                         .addParametricCallback(0.7, () -> robot.follower.setMaxPower(0.3))
                         //.setPathEndTValueConstraint(0.5) // faster end due to overshoot
@@ -90,17 +90,17 @@ public class BlueSampleAuto extends CommandOpMode {
                         .addPath(
                                 // Line 6
                                 new BezierCurve(
-                                        allianceColor.convertPoint(new Point(12.386, 128.573, Point.CARTESIAN)),
-                                        allianceColor.convertPoint(new Point(41.514, 117.189, Point.CARTESIAN)),
-                                        allianceColor.convertPoint(new Point(59.027, 122.162, Point.CARTESIAN))
+                                        allianceColor.convert(new Point(12.386, 128.573, Point.CARTESIAN)),
+                                        allianceColor.convert(new Point(41.514, 117.189, Point.CARTESIAN)),
+                                        allianceColor.convert(new Point(59.027, 122.162, Point.CARTESIAN))
                                 )
                         )
                         .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(90))
                         .addPath(
                                 // Line 7
                                 new BezierLine(
-                                        allianceColor.convertPoint(new Point(59.027, 122.162, Point.CARTESIAN)),
-                                        allianceColor.convertPoint(new Point(62.054, 91.527, Point.CARTESIAN))
+                                        allianceColor.convert(new Point(59.027, 122.162, Point.CARTESIAN)),
+                                        allianceColor.convert(new Point(62.054, 91.527, Point.CARTESIAN))
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(90))

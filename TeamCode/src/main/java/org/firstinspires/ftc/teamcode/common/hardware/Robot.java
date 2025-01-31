@@ -5,6 +5,9 @@ import androidx.annotation.GuardedBy;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.pathgen.MathFunctions;
+import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,9 +25,8 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
-//import org.firstinspires.ftc.teamcode.common.utils.ConfigMenu;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
@@ -297,6 +299,7 @@ public class Robot extends SubsystemWrapper{
             addSubsystem(drivetrain);
         }
 
+        Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
 
 

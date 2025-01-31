@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.specAutoStartPose;
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.depositLocation;
-import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.depositSetupLocation;
-import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.intermediateDepositLocation;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -13,27 +11,23 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.IntakeSpecimenCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierLine;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.PathChain;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Point;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.DashboardPoseTracker;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.util.Drawing;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SampleCycleGenerator;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator;
 
 import java.util.ArrayList;
@@ -55,8 +49,8 @@ public class BlueSpecAuto extends CommandOpMode {
     private DashboardPoseTracker dashboardPoseTracker;
 
     public void generatePaths(){
-        //robot.follower.setStartingPose(allianceColor.convertPose(Globals.preloadSampleStartPose));
-        robot.follower.setPose(allianceColor.convertPose(specAutoStartPose));
+        //robot.follower.setStartingPose(allianceColor.convert(Globals.preloadSampleStartPose));
+        robot.follower.setPose(allianceColor.convert(specAutoStartPose, Pose.class));
 
 
         SpecimenCycleGenerator specimenCyclePaths = new SpecimenCycleGenerator()
@@ -69,8 +63,8 @@ public class BlueSpecAuto extends CommandOpMode {
                         .addPath(
                                 // Line 1
                                 new BezierLine(
-                                        specAutoStartPose.getPoint(),
-                                        depositLocation.getPoint()
+                                        allianceColor.convert(specAutoStartPose, Point.class),
+                                        allianceColor.convert(depositLocation, Point.class)
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(180))
