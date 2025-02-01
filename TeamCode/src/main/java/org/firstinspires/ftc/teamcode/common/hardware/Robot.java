@@ -189,6 +189,7 @@ public class Robot extends SubsystemWrapper{
         extendoMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
+        extendoEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
 
         double ekP = 0.005;
         double ekI = 0.0;
@@ -248,7 +249,7 @@ public class Robot extends SubsystemWrapper{
         liftBottomMotor = hardwareMap.get(DcMotorEx.class, "liftBottomMotor");
         liftBottomMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftBottomMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
-        liftBottomMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftBottomMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         liftCenterMotor = hardwareMap.get(DcMotorEx.class, "liftCenterMotor");
@@ -268,10 +269,9 @@ public class Robot extends SubsystemWrapper{
         double lkD = 0.0;
         int lTolerance = 20;
         this.liftActuator = new ActuatorGroupWrapper(
-                () -> intSubscriber(Sensors.SensorType.LIFT_TOP_ENCODER), liftTopMotor)
+                () -> intSubscriber(Sensors.SensorType.LIFT_TOP_ENCODER), liftTopEncoder, liftTopMotor, liftCenterMotor, liftBottomMotor)
                 .setPIDController(new PIDController(lkP, lkI, lkD))
                 .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, 0.25)
-//                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(lTolerance)
                 .setMinPos(0)
                 .setMaxPos(MAX_SLIDES_EXTENSION);

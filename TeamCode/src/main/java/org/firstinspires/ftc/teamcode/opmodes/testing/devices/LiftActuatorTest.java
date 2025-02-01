@@ -57,7 +57,7 @@ public class LiftActuatorTest extends OpMode {
         liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
         liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
 
-        this.liftActuator = new ActuatorGroupWrapper(liftTopEncoder, liftTopMotor, liftCenterMotor, liftBottomMotor)
+        this.liftActuator = new ActuatorGroupWrapper(liftTopEncoder, liftTopMotor)
                 .setPIDController(new PIDController(lkP, lkI, lkD))
                 .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, 0.0)
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))

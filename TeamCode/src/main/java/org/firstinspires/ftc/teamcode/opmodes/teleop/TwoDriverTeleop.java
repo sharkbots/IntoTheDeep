@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.R
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
-import org.firstinspires.ftc.teamcode.common.utils.Globals;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.teamcode.common.utils.math.geometry.Pose;
 
@@ -59,15 +59,15 @@ public class TwoDriverTeleop extends CommandOpMode {
     public void initialize() {
         CommandScheduler.getInstance().reset();
 
-        Globals.IS_AUTO = false;
+        IS_AUTO = false;
 
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
 
         robot.init(hardwareMap);
 
-        robot.follower.setStartingPose(Globals.END_OF_AUTO_POSE);
-        robot.follower.setPose(Globals.END_OF_AUTO_POSE);
+        robot.follower.setStartingPose(END_OF_AUTO_POSE);
+        robot.follower.setPose(END_OF_AUTO_POSE);
 
         dtHeadingLockOn = new PIDController(0.5, 0, 0);
 
@@ -92,7 +92,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                         new ConditionalCommand(
                                 new TransferCommand(robot),
                                 new ConditionalCommand(new HoverCommand(robot,100), new InstantCommand(),
-                                        () -> !Globals.HOLDING_SPECIMEN && !Globals.HOLDING_SAMPLE && !Globals.INTAKING_SPECIMENS &&
+                                        () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
                                                 robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER),
                                 () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
                         )
@@ -127,7 +127,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         // Deposit high basket setup
         operator.getGamepadButton(GamepadKeys.Button.B)
                 .whenPressed(new ConditionalCommand(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET),
-                        new InstantCommand(), () -> Globals.HOLDING_SAMPLE)
+                        new InstantCommand(), () -> HOLDING_SAMPLE)
                 );
 
         // Deposit sample
@@ -149,8 +149,8 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
-                                        new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true)),
-                        new InstantCommand(), () -> !Globals.INTAKING_SAMPLES && !Globals.HOLDING_SAMPLE && !Globals.HOLDING_SPECIMEN)
+                                        new InstantCommand(() -> INTAKING_SPECIMENS = true)),
+                        new InstantCommand(), () -> !INTAKING_SAMPLES && !HOLDING_SAMPLE && !HOLDING_SPECIMEN)
                 );
 
         // Intake specimen
@@ -171,7 +171,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
-                                        new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true)),
+                                        new InstantCommand(() -> INTAKING_SPECIMENS = true)),
                                 new InstantCommand(),
                                 ()-> robot.lift.getLiftState() == LiftSubsystem.LiftState.HOLDING_SPECIMEN
                         )
@@ -232,7 +232,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 (robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
                 || robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)){
             robot.extendoActuator.enableManualPower();
-            robot.extendoActuator.setManualPower(-gamepad2.right_stick_y);
+            robot.extendoActuator.setManualPower(gamepad2.right_stick_y);
         }
 
         // emergency lift override
@@ -297,6 +297,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         telemetry.addData("lift position", robot.liftActuator.getPosition());
+        telemetry.addData("extendo position", robot.extendoActuator.getPosition());
         telemetry.addData("heading", Math.toDegrees(currentHeading));
         loopTime = loop;
         telemetry.update();
