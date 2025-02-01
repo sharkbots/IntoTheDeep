@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
+import com.pedropathing.pathgen.MathFunctions;
 
 import java.lang.Math;
 import java.util.Set;

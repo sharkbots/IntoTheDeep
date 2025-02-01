@@ -55,8 +55,8 @@ public class Globals {
     // Pivot times
     // 0.84 sec/360° -> 0.828 sec/355° -> 828 milliseconds/355°
     public static double INTAKE_ARM_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
-    public static double DEPOSIT_CLAW_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
     public static double INTAKE_CLAW_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
+    public static double DEPOSIT_CLAW_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
 
     // Intake Arm Pivot
     public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.47;

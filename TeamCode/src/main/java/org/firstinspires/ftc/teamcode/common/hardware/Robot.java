@@ -268,7 +268,7 @@ public class Robot extends SubsystemWrapper{
         double lkD = 0.0;
         int lTolerance = 20;
         this.liftActuator = new ActuatorGroupWrapper(
-                () -> intSubscriber(Sensors.SensorType.LIFT_TOP_ENCODER), liftTopMotor, liftCenterMotor, liftBottomMotor)
+                () -> intSubscriber(Sensors.SensorType.LIFT_TOP_ENCODER), liftTopMotor)
                 .setPIDController(new PIDController(lkP, lkI, lkD))
                 .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, 0.25)
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
