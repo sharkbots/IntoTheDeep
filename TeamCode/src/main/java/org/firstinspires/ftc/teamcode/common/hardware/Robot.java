@@ -29,6 +29,8 @@ import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants.FConst
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
+
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper;
@@ -114,7 +116,7 @@ public class Robot extends SubsystemWrapper{
     long lastIMUReadTimestamp = System.currentTimeMillis();
 
 
-    private double voltageReadTimeIntervalMS = 5000;
+    private final double voltageReadTimeIntervalMS = 5000;
     long lastVoltageReadTimestamp = System.currentTimeMillis();
 
     private HardwareMap hardwareMap;
@@ -199,8 +201,7 @@ public class Robot extends SubsystemWrapper{
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(eTolerance)
                 .setMinPos(0)
-                .setMaxPos(1850);
-
+                .setMaxPos(MAX_EXTENDO_EXTENSION);
 
         // INTAKE
         intakeArmPivotLeftServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotLeftServo"));
@@ -273,7 +274,7 @@ public class Robot extends SubsystemWrapper{
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(lTolerance)
                 .setMinPos(0)
-                .setMaxPos(1900);
+                .setMaxPos(MAX_SLIDES_EXTENSION);
 
         // DEPOSIT
         depositPivotServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositPivotServo"));

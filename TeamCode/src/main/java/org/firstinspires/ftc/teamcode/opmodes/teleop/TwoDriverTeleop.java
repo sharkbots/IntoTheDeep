@@ -13,7 +13,6 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
@@ -127,7 +126,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         // Deposit high basket setup
         operator.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new ConditionalCommand(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET),
+                .whenPressed(new ConditionalCommand(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET),
                         new InstantCommand(), () -> Globals.HOLDING_SAMPLE)
                 );
 
@@ -138,8 +137,8 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 new DepositSampleCommand(robot)
                                         .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
                                 new InstantCommand(),
-                                ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET
-                                        || robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_LOW_BASKET
+                                ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET
+                                        || robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_LOW_BUCKET
                         )
                 );
 
@@ -191,7 +190,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_DOWN)
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN)
                                                 .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
                                         new DepositSpecimenCommand(robot),
                                         new WaitCommand(300)

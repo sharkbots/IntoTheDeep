@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
+
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
@@ -13,8 +15,8 @@ public class LiftSubsystem extends SubsystemWrapper {
     public ClawState clawState = ClawState.OPEN;
 
     public enum ClawState {
-        OPEN(0.71),
-        CLOSED(0.96);
+        OPEN(DEPOSIT_CLAW_OPEN_POS),
+        CLOSED(DEPOSIT_CLAW_CLOSED_POS);
 
         private final double position;
 
@@ -32,11 +34,11 @@ public class LiftSubsystem extends SubsystemWrapper {
         TRANSFER,
         INTAKE_SPECIMEN,
         HOLDING_SPECIMEN,
-        DEPOSIT_LOW_RUNG,
+        DEPOSIT_LOW_SPECIMEN,
         DEPOSIT_HIGH_RUNG_SETUP,
-        DEPOSIT_HIGH_RUNG_DOWN,
-        DEPOSIT_LOW_BASKET,
-        DEPOSIT_HIGH_BASKET,
+        DEPOSIT_HIGH_SPECIMEN,
+        DEPOSIT_LOW_BUCKET,
+        DEPOSIT_HIGH_BUCKET,
         LVL1_HANG
     }
 
@@ -75,10 +77,10 @@ public class LiftSubsystem extends SubsystemWrapper {
     }
 
     public boolean isClawControlAllowed() {
-        return liftState == LiftState.DEPOSIT_LOW_RUNG
+        return liftState == LiftState.DEPOSIT_LOW_SPECIMEN
                 || liftState == LiftState.DEPOSIT_HIGH_RUNG_SETUP
-                || liftState == LiftState.DEPOSIT_LOW_BASKET
-                || liftState == LiftState.DEPOSIT_HIGH_BASKET;
+                || liftState == LiftState.DEPOSIT_LOW_BUCKET
+                || liftState == LiftState.DEPOSIT_HIGH_BUCKET;
     }
 
     /**
@@ -91,13 +93,13 @@ public class LiftSubsystem extends SubsystemWrapper {
             case INTAKE_SPECIMEN:
                 return 0;
             case HOLDING_SPECIMEN:
-                return 50;
-            case DEPOSIT_LOW_RUNG: return 85;
-            case DEPOSIT_HIGH_RUNG_SETUP: return 785;
-            case DEPOSIT_HIGH_RUNG_DOWN: return 540;
-            case DEPOSIT_LOW_BASKET: return 925;
-            case DEPOSIT_HIGH_BASKET: return 1875;
-            case LVL1_HANG: return 725;
+                return HOLDING_SPECIMEN_HEIGHT;
+            case DEPOSIT_LOW_SPECIMEN: return LOW_SPECIMEN_HEIGHT;
+            case DEPOSIT_HIGH_RUNG_SETUP: return HIGH_SPECIMEN_HEIGHT+245;
+            case DEPOSIT_HIGH_SPECIMEN: return HIGH_SPECIMEN_HEIGHT;
+            case DEPOSIT_LOW_BUCKET: return LOW_BUCKET_HEIGHT;
+            case DEPOSIT_HIGH_BUCKET: return HIGH_BUCKET_HEIGHT;
+            case LVL1_HANG: return LVL1_HANG_HEIGHT;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
     }
@@ -110,16 +112,16 @@ public class LiftSubsystem extends SubsystemWrapper {
             case TRANSFER:
             case RETRACTED:
             case LVL1_HANG:
-                return 0.045;
-            case INTAKE_SPECIMEN: return 0.96;
-            case DEPOSIT_LOW_RUNG:
-            case DEPOSIT_HIGH_RUNG_DOWN:
+                return DEPOSIT_CLAW_PIVOT_TRANSFER_POS;
+            case INTAKE_SPECIMEN: return DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS;
+            case DEPOSIT_LOW_SPECIMEN:
+            case DEPOSIT_HIGH_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
             case HOLDING_SPECIMEN:
-                return 0.88;
-            case DEPOSIT_LOW_BASKET:
-            case DEPOSIT_HIGH_BASKET:
-                return 0.81;
+                return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS;
+            case DEPOSIT_LOW_BUCKET:
+            case DEPOSIT_HIGH_BUCKET:
+                return DEPOSIT_CLAW_PIVOT_BUCKET_POS;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
     }
@@ -133,14 +135,16 @@ public class LiftSubsystem extends SubsystemWrapper {
             case RETRACTED:
             case LVL1_HANG:
             case INTAKE_SPECIMEN:
-            case DEPOSIT_LOW_RUNG:
+            case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
-            case DEPOSIT_HIGH_RUNG_DOWN:
+            case DEPOSIT_HIGH_SPECIMEN:
             case HOLDING_SPECIMEN:
-                return 0.35;
-            case DEPOSIT_LOW_BASKET:
-            case DEPOSIT_HIGH_BASKET:
-                return Globals.ALLIANCE == Globals.ALLIANCE.RED ? 0.02 : 0.685;
+                return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
+            case DEPOSIT_LOW_BUCKET:
+            case DEPOSIT_HIGH_BUCKET:
+                return Globals.ALLIANCE == Globals.AllianceColor.RED ?
+                        DEPOSIT_CLAW_ROTATION_BUCKET_SCORING_RED_POS : DEPOSIT_CLAW_ROTATION_BUCKET_SCORING_BLUE_POS;
+
             default:
                 throw new IllegalArgumentException("Unknown LiftState: " + state);
         }

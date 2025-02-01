@@ -45,7 +45,7 @@ public class LiftSubsystemTest extends CommandOpMode {
 
         // Map button B to set lift state to DEPOSIT_HIGH_BASKET
         gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET));
+                .whenPressed(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET));
 
         // Map button Y to set lift state to DEPOSIT_HIGH_RUNG
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.common.subsystems;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
 import org.jetbrains.annotations.NotNull;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
 public class IntakeSubsystem extends SubsystemWrapper {
 
@@ -13,7 +14,6 @@ public class IntakeSubsystem extends SubsystemWrapper {
     public ClawRotationState clawRotationState = ClawRotationState.TRANSFER;
 
     public int extendoTargetPos = 0;
-    private final int MAX_EXTENDO_EXTENSION = 1890;
 
     public enum PivotState{
         HOVERING_NO_SAMPLE,
@@ -23,7 +23,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
     }
 
     public enum ClawRotationState{
-        TRANSFER(0.54),
+        TRANSFER(INTAKE_CLAW_ROTATION_TRANSFER_POS),
         FULLY_LEFT(0.88),
         LEFT_30_DEGREES(TRANSFER.getPosition()+1*(FULLY_LEFT.getPosition()-TRANSFER.getPosition())/3),
         LEFT_60_DEGREES(TRANSFER.getPosition()+2*(FULLY_LEFT.getPosition()-TRANSFER.getPosition())/3),
@@ -42,9 +42,9 @@ public class IntakeSubsystem extends SubsystemWrapper {
     }
 
     public enum ClawState{
-        OPEN(0.73),
-        MICRO_OPEN(0.95),
-        CLOSED(0.98);
+        OPEN(INTAKE_CLAW_OPEN_POS),
+        MICRO_OPEN(INTAKE_CLAW_MICRO_OPEN_POS),
+        CLOSED(INTAKE_CLAW_CLOSED_POS);
 
         private final double position;
         ClawState(double position) {
@@ -152,6 +152,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
     public void setClawState(@NotNull ClawState state) {
         this.clawState = state;
         robot.intakeClawServo.setPosition(state.getPosition());
+        robot.intakeClawRotationServo.getPosition();
     }
 
 
@@ -166,13 +167,13 @@ public class IntakeSubsystem extends SubsystemWrapper {
     private double getClawPivotPosition(PivotState state) {
         switch (state) {
             case TRANSFER:
-                return 0.24;
+                return INTAKE_CLAW_PIVOT_TRANSFER_POS;
             case HOVERING_NO_SAMPLE:
-                return 0.95;
+                return INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS;
             case HOVERING_WITH_SAMPLE:
-                return 1;
+                return INTAKE_CLAW_PIVOT_HOLDING_POS;
             case INTAKE:
-                return 0.9;
+                return INTAKE_CLAW_PIVOT_INTAKE_POS;
             default: throw new IllegalArgumentException("Unknown PivotState: " + state);
         }
     }
@@ -183,13 +184,13 @@ public class IntakeSubsystem extends SubsystemWrapper {
     private double getArmPivotPosition(PivotState state) {
         switch (state) {
             case TRANSFER:
-                return 0.47;
+                return INTAKE_ARM_PIVOT_TRANSFER_POS;
             case HOVERING_NO_SAMPLE:
-                return 0.75;
+                return INTAKE_ARM_PIVOT_HOVER_INTAKE_POS;
             case HOVERING_WITH_SAMPLE:
-                return 0.7;
+                return INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS;
             case INTAKE:
-                return 0.79;
+                return INTAKE_ARM_PIVOT_INTAKE_POS;
             default: throw new IllegalArgumentException("Unknown PivotState: " + state);
         }
     }
@@ -204,13 +205,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     @Override
     public void periodic() {
-        //robot.extendoActuator.setTargetPosition(extendoTargetPos);
-//        if (pivotState == PivotState.TRANSFER){
-//            robot.extendoActuator.setTargetPosition(0);
-//        }
         robot.extendoActuator.periodic();
-//        robot.intakeArmPivotActuator.periodic();
-//        robot.intakeClawPivotActuator.periodic();
     }
 
 

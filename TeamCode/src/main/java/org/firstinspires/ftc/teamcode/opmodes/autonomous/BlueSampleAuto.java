@@ -139,7 +139,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(0)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(1000),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET)
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
                                 )
                         ),
                         new WaitCommand(200),
@@ -159,7 +159,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         new TransferCommand(robot),
 
                         // Deposit inside sample
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(800),
                                         new FollowPathChainCommand(robot.follower, paths.get(2)).setHoldEnd(true)
@@ -182,7 +182,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         new TransferCommand(robot),
 
                         // Deposit middle sample
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(800),
                                         new FollowPathChainCommand(robot.follower, paths.get(4)).setHoldEnd(true)
@@ -206,7 +206,7 @@ public class BlueSampleAuto extends CommandOpMode {
                         new TransferCommand(robot),
 
                         // Deposit outside sample
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BASKET).alongWith(
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(800),
                                         new FollowPathChainCommand(robot.follower, paths.get(6)).setHoldEnd(true)
