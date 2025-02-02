@@ -41,7 +41,7 @@ public class LiftActuatorTest extends OpMode {
         liftBottomMotor = hardwareMap.get(DcMotorEx.class, "liftBottomMotor");
         liftBottomMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftBottomMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
-        liftBottomMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftBottomMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         liftCenterMotor = hardwareMap.get(DcMotorEx.class, "liftCenterMotor");
@@ -53,11 +53,11 @@ public class LiftActuatorTest extends OpMode {
         liftTopMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         liftTopMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-        liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
+        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
         liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
 
-        this.liftActuator = new ActuatorGroupWrapper(liftTopEncoder, liftTopMotor)
+
+        this.liftActuator = new ActuatorGroupWrapper(liftTopEncoder, liftTopMotor, liftCenterMotor, liftBottomMotor)
                 .setPIDController(new PIDController(lkP, lkI, lkD))
                 .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, 0.0)
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))

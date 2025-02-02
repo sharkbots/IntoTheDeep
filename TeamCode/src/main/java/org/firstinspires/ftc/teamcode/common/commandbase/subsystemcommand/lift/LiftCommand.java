@@ -14,7 +14,7 @@ public class LiftCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.lift.updateState(state)),
                 new ConditionalCommand(
                         new InstantCommand(() -> robot.liftActuator.updateFeedforward(0)),
-                        new InstantCommand(() -> robot.liftActuator.updateFeedforward(0.35)),
+                        new InstantCommand(() -> robot.liftActuator.updateFeedforward(0.10)),
                         () -> (state == LiftSubsystem.LiftState.RETRACTED ||
                                 state == LiftSubsystem.LiftState.INTAKE_SPECIMEN ||
                                 state == LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN)),

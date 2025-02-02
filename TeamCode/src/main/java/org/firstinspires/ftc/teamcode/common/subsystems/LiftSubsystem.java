@@ -95,7 +95,7 @@ public class LiftSubsystem extends SubsystemWrapper {
             case HOLDING_SPECIMEN:
                 return HOLDING_SPECIMEN_HEIGHT;
             case DEPOSIT_LOW_SPECIMEN: return LOW_SPECIMEN_HEIGHT;
-            case DEPOSIT_HIGH_RUNG_SETUP: return HIGH_SPECIMEN_HEIGHT+245;
+            case DEPOSIT_HIGH_RUNG_SETUP: return HIGH_SPECIMEN_SETUP_HEIGHT;
             case DEPOSIT_HIGH_SPECIMEN: return HIGH_SPECIMEN_HEIGHT;
             case DEPOSIT_LOW_BUCKET: return LOW_BUCKET_HEIGHT;
             case DEPOSIT_HIGH_BUCKET: return HIGH_BUCKET_HEIGHT;

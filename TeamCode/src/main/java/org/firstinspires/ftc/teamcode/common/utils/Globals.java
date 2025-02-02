@@ -98,14 +98,16 @@ public class Globals {
     public static double DEPOSIT_CLAW_ROTATION_BUCKET_SCORING_BLUE_POS = 0.685;
 
     // Deposit Slides
-    public static int MAX_SLIDES_EXTENSION = 1900;
-    public static int HOLDING_SPECIMEN_HEIGHT = 50;
-    public static int LOW_BUCKET_HEIGHT = 925;
-    public static int HIGH_BUCKET_HEIGHT = 1875;
+    public static int MAX_SLIDES_EXTENSION = 2050;
+    public static int HOLDING_SPECIMEN_HEIGHT = 65;
+    public static int LOW_BUCKET_HEIGHT = 1000;
+    public static int HIGH_BUCKET_HEIGHT = 1970;
     public static int LOW_SPECIMEN_HEIGHT = 85;
-    public static int HIGH_SPECIMEN_HEIGHT = 540;
-    public static int LVL1_HANG_HEIGHT = 725;
-    public static int ENDGAME_ASCENT_HEIGHT = 0;
+    public static int HIGH_SPECIMEN_SETUP_HEIGHT = 925;
+    public static int HIGH_SPECIMEN_HEIGHT = 600;
+    public static int LVL1_HANG_HEIGHT = 825;
+    public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2000;
+    public static int ENDGAME_ASCENT_HEIGHT = 1200;
 
     // Autonomous poses
     public static final Pose sampleAutoStartPose = new Pose(6.595, 101.105, Math.toRadians(270));

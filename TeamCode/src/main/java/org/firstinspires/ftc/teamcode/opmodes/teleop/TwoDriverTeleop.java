@@ -232,7 +232,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 (robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
                 || robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)){
             robot.extendoActuator.enableManualPower();
-            robot.extendoActuator.setManualPower(gamepad2.right_stick_y);
+            robot.extendoActuator.setManualPower(-gamepad2.right_stick_y);
         }
 
         // emergency lift override
@@ -276,6 +276,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 //            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
 //            robot.follower.update();
 //        }
+
         // align to closest cardinal point
         if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
             double alignmentHeading = ((int) Math.round(currentHeading / (Math.PI/2))) * (Math.PI/2);

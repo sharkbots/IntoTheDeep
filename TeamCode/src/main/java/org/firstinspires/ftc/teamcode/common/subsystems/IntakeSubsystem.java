@@ -126,7 +126,6 @@ public class IntakeSubsystem extends SubsystemWrapper {
             default:
                 break;
         }
-        //setClawRotation(clawRotationState);
     }
 
     public void setExtendoTarget(int pos){
