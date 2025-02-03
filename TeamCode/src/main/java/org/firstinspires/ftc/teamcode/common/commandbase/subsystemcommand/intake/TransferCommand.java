@@ -22,7 +22,7 @@ public class TransferCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.intake.setExtendoTarget(0)),
                 new WaitUntilCommand(() -> robot.intake.extendoReached()), /*prev wait 350*/
                 new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.CLOSED)),
-                new WaitCommand(100),
+                new WaitCommand(150), /* 200 prev, 100 not enough*/
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN)),
                 new InstantCommand(() -> Globals.INTAKING_SAMPLES = false),
                 new InstantCommand(() -> Globals.HOLDING_SAMPLE = true)
