@@ -2,15 +2,18 @@ package org.firstinspires.ftc.teamcode.common.commandbase;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
+
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants.FConstants;
 
 public class FollowPathChainCommand extends CommandBase {
 
     private final Follower follower;
     private final PathChain path;
     private boolean holdEnd = true;
-    private double completionThreshold = 0.995;
+    private double completionThreshold = FollowerConstants.pathEndTValueConstraint;
 
     public FollowPathChainCommand(Follower follower, PathChain path) {
         this.follower = follower;

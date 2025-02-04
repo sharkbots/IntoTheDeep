@@ -39,6 +39,8 @@ public class Globals {
         }
     }
 
+    public static double LIFT_FEEDFORWARD = 0.10;
+
     public static AllianceColor ALLIANCE = AllianceColor.RED;
     public static boolean IS_AUTO = false;
     public static boolean COMING_FROM_AUTONOMOUS = false;

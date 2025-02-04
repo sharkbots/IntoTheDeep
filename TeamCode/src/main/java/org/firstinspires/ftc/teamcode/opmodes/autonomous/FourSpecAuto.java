@@ -7,7 +7,10 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -34,7 +37,7 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous(name = "A🔵 Blue spec (4+0) Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
-public class BlueSpecAuto extends CommandOpMode {
+public class FourSpecAuto extends CommandOpMode {
     private Telemetry telemetryA;
 
     private final Robot robot = Robot.getInstance();
@@ -184,9 +187,18 @@ public class BlueSpecAuto extends CommandOpMode {
                 new RunCommand(robot::periodic),
                 new RunCommand(robot.follower::update),
 
+                new InstantCommand(),
+                new SequentialCommandGroup(),
+                new ParallelCommandGroup(),
+                new ParallelRaceGroup(),
+                new ConditionalCommand(null, null, () -> false),
+
+
                 new SequentialCommandGroup(
+                        
                         // Deposit specimen 1 (preload)
-                        new FollowPathChainCommand(robot.follower, paths.get(0)).setHoldEnd(false).setCompletionThreshold(0.95).alongWith(
+                        new FollowPathChainCommand(robot.follower, paths.get(0)).setHoldEnd(false).setCompletionThreshold(0.95)
+                                .alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(200),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
