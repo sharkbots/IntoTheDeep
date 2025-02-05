@@ -265,9 +265,9 @@ public class Robot extends SubsystemWrapper{
         liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
 
         double lkP = 0.005;
-        double lkI = 0.0;
+        double lkI = 0.05;
         double lkD = 0.0;
-        int lTolerance = 20;
+        int lTolerance = 10;
         this.liftActuator = new ActuatorGroupWrapper(
                 () -> intSubscriber(Sensors.SensorType.LIFT_TOP_ENCODER), liftTopEncoder, liftTopMotor, liftCenterMotor, liftBottomMotor)
                 .setPIDController(new PIDController(lkP, lkI, lkD))

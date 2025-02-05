@@ -44,17 +44,17 @@ public class FollowPathChainCommand extends CommandBase {
         follower.followPath(path, holdEnd);
     }
 
-//    @Override
-//    public boolean isFinished() {
-//        return !follower.isBusy();
-//    }
-
     @Override
-    public boolean isFinished(){
-        if (follower.getCurrentPathNumber () == this.path.size() - 1 /*&& Math.abs(follower. headingError) < 0.1*/) {
-            return follower.getCurrentTValue() >=
-            this.completionThreshold;
-        }
-        return false;
+    public boolean isFinished() {
+        return !follower.isBusy();
     }
+
+//    @Override
+//    public boolean isFinished(){
+//        if (follower.getCurrentPathNumber () == this.path.size() - 1 /*&& Math.abs(follower. headingError) < 0.1*/) {
+//            return follower.getCurrentTValue() >=
+//            this.completionThreshold;
+//        }
+//        return false;
+//    }
 }

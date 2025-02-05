@@ -15,11 +15,13 @@ public class LiftCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> robot.lift.updateState(state)),
                 new ConditionalCommand(
-                        new InstantCommand(() -> robot.liftActuator.updateFeedforward(0)),
-                        new InstantCommand(() -> robot.liftActuator.updateFeedforward(LIFT_FEEDFORWARD)),
-                        () -> (state == LiftSubsystem.LiftState.RETRACTED ||
-                                state == LiftSubsystem.LiftState.INTAKE_SPECIMEN ||
-                                state == LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN)),
+                        new InstantCommand(() -> robot.liftActuator.updateFeedforward(LIFT_RESET_FEEDFORWARD)),
+                        new InstantCommand(() -> robot.liftActuator.updateFeedforward(DEFAULT_LIFT_FEEDFORWARD)),
+                        () -> (state == LiftSubsystem.LiftState.RETRACTED || state == LiftSubsystem.LiftState.INTAKE_SPECIMEN)),
+                new ConditionalCommand(
+                        new InstantCommand(() -> robot.liftActuator.updateFeedforward(LIFT_NEAR_RESET_FEEDFORWARD)),
+                        new InstantCommand(),
+                        () -> (state == LiftSubsystem.LiftState.HOLDING_SPECIMEN)),
                 new WaitUntilCommand(()->robot.lift.liftReached())
                 );
     }

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class SpecimenCycleGenerator {
     public static Pose pickupLocation = new Pose(7.595, 32.342, Math.toRadians(180));
     public static Pose intermediatePickupLocation = new Pose(pickupLocation.getX()+10, pickupLocation.getY(), pickupLocation.getHeading());
-    public static Pose depositLocation = new Pose(37.5, 65.72/*63.72*/, Math.toRadians(180));
+    public static Pose depositLocation = new Pose(38, 65.72/*63.72*/, Math.toRadians(180));
     public static Pose intermediateDepositLocation = new Pose(depositLocation.getX(), depositLocation.getY()-3, depositLocation.getHeading());
     public static Pose depositSetupLocation = new Pose(depositLocation.getX()-10, intermediateDepositLocation.getY(), depositLocation.getHeading());
     private double depositGap = 1.5;
@@ -82,8 +82,9 @@ public class SpecimenCycleGenerator {
                         new BezierLine(
                                 allianceColor.convert(intermediatePickupLocation, Point.class),
                                 allianceColor.convert(pickupLocation, Point.class)))
-                .setPathEndVelocityConstraint(3)
-                .setConstantHeadingInterpolation(Math.toRadians(0));
+                .setPathEndVelocityConstraint(2)
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setPathEndTValueConstraint(0.99);
 
         return builder
                 .build();

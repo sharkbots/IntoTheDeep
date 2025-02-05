@@ -33,6 +33,7 @@ public class LiftActuatorTest extends OpMode {
     public static double lkI = 0.0;
     public static double lkD = 0.0;
     public static int lTolerance = 20;
+    public static double feedForward = 0.20;
 
     @Override
     public void init() {
@@ -59,7 +60,7 @@ public class LiftActuatorTest extends OpMode {
 
         this.liftActuator = new ActuatorGroupWrapper(liftTopEncoder, liftTopMotor, liftCenterMotor, liftBottomMotor)
                 .setPIDController(new PIDController(lkP, lkI, lkD))
-                .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, 0.0)
+                .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, feedForward)
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(lTolerance);
         liftActuator.read();
@@ -68,12 +69,19 @@ public class LiftActuatorTest extends OpMode {
     @Override
     public void loop() {
         liftActuator.updatePID(lkP, lkI, lkD);
+        liftActuator.updateFeedforward(feedForward);
         liftActuator.read();
         liftActuator.setTargetPosition(targetPos);
         liftActuator.periodic();
         liftActuator.write();
 
-        telemetry.addData("top lift ticks", liftTopEncoder.getPosition());
+        double liftTicks = liftActuator.getPosition();
+        double targetTickPos = liftActuator.getTargetPosition();
+        double tickError = Math.abs(liftTicks-targetTickPos);
+
+        telemetry.addData("lift ticks", liftTicks);
+        telemetry.addData("lift target pos", targetTickPos);
+        telemetry.addData("lift tick error", tickError);
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         telemetry.addData("lift position", liftActuator.getPosition() / 26);

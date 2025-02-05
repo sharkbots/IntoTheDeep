@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.common.utils;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.Point;
 
+@Config
 public class Globals {
     public enum AllianceColor{
         BLUE,
@@ -39,7 +41,9 @@ public class Globals {
         }
     }
 
-    public static double LIFT_FEEDFORWARD = 0.10;
+    public static double DEFAULT_LIFT_FEEDFORWARD = 0.08;
+    public static double LIFT_RESET_FEEDFORWARD = -0.2;
+    public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.2;
 
     public static AllianceColor ALLIANCE = AllianceColor.RED;
     public static boolean IS_AUTO = false;

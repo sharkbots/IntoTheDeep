@@ -7,10 +7,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -26,7 +23,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.IntakeSpecimenCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
@@ -37,7 +33,7 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous(name = "A🔵 Blue spec (4+0) Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
-public class FourSpecAuto extends CommandOpMode {
+public class FiveSpecAuto extends CommandOpMode {
     private Telemetry telemetryA;
 
     private final Robot robot = Robot.getInstance();
@@ -81,6 +77,72 @@ public class FourSpecAuto extends CommandOpMode {
         paths.add(
                 robot.follower.pathBuilder()
                         .addPath(
+                                // Line 2
+                                new BezierCurve(
+                                        new Point(37.500, 63.720, Point.CARTESIAN),
+                                        new Point(27.676, 45.622, Point.CARTESIAN),
+                                        new Point(44.757, 31.100, Point.CARTESIAN),
+                                        new Point(50.216, 31.100, Point.CARTESIAN)
+                                )
+                        )
+                        .setTangentHeadingInterpolation()
+                        .addPath(
+                                // Line 3
+                                new BezierCurve(
+                                        new Point(56.216, 31.100, Point.CARTESIAN),
+                                        new Point(51.946, 19.243, Point.CARTESIAN),
+                                        new Point(23.314, 21.400, Point.CARTESIAN)
+                                )
+                        )
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .addPath(
+                                // Line 4
+                                new BezierLine(
+                                        new Point(23.314, 21.400, Point.CARTESIAN),
+                                        new Point(47.216, 21.100, Point.CARTESIAN)
+                                )
+                        )
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .addPath(
+                                // Line 5
+                                new BezierCurve(
+                                        new Point(47.216, 21.100, Point.CARTESIAN),
+                                        new Point(51.946, 6.243, Point.CARTESIAN),
+                                        new Point(23.314, 11.400, Point.CARTESIAN)
+                                )
+                        )
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .addPath(
+                                // Line 6
+                                new BezierLine(
+                                        new Point(23.314, 11.400, Point.CARTESIAN),
+                                        new Point(47.216, 10.811, Point.CARTESIAN)
+                                )
+                        )
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .addPath(
+                                // Line 7
+                                new BezierLine(
+                                        new Point(47.216, 10.811, Point.CARTESIAN),
+                                        new Point(47.216, 7.300, Point.CARTESIAN)
+                                )
+                        )
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .addPath(
+                                // Line 8
+                                new BezierLine(
+                                        new Point(47.216, 7.300, Point.CARTESIAN),
+                                        new Point(23.314, 7.300, Point.CARTESIAN)
+                                )
+                        )
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .build()
+        );
+
+
+        paths.add(
+                robot.follower.pathBuilder()
+                        .addPath(
                                 // Line 1
                                 new BezierCurve(
                                         new Point(37.5, 63.72, Point.CARTESIAN),
@@ -97,7 +159,7 @@ public class FourSpecAuto extends CommandOpMode {
                                         new Point(16.314, 23.900, Point.CARTESIAN)
                                 )
                         )
-                        .setConstantHeadingInterpolation(Math.toRadians(90))
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 3
                                 new BezierCurve(
@@ -106,7 +168,7 @@ public class FourSpecAuto extends CommandOpMode {
                                         new Point(60.000, 13.800, Point.CARTESIAN)
                                 )
                         )
-                        .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 4
                                 new BezierLine(
@@ -114,7 +176,32 @@ public class FourSpecAuto extends CommandOpMode {
                                         new Point(16.314, 13.800, Point.CARTESIAN)
                                 )
                         )
+                        .addPath(
+                                // Line 3
+                                new BezierLine(
+                                        new Point(16.314, 13.800, Point.CARTESIAN),
+                                        new Point(56.216, 11.676, Point.CARTESIAN)
+                                )
+                        )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .addPath(
+                                // Line 4
+                                new BezierLine(
+                                        new Point(56.216, 11.676, Point.CARTESIAN),
+                                        new Point(56.432, 7.300, Point.CARTESIAN)
+                                )
+                        )
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .addPath(
+                                // Line 5
+                                new BezierLine(
+                                        new Point(56.432, 7.300, Point.CARTESIAN),
+                                        new Point(16.314, 7.300, Point.CARTESIAN)
+                                )
+                        )
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+
+                        /*
                         .addParametricCallback(0.7, ()-> robot.follower.setMaxPower(0.7))
                         .setZeroPowerAccelerationMultiplier(2)
                         .addPath(
@@ -135,6 +222,7 @@ public class FourSpecAuto extends CommandOpMode {
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
+                        */
                         .build()
         ); // path 1
 
@@ -142,12 +230,16 @@ public class FourSpecAuto extends CommandOpMode {
         paths.add(specimenCyclePaths.getDepositPath(1)); // path 2
 
 
-        // deposit specimen 3
+        // pickup spec 3
         paths.add(specimenCyclePaths.getPickupPath(2)); // path 3
+
+        // depo spec 3
         paths.add(specimenCyclePaths.getDepositPath(2)); // path 4
 
-        // specimen 4
+        // pickup spec 4
         paths.add(specimenCyclePaths.getPickupPath(3)); // path 5
+
+        // depo spec 4
         paths.add(specimenCyclePaths.getDepositPath(3)); // path 6
 
         // park
@@ -176,7 +268,7 @@ public class FourSpecAuto extends CommandOpMode {
 
         robot.init(hardwareMap);
 
-        robot.follower.setMaxPower(0.7);
+        robot.follower.setMaxPower(1); //0.7
 
         generatePaths();
 
@@ -187,15 +279,7 @@ public class FourSpecAuto extends CommandOpMode {
                 new RunCommand(robot::periodic),
                 new RunCommand(robot.follower::update),
 
-                new InstantCommand(),
-                new SequentialCommandGroup(),
-                new ParallelCommandGroup(),
-                new ParallelRaceGroup(),
-                new ConditionalCommand(null, null, () -> false),
-
-
                 new SequentialCommandGroup(
-                        
                         // Deposit specimen 1 (preload)
                         new FollowPathChainCommand(robot.follower, paths.get(0)).setHoldEnd(false).setCompletionThreshold(0.95)
                                 .alongWith(
@@ -205,7 +289,7 @@ public class FourSpecAuto extends CommandOpMode {
 
                                 )
                         ),
-                        new InstantCommand(()-> robot.follower.setMaxPower(0.7)),
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)), //0.9
 
 
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
@@ -219,12 +303,12 @@ public class FourSpecAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true)
                                 )
-                        ),
-                        new WaitCommand(100),
+                        )
+                        /*
                         // pickup specimen 2
                         new IntakeSpecimenCommand(robot),
 
-                        new InstantCommand(()-> robot.follower.setMaxPower(0.7)),
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)), //0.9
                         // Deposit specimen 2
                         new FollowPathChainCommand(robot.follower, paths.get(2)).setHoldEnd(false).alongWith(
                                 new SequentialCommandGroup(
@@ -242,7 +326,6 @@ public class FourSpecAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
                         ),
-                        new WaitCommand(100),
                         new IntakeSpecimenCommand(robot),
 
                         // Deposit specimen 3
@@ -262,7 +345,6 @@ public class FourSpecAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
                         ),
-                        new WaitCommand(100),
                         new IntakeSpecimenCommand(robot),
 
                         // Deposit specimen 4
@@ -280,6 +362,7 @@ public class FourSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(true).alongWith(
                                 new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                         )
+                         */
                 )
         );
         robot.reset();
@@ -293,6 +376,7 @@ public class FourSpecAuto extends CommandOpMode {
 
         telemetryA.addData("Robot Pose", robot.follower.getPose());
         double loop = System.nanoTime();
+        telemetryA.addData("feedforward", robot.liftActuator.getCurrentFeedforward());
         telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
         telemetryA.addLine(robot.follower.getPose().toString());
         telemetryA.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
