@@ -71,7 +71,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         dtHeadingLockOn = new PIDController(0.5, 0, 0);
 
-        // rotate claw right
+        // rotate claw left
         operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                         .whenPressed(new ConditionalCommand(
                                 new InstantCommand(() -> robot.intake.moveLeft()),
