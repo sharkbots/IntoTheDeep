@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.common.hardware;
 
 import androidx.annotation.GuardedBy;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.pedropathing.follower.Follower;
@@ -22,6 +24,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
@@ -108,6 +111,8 @@ public class Robot extends SubsystemWrapper{
     private volatile double imuYaw = 0;
     public double imuYawOffset = 0;
     private double imuYawStartOffset = 0;
+
+    public Telemetry telemetryA;
 
     // vision
     private VisionPortal visionPortal;
@@ -267,7 +272,7 @@ public class Robot extends SubsystemWrapper{
         double lkP = 0.005;
         double lkI = 0.05;
         double lkD = 0.0;
-        int lTolerance = 10;
+        int lTolerance = 20;
         this.liftActuator = new ActuatorGroupWrapper(
                 () -> intSubscriber(Sensors.SensorType.LIFT_TOP_ENCODER), liftTopEncoder, liftTopMotor, liftCenterMotor, liftBottomMotor)
                 .setPIDController(new PIDController(lkP, lkI, lkD))
@@ -365,6 +370,10 @@ public class Robot extends SubsystemWrapper{
         }
 
         imuYawOffset = imuYaw;
+    }
+
+    public void setTelemetry(Telemetry telemetry){
+        this.telemetryA = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     public void setBulkCachingMode(LynxModule.BulkCachingMode mode){

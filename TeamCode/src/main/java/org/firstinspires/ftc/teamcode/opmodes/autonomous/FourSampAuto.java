@@ -241,6 +241,7 @@ public class FourSampAuto extends CommandOpMode {
         telemetryA.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
         telemetryA.addData("Lift pos", robot.liftActuator.getPosition());
         telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
+        telemetryA.addData("t value", robot.follower.getCurrentTValue());
         telemetryA.update();
 
         loopTime = loop;

@@ -46,8 +46,7 @@ public class SpecimenCycleGenerator {
                         allianceColor.convert(pickupLocation, Point.class),
                         allianceColor.convert(new Point(20.738, 61.437, Point.CARTESIAN)),
                         allianceColor.convert(new Point(depositLocation.getX()-10, depositLocation.getY()-cycleNum*depositGap))))
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
-                .addParametricCallback(0, ()-> follower.setMaxPower(1.0));
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180));
 
         builder.addPath(
                         new BezierLine(
@@ -57,7 +56,8 @@ public class SpecimenCycleGenerator {
                 .setPathEndVelocityConstraint(3)
                 .setPathEndTValueConstraint(0.99)
                 .setConstantHeadingInterpolation(Math.toRadians(180))
-                .setPathEndTimeoutConstraint(250);
+                .setPathEndTimeoutConstraint(250)
+                .addParametricCallback(0, ()-> follower.setMaxPower(1.0));
 
         return builder
                 .build();
@@ -115,7 +115,8 @@ public class SpecimenCycleGenerator {
                 .setPathEndVelocityConstraint(3)
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addParametricCallback(0.1, ()-> follower.setMaxPower(0.7))
-                .setPathEndTValueConstraint(0.99);
+                .setPathEndTValueConstraint(0.99)
+                .setPathEndTimeoutConstraint(200);
 
         return builder
                 .build();

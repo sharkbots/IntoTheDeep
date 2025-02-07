@@ -9,6 +9,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -38,7 +39,7 @@ import java.util.ArrayList;
 @Config
 @Autonomous(name = "A🔵 Blue spec (5+0) Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
 public class FiveSpecAuto extends CommandOpMode {
-    private Telemetry telemetryA;
+    //private Telemetry telemetryA;
 
     private final Robot robot = Robot.getInstance();
 
@@ -95,7 +96,7 @@ public class FiveSpecAuto extends CommandOpMode {
                                 new BezierCurve(
                                         new Point(56.216, 31.100, Point.CARTESIAN),
                                         new Point(51.946, 19.243, Point.CARTESIAN),
-                                        new Point(28.314, 21.400, Point.CARTESIAN)
+                                        new Point(25.314, 21.400, Point.CARTESIAN)
                                 )
                         )
                         .setZeroPowerAccelerationMultiplier(2)
@@ -103,7 +104,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         .addPath(
                                 // Line 4
                                 new BezierLine(
-                                        new Point(28.314, 21.400, Point.CARTESIAN),
+                                        new Point(25.314, 21.400, Point.CARTESIAN),
                                         new Point(47.216, 21.100, Point.CARTESIAN)
                                 )
                         )
@@ -113,7 +114,7 @@ public class FiveSpecAuto extends CommandOpMode {
                                 new BezierCurve(
                                         new Point(47.216, 21.100, Point.CARTESIAN),
                                         new Point(51.946, 6.243, Point.CARTESIAN),
-                                        new Point(28.314, 11.400, Point.CARTESIAN)
+                                        new Point(25.314, 11.400, Point.CARTESIAN)
                                 )
                         )
                         .setZeroPowerAccelerationMultiplier(2)
@@ -121,24 +122,24 @@ public class FiveSpecAuto extends CommandOpMode {
                         .addPath(
                                 // Line 6
                                 new BezierLine(
-                                        new Point(28.314, 11.400, Point.CARTESIAN),
-                                        new Point(47.216, 10.811, Point.CARTESIAN)
+                                        new Point(25.314, 11.400, Point.CARTESIAN),
+                                        new Point(49.216, 10.811, Point.CARTESIAN)
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 7
                                 new BezierLine(
-                                        new Point(47.216, 10.811, Point.CARTESIAN),
-                                        new Point(47.216, 7.300, Point.CARTESIAN)
+                                        new Point(49.216, 10.811, Point.CARTESIAN),
+                                        new Point(49.216, 7.300, Point.CARTESIAN)
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 8
                                 new BezierLine(
-                                        new Point(47.216, 7.300, Point.CARTESIAN),
-                                        new Point(20.314, 7.300, Point.CARTESIAN)
+                                        new Point(49.216, 7.300, Point.CARTESIAN),
+                                        new Point(23.314, 7.300, Point.CARTESIAN)
                                 )
                         )
                         .setZeroPowerAccelerationMultiplier(2)
@@ -146,7 +147,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         .addPath(
                                 // Line 9
                                 new BezierLine(
-                                        new Point(20.314, 7.300, Point.CARTESIAN),
+                                        new Point(23.314, 7.300, Point.CARTESIAN),
                                         new Point(17.297, 29.342, Point.CARTESIAN)
                                 )
                         )
@@ -163,99 +164,9 @@ public class FiveSpecAuto extends CommandOpMode {
                         .build()
         );
 
-        // old 4+0
-        /*
-        paths.add(
-                robot.follower.pathBuilder()
-                        .addPath(
-                                // Line 1
-                                new BezierCurve(
-                                        new Point(37.5, 63.72, Point.CARTESIAN),
-                                        new Point(22.054, 27.027, Point.CARTESIAN),
-                                        new Point(71.351, 41.081, Point.CARTESIAN),
-                                        new Point(57.730, 22.919, Point.CARTESIAN)
-                                )
-                        )
-                        .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
-                        .addPath(
-                                // Line 2
-                                new BezierLine(
-                                        new Point(57.730, 22.919, Point.CARTESIAN),
-                                        new Point(16.314, 23.900, Point.CARTESIAN)
-                                )
-                        )
-                        .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .addPath(
-                                // Line 3
-                                new BezierCurve(
-                                        new Point(16.314, 23.900, Point.CARTESIAN),
-                                        new Point(67.639, 27.327, Point.CARTESIAN),
-                                        new Point(60.000, 13.800, Point.CARTESIAN)
-                                )
-                        )
-                        .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .addPath(
-                                // Line 4
-                                new BezierLine(
-                                        new Point(60.000, 13.800, Point.CARTESIAN),
-                                        new Point(16.314, 13.800, Point.CARTESIAN)
-                                )
-                        )
-                        .addPath(
-                                // Line 3
-                                new BezierLine(
-                                        new Point(16.314, 13.800, Point.CARTESIAN),
-                                        new Point(56.216, 11.676, Point.CARTESIAN)
-                                )
-                        )
-                        .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .addPath(
-                                // Line 4
-                                new BezierLine(
-                                        new Point(56.216, 11.676, Point.CARTESIAN),
-                                        new Point(56.432, 7.300, Point.CARTESIAN)
-                                )
-                        )
-                        .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .addPath(
-                                // Line 5
-                                new BezierLine(
-                                        new Point(56.432, 7.300, Point.CARTESIAN),
-                                        new Point(16.314, 7.300, Point.CARTESIAN)
-                                )
-                        )
-                        .setConstantHeadingInterpolation(Math.toRadians(0))
-
-                        /*
-                        .addParametricCallback(0.7, ()-> robot.follower.setMaxPower(0.7))
-                        .setZeroPowerAccelerationMultiplier(2)
-                        .addPath(
-                                // Line 5
-                                new BezierLine(
-                                        new Point(16.314, 13.800, Point.CARTESIAN),
-                                        new Point(16.314, 30, Point.CARTESIAN)
-                                )
-                        )
-                        .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .setZeroPowerAccelerationMultiplier(2)
-                        .addParametricCallback(0.9, ()-> robot.follower.setMaxPower(0.3))
-                        .addPath(
-                                // Line 6
-                                new BezierLine(
-                                        new Point(16.314, 30, Point.CARTESIAN),
-                                        new Point(7.595, 32.342, Point.CARTESIAN)
-                                )
-                        )
-                        .setConstantHeadingInterpolation(Math.toRadians(0))
-
-                        .build()
-        ); // path 1
-         */
-
 
         // deposit specimen 2
         paths.add(specimenCyclePaths.getDepositPath(1)); // path 2
-
 
         // pickup spec 3
         paths.add(specimenCyclePaths.getPickupPath(2)); // path 3
@@ -270,10 +181,10 @@ public class FiveSpecAuto extends CommandOpMode {
         paths.add(specimenCyclePaths.getDepositPath(3)); // path 6
 
         // pickup spec 4
-        paths.add(specimenCyclePaths.getPickupPath(4)); // path 5
+        paths.add(specimenCyclePaths.getPickupPath(4)); // path 7
 
         // depo spec 4
-        paths.add(specimenCyclePaths.getDepositPath(4)); // path 6
+        paths.add(specimenCyclePaths.getDepositPath(4)); // path 8
 
         // park
         paths.add(
@@ -283,13 +194,13 @@ public class FiveSpecAuto extends CommandOpMode {
                                 // Line 13
                                 new BezierCurve(
                                         new Point(40.432, 61.720, Point.CARTESIAN),
-                                        new Point(34.300, 61.720, Point.CARTESIAN),
-                                        new Point(23.568, 46.703, Point.CARTESIAN)
+                                        new Point(36.4, 61.72, Point.CARTESIAN),
+                                        new Point(19.459, 42.811, Point.CARTESIAN)
                                 )
                         )
                         .setTangentHeadingInterpolation()
                         .build()
-        ); // path 7
+        ); // path 9
     }
 
     public SequentialCommandGroup specimenCycle (int cycleNum) {
@@ -300,7 +211,7 @@ public class FiveSpecAuto extends CommandOpMode {
         Globals.IS_AUTO = true;
         Globals.ALLIANCE = Globals.AllianceColor.BLUE;
 
-        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        robot.setTelemetry(telemetry);
 
         timer.reset();
 
@@ -315,8 +226,8 @@ public class FiveSpecAuto extends CommandOpMode {
         schedule(
                 new RunCommand(robot::clearChubCache),
                 new RunCommand(robot::read),
-                new RunCommand(robot::write),
                 new RunCommand(robot::periodic),
+                new RunCommand(robot::write),
                 new RunCommand(robot.follower::update),
 
                 new SequentialCommandGroup(
@@ -337,7 +248,7 @@ public class FiveSpecAuto extends CommandOpMode {
 
                         // bring two specimens back && pickup specimen 2
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new FollowPathChainCommand(robot.follower, paths.get(1)).disableUseIsBusy().setHoldEnd(false)
+                        new FollowPathChainCommand(robot.follower, paths.get(1)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.99)
                                 .alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(200),
@@ -404,7 +315,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new DepositSpecimenCommand(robot),
 
                         // Pickup specimen 5
-                        new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).disableUseIsBusy()
+                        new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).disableUseIsBusy().setCompletionThreshold(0.99)
                                 .alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(200),
@@ -414,7 +325,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new IntakeSpecimenCommand(robot),
 
                         // Deposit specimen 5
-                        new FollowPathChainCommand(robot.follower, paths.get(8)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.99)
+                        new FollowPathChainCommand(robot.follower, paths.get(8)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.97)
                                 .alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(600),
@@ -428,7 +339,10 @@ public class FiveSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(9))
                                 .alongWith(
                                         new ParallelCommandGroup(
-                                                new LiftCommand(robot, LiftSubsystem.LiftState.TRANSFER),
+                                                new SequentialCommandGroup(
+                                                        new WaitCommand(300),
+                                                        new LiftCommand(robot, LiftSubsystem.LiftState.TRANSFER)
+                                                ),
                                                 new HoverCommand(robot, 1500)
                                         )
                                 )
@@ -443,16 +357,18 @@ public class FiveSpecAuto extends CommandOpMode {
     public void run(){
         super.run();
 
-        telemetryA.addData("Robot Pose", robot.follower.getPose());
+//        robot.telemetryA.addData("Robot Pose", robot.follower.getPose());
         double loop = System.nanoTime();
-        telemetryA.addData("feedforward", robot.liftActuator.getCurrentFeedforward());
-        telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetryA.addLine(robot.follower.getPose().toString());
-        telemetryA.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
-        telemetryA.addData("Lift pos", robot.liftActuator.getPosition());
-        telemetryA.addData("Lift target", robot.liftActuator.getTargetPosition());
-        telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
-        telemetryA.update();
+//        robot.telemetryA.addData("feedforward", robot.liftActuator.getCurrentFeedforward());
+//        robot.telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
+//        robot.telemetryA.addLine(robot.follower.getPose().toString());
+//        robot.telemetryA.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
+//        robot.telemetryA.addData("Lift pos", robot.liftActuator.getPosition());
+//        robot.telemetryA.addData("Lift target", robot.liftActuator.getTargetPosition());
+//        robot.telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
+//        robot.telemetryA.addData("t value (general loop)", robot.follower.getCurrentTValue());
+
+        robot.telemetryA.update();
 
         loopTime = loop;
         Globals.END_OF_AUTO_POSE = robot.follower.poseUpdater.getPose();

@@ -6,6 +6,8 @@ import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 
+import org.firstinspires.ftc.teamcode.common.hardware.Robot;
+
 public class FollowPathChainCommand extends CommandBase {
 
     private final Follower follower;
@@ -13,10 +15,12 @@ public class FollowPathChainCommand extends CommandBase {
     private boolean holdEnd = true;
     private double completionThreshold = FollowerConstants.pathEndTValueConstraint;
     private boolean useIsBusy = true;
+    private final Robot robot;
 
     public FollowPathChainCommand(Follower follower, PathChain path) {
         this.follower = follower;
         this.path = path;
+        robot = Robot.getInstance();
     }
 
     public FollowPathChainCommand(Follower follower, Path path) {
@@ -60,7 +64,13 @@ public class FollowPathChainCommand extends CommandBase {
             return !follower.isBusy();
 
         } else {
+            robot.telemetryA.addData("Current Path Number (not done)", follower.getCurrentPathNumber());
+            robot.telemetryA.update();
             if (follower.getCurrentPathNumber() == this.path.size() - 1 /*&& Math.abs(follower. headingError) < 0.1*/) {
+                robot.telemetryA.addData("Current Path Number (done)", follower.getCurrentPathNumber());
+                robot.telemetryA.addData("Current completion threshold (done)", this.completionThreshold);
+                robot.telemetryA.addData("t value (done)", follower.getCurrentTValue());
+                robot.telemetryA.update();
                 return follower.getCurrentTValue() >=
                         this.completionThreshold;
             }
