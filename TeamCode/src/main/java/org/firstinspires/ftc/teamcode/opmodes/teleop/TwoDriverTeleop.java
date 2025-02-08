@@ -53,6 +53,11 @@ public class TwoDriverTeleop extends CommandOpMode {
     public static double dtScale = 3.5;
 
     private boolean notifiedEndgame = false;
+    private boolean hangDone = false;
+    private boolean readyToLetGo = false;
+
+    private int matchLength = 10;
+    private int increaseCounter = 0;
 
 
     @Override
@@ -70,6 +75,31 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.follower.setPose(END_OF_AUTO_POSE);
 
         dtHeadingLockOn = new PIDController(0.5, 0, 0);
+
+        // setup hang
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new SequentialCommandGroup(
+                                        new InstantCommand(()-> readyToLetGo = false),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL2_ASCENT_SETUP)
+                                ),
+                                new InstantCommand(),
+                                () -> notifiedEndgame
+                        )
+                );
+
+        // hang
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whenReleased(
+                        new ConditionalCommand(
+                                new SequentialCommandGroup(
+                                        new InstantCommand(()-> robot.lift.updateState(LiftSubsystem.LiftState.LVL2_ASCENT_DOWN))
+                                ),
+                                new InstantCommand(),
+                                () -> robot.lift.liftState == LiftSubsystem.LiftState.LVL2_ASCENT_SETUP
+                        )
+                );
 
         // rotate claw left
         operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
@@ -220,10 +250,15 @@ public class TwoDriverTeleop extends CommandOpMode {
 
             timer = new ElapsedTime();
         }
-        else if (timer.seconds() > 140 && !notifiedEndgame){
+        else if (timer.seconds() > (matchLength-5) && !notifiedEndgame){
             notifiedEndgame = true;
             gamepad1.rumble(500);
             gamepad2.rumble(500);
+        }
+        if (gamepad2.left_stick_button && gamepad2.right_stick_button){
+            gamepad1.rumble(500);
+            gamepad2.rumble(500);
+            notifiedEndgame = true;
         }
 
         // manual extendo control
@@ -239,12 +274,10 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.liftActuator.disableManualPower();
         if (gamepad2.left_trigger > 0.75 && gamepad2.right_trigger > 0.75){
             robot.liftActuator.enableManualPower();
-            robot.liftActuator.setManualPower(-gamepad2.left_stick_y);
+            robot.liftActuator.setOverridePower(-gamepad2.left_stick_y);
         }
         telemetry.addData("left trigger", gamepad2.left_trigger);
         telemetry.addData("right trigger", gamepad2.right_trigger);
-
-
 
         robot.periodic();
         robot.write();
@@ -259,6 +292,29 @@ public class TwoDriverTeleop extends CommandOpMode {
             forward *= 0.3;
             strafe *= 0.3;
             rotation *= 0.3;
+        }
+
+        if (robot.lift.liftState == LiftSubsystem.LiftState.LVL2_ASCENT_SETUP ||
+                robot.lift.liftState == LiftSubsystem.LiftState.LVL2_ASCENT_DOWN){
+            robot.liftActuator.enableManualPower();
+        }
+
+
+        if (readyToLetGo && timer.seconds() > (matchLength+3) && !hangDone){
+            robot.liftActuator.enableManualPower();
+            increaseCounter ++;
+            //robot.liftActuator.setTargetPosition(robot.liftActuator.getTargetPosition()+5);
+            robot.liftActuator.setOverridePower(-0.5);
+            if (robot.liftActuator.getPosition() > HIGH_BUCKET_HEIGHT){
+                hangDone = true;
+            }
+        }
+        if (robot.lift.liftState == LiftSubsystem.LiftState.LVL2_ASCENT_DOWN && !readyToLetGo){
+            robot.liftActuator.enableManualPower();
+            robot.liftActuator.setOverridePower(-1);
+            if (robot.liftActuator.getPosition() > ENDGAME_ASCENT_HEIGHT){
+                readyToLetGo = true;
+            }
         }
 
 //        // flick 180
@@ -297,9 +353,15 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addData("lift position", robot.liftActuator.getPosition());
-        telemetry.addData("extendo position", robot.extendoActuator.getPosition());
+        telemetry.addData("lift pos", robot.liftActuator.getPosition());
+        telemetry.addData("lift target pos", robot.liftActuator.getTargetPosition());
+        telemetry.addData("extendo pos", robot.extendoActuator.getPosition());
         telemetry.addData("heading", Math.toDegrees(currentHeading));
+        telemetry.addData("state", robot.lift.liftState.toString());
+        telemetry.addData("time", timer.seconds());
+        telemetry.addData("hang done", hangDone);
+        telemetry.addData("ready to let go", readyToLetGo);
+        telemetry.addData("increase counter", increaseCounter);
         loopTime = loop;
         telemetry.update();
     }

@@ -111,9 +111,9 @@ public class Globals {
     public static int LOW_SPECIMEN_HEIGHT = 85;
     public static int HIGH_SPECIMEN_SETUP_HEIGHT = 925;
     public static int HIGH_SPECIMEN_HEIGHT = 600;
-    public static int LVL1_HANG_HEIGHT = 825;
+    public static int LVL1_ASCENT_HEIGHT = 825;
     public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2000;
-    public static int ENDGAME_ASCENT_HEIGHT = 1200;
+    public static int ENDGAME_ASCENT_HEIGHT = 1400;
 
     // Autonomous poses
     public static final Pose sampleAutoStartPose = new Pose(6.595, 101.105, Math.toRadians(270));

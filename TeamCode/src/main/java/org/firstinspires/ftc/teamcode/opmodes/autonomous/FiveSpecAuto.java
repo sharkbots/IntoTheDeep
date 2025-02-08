@@ -9,6 +9,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -282,6 +283,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         ),
                         new IntakeSpecimenCommand(robot),
 
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         // Deposit specimen 3
                         new FollowPathChainCommand(robot.follower, paths.get(4)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.99)
                                 .alongWith(
@@ -293,6 +295,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
                         new DepositSpecimenCommand(robot),
 
+
                         // Pickup specimen 4
                         new FollowPathChainCommand(robot.follower, paths.get(5)).setHoldEnd(false).disableUseIsBusy()
                                 .alongWith(
@@ -303,6 +306,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         ),
                         new IntakeSpecimenCommand(robot),
 
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         // Deposit specimen 4
                         new FollowPathChainCommand(robot.follower, paths.get(6)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.99)
                                 .alongWith(
@@ -324,6 +328,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         ),
                         new IntakeSpecimenCommand(robot),
 
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         // Deposit specimen 5
                         new FollowPathChainCommand(robot.follower, paths.get(8)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.97)
                                 .alongWith(

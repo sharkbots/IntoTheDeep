@@ -221,7 +221,7 @@ public class FourSampAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(500),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_HANG)
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
                                 )
                         )
             )

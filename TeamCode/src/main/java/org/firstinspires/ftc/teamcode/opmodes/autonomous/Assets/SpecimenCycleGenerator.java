@@ -57,40 +57,11 @@ public class SpecimenCycleGenerator {
                 .setPathEndTValueConstraint(0.99)
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .setPathEndTimeoutConstraint(250)
-                .addParametricCallback(0, ()-> follower.setMaxPower(1.0));
+                .addParametricCallback(0.05, ()-> follower.setMaxPower(1.0));
 
         return builder
                 .build();
     }
-
-    public PathChain getDepositPathSpline(int cycleNum) throws IllegalStateException {
-        if (follower == null)
-            throw new IllegalStateException("The generator's follower wasn't set");
-
-        PathBuilder builder = follower.pathBuilder();
-
-        builder.addPath(
-                // Line 11
-                new BezierLine(
-                        new Point(7.595, 32.342, Point.CARTESIAN),
-                        new Point(11.243, 37.622, Point.CARTESIAN)
-                ))
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-110));
-
-        builder.addPath(
-                // Line 12
-                new BezierCurve(
-                        new Point(11.243, 37.622, Point.CARTESIAN),
-                        new Point(21.300, depositLocation.getY()-cycleNum*depositGap, Point.CARTESIAN),
-                        new Point(depositLocation.getX(), depositLocation.getY()-cycleNum*depositGap, Point.CARTESIAN)
-                ))
-                .setTangentHeadingInterpolation()
-                .setReversed(true);
-
-        return builder
-                .build();
-    }
-
 
     public PathChain getPickupPath(int cycleNum) throws IllegalStateException {
         if (follower == null)
@@ -117,34 +88,6 @@ public class SpecimenCycleGenerator {
                 .addParametricCallback(0.1, ()-> follower.setMaxPower(0.7))
                 .setPathEndTValueConstraint(0.99)
                 .setPathEndTimeoutConstraint(200);
-
-        return builder
-                .build();
-    }
-
-    public PathChain getPickupPathSpline(int cycleNum) throws IllegalStateException {
-        if (follower == null)
-            throw new IllegalStateException("The generator's follower wasn't set");
-
-        PathBuilder builder = follower.pathBuilder();
-
-        builder.addPath(
-                        new BezierCurve(
-                                allianceColor.convert(
-                                        new Point(depositLocation.getX(), depositLocation.getY()-(cycleNum-1)*depositGap)
-                                ),
-                                new Point(17.830, 58.724, Point.CARTESIAN),
-                                new Point(31.397, 27.715, Point.CARTESIAN),
-                                allianceColor.convert(intermediatePickupLocation, Point.class)))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0));
-
-        builder.addPath(
-                        new BezierLine(
-                                allianceColor.convert(intermediatePickupLocation, Point.class),
-                                allianceColor.convert(pickupLocation, Point.class)))
-                .setPathEndVelocityConstraint(2)
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .setPathEndTValueConstraint(0.99);
 
         return builder
                 .build();

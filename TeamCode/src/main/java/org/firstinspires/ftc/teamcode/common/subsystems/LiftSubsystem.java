@@ -39,7 +39,9 @@ public class LiftSubsystem extends SubsystemWrapper {
         DEPOSIT_HIGH_SPECIMEN,
         DEPOSIT_LOW_BUCKET,
         DEPOSIT_HIGH_BUCKET,
-        LVL1_HANG
+        LVL1_ASCENT,
+        LVL2_ASCENT_SETUP,
+        LVL2_ASCENT_DOWN;
     }
 
     public LiftSubsystem() {
@@ -56,6 +58,7 @@ public class LiftSubsystem extends SubsystemWrapper {
 
         robot.depositPivotServo.setPosition(getClawPivotPosition(liftState));
         robot.depositClawRotationServo.setPosition(getClawRotationPosition(liftState));
+        robot.liftActuator.setTargetPosition(getActuatorPosition(liftState));
     }
 
     /**
@@ -99,7 +102,9 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_HIGH_SPECIMEN: return HIGH_SPECIMEN_HEIGHT;
             case DEPOSIT_LOW_BUCKET: return LOW_BUCKET_HEIGHT;
             case DEPOSIT_HIGH_BUCKET: return HIGH_BUCKET_HEIGHT;
-            case LVL1_HANG: return LVL1_HANG_HEIGHT;
+            case LVL1_ASCENT: return LVL1_ASCENT_HEIGHT;
+            case LVL2_ASCENT_SETUP: return ENDGAME_ASCENT_SETUP_HEIGHT;
+            case LVL2_ASCENT_DOWN: return ENDGAME_ASCENT_HEIGHT;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
     }
@@ -111,7 +116,9 @@ public class LiftSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
             case RETRACTED:
-            case LVL1_HANG:
+            case LVL1_ASCENT:
+            case LVL2_ASCENT_SETUP:
+            case LVL2_ASCENT_DOWN:
                 return DEPOSIT_CLAW_PIVOT_TRANSFER_POS;
             case INTAKE_SPECIMEN: return DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS;
             case DEPOSIT_LOW_SPECIMEN:
@@ -133,12 +140,14 @@ public class LiftSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
             case RETRACTED:
-            case LVL1_HANG:
+            case LVL1_ASCENT:
             case INTAKE_SPECIMEN:
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
             case DEPOSIT_HIGH_SPECIMEN:
             case HOLDING_SPECIMEN:
+            case LVL2_ASCENT_SETUP:
+            case LVL2_ASCENT_DOWN:
                 return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
@@ -156,7 +165,6 @@ public class LiftSubsystem extends SubsystemWrapper {
 
     @Override
     public void periodic() {
-        robot.liftActuator.setTargetPosition(getActuatorPosition(liftState));
         robot.liftActuator.periodic();
     }
 
