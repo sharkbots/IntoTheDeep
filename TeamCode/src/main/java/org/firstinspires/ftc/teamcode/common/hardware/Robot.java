@@ -2,9 +2,14 @@ package org.firstinspires.ftc.teamcode.common.hardware;
 
 import androidx.annotation.GuardedBy;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.pathgen.MathFunctions;
+import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,14 +24,16 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
-//import org.firstinspires.ftc.teamcode.common.utils.ConfigMenu;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.MathFunctions;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
+
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper;
@@ -105,6 +112,8 @@ public class Robot extends SubsystemWrapper{
     public double imuYawOffset = 0;
     private double imuYawStartOffset = 0;
 
+    public Telemetry telemetryA;
+
     // vision
     private VisionPortal visionPortal;
 
@@ -112,7 +121,7 @@ public class Robot extends SubsystemWrapper{
     long lastIMUReadTimestamp = System.currentTimeMillis();
 
 
-    private double voltageReadTimeIntervalMS = 5000;
+    private final double voltageReadTimeIntervalMS = 5000;
     long lastVoltageReadTimestamp = System.currentTimeMillis();
 
     private HardwareMap hardwareMap;
@@ -185,6 +194,7 @@ public class Robot extends SubsystemWrapper{
         extendoMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
+        extendoEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
 
         double ekP = 0.005;
         double ekI = 0.0;
@@ -197,8 +207,7 @@ public class Robot extends SubsystemWrapper{
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(eTolerance)
                 .setMinPos(0)
-                .setMaxPos(1850);
-
+                .setMaxPos(MAX_EXTENDO_EXTENSION);
 
         // INTAKE
         intakeArmPivotLeftServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotLeftServo"));
@@ -245,7 +254,7 @@ public class Robot extends SubsystemWrapper{
         liftBottomMotor = hardwareMap.get(DcMotorEx.class, "liftBottomMotor");
         liftBottomMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftBottomMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
-        liftBottomMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftBottomMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         liftCenterMotor = hardwareMap.get(DcMotorEx.class, "liftCenterMotor");
@@ -261,17 +270,16 @@ public class Robot extends SubsystemWrapper{
         liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
 
         double lkP = 0.005;
-        double lkI = 0.0;
+        double lkI = 0.05;
         double lkD = 0.0;
         int lTolerance = 20;
         this.liftActuator = new ActuatorGroupWrapper(
-                () -> intSubscriber(Sensors.SensorType.LIFT_TOP_ENCODER), liftTopMotor, liftCenterMotor, liftBottomMotor)
+                () -> intSubscriber(Sensors.SensorType.LIFT_TOP_ENCODER), liftTopEncoder, liftTopMotor, liftCenterMotor, liftBottomMotor)
                 .setPIDController(new PIDController(lkP, lkI, lkD))
                 .setFeedforward(ActuatorGroupWrapper.FeedforwardMode.CONSTANT, 0.25)
-//                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(lTolerance)
                 .setMinPos(0)
-                .setMaxPos(1900);
+                .setMaxPos(MAX_SLIDES_EXTENSION);
 
         // DEPOSIT
         depositPivotServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositPivotServo"));
@@ -297,6 +305,7 @@ public class Robot extends SubsystemWrapper{
             addSubsystem(drivetrain);
         }
 
+        Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
 
 
@@ -361,6 +370,10 @@ public class Robot extends SubsystemWrapper{
         }
 
         imuYawOffset = imuYaw;
+    }
+
+    public void setTelemetry(Telemetry telemetry){
+        this.telemetryA = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     public void setBulkCachingMode(LynxModule.BulkCachingMode mode){

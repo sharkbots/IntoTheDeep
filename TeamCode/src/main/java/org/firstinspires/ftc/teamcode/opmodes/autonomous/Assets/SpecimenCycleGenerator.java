@@ -1,21 +1,22 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets;
 
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.BezierLine;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.PathBuilder;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.PathChain;
-import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.pathGeneration.Point;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.PathBuilder;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 public class SpecimenCycleGenerator {
-    public static Pose pickupLocation = new Pose(7.595, 32.342, Math.toRadians(180));
+    public static Pose pickupLocation = new Pose(8.095, 32.342, Math.toRadians(180));
     public static Pose intermediatePickupLocation = new Pose(pickupLocation.getX()+10, pickupLocation.getY(), pickupLocation.getHeading());
-    public static Pose depositLocation = new Pose(37.5, 65.72/*63.72*/, Math.toRadians(180));
+    public static Pose depositLocation = new Pose(38, 67.72/*63.72*/, Math.toRadians(180));
     public static Pose intermediateDepositLocation = new Pose(depositLocation.getX(), depositLocation.getY()-3, depositLocation.getHeading());
     public static Pose depositSetupLocation = new Pose(depositLocation.getX()-10, intermediateDepositLocation.getY(), depositLocation.getHeading());
-    private double depositGap = 1.5;
+    private final double depositGap = 1.5;
 
     private Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
     private Follower follower;
@@ -42,24 +43,25 @@ public class SpecimenCycleGenerator {
 
         builder.addPath(
                 new BezierCurve(
-                        allianceColor.convertPoint(pickupLocation.getPoint()),
-                        allianceColor.convertPoint(new Point(20.738, 61.437, Point.CARTESIAN)),
-                        allianceColor.convertPoint(depositSetupLocation.getPoint())))
+                        allianceColor.convert(pickupLocation, Point.class),
+                        allianceColor.convert(new Point(20.738, 61.437, Point.CARTESIAN)),
+                        allianceColor.convert(new Point(depositLocation.getX()-10, depositLocation.getY()-cycleNum*depositGap))))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180));
 
         builder.addPath(
                         new BezierLine(
-                                allianceColor.convertPoint(depositSetupLocation.getPoint()),
-                                allianceColor.convertPoint(
+                                allianceColor.convert(new Point(depositLocation.getX()-10, depositLocation.getY()-cycleNum*depositGap)),
+                                allianceColor.convert(
                                         new Point(depositLocation.getX(), depositLocation.getY()-cycleNum*depositGap))))
                 .setPathEndVelocityConstraint(3)
+                .setPathEndTValueConstraint(0.99)
                 .setConstantHeadingInterpolation(Math.toRadians(180))
-                .setPathEndTimeoutConstraint(500);
+                .setPathEndTimeoutConstraint(250)
+                .addParametricCallback(0.05, ()-> follower.setMaxPower(1.0));
 
         return builder
                 .build();
     }
-
 
     public PathChain getPickupPath(int cycleNum) throws IllegalStateException {
         if (follower == null)
@@ -69,26 +71,25 @@ public class SpecimenCycleGenerator {
 
         builder.addPath(
                 new BezierCurve(
-                        allianceColor.convertPoint(
+                        allianceColor.convert(
                                 new Point(depositLocation.getX(), depositLocation.getY()-(cycleNum-1)*depositGap)
                         ),
                         new Point(17.830, 58.724, Point.CARTESIAN),
                         new Point(31.397, 27.715, Point.CARTESIAN),
-                        allianceColor.convertPoint(intermediatePickupLocation.getPoint())))
+                        allianceColor.convert(intermediatePickupLocation, Point.class)))
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0));
 
         builder.addPath(
                         new BezierLine(
-                                allianceColor.convertPoint(intermediatePickupLocation.getPoint()),
-                                allianceColor.convertPoint(pickupLocation.getPoint())))
+                                allianceColor.convert(intermediatePickupLocation, Point.class),
+                                allianceColor.convert(pickupLocation, Point.class)))
                 .setPathEndVelocityConstraint(3)
-                .setConstantHeadingInterpolation(Math.toRadians(0));
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .addParametricCallback(0.1, ()-> follower.setMaxPower(0.7))
+                .setPathEndTValueConstraint(0.99)
+                .setPathEndTimeoutConstraint(200);
 
         return builder
                 .build();
-    }
-
-    public enum SampleLocation {
-        OUTSIDE, MIDDLE, INSIDE
     }
 }

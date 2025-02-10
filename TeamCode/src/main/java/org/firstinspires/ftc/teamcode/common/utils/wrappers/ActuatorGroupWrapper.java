@@ -210,6 +210,11 @@ public class ActuatorGroupWrapper {
         this.power = power;
     }
 
+    public void setOverridePower(double power){
+        this.power = power;
+    }
+
+
     public ActuatorGroupWrapper setMinPos(int pos){
         this.minPos = pos;
         return this;
