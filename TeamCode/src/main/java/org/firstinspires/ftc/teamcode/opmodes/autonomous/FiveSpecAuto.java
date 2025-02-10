@@ -88,7 +88,7 @@ public class FiveSpecAuto extends CommandOpMode {
                                         new Point(37.500, 63.720, Point.CARTESIAN),
                                         new Point(27.676, 45.622, Point.CARTESIAN),
                                         new Point(44.757, 31.100, Point.CARTESIAN),
-                                        new Point(50.216, 31.100, Point.CARTESIAN)
+                                        new Point(56.216, 31.100, Point.CARTESIAN)
                                 )
                         )
                         .setTangentHeadingInterpolation()
@@ -106,14 +106,14 @@ public class FiveSpecAuto extends CommandOpMode {
                                 // Line 4
                                 new BezierLine(
                                         new Point(25.314, 21.400, Point.CARTESIAN),
-                                        new Point(47.216, 21.100, Point.CARTESIAN)
+                                        new Point(50.216, 21.100, Point.CARTESIAN)
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 5
                                 new BezierCurve(
-                                        new Point(47.216, 21.100, Point.CARTESIAN),
+                                        new Point(50.216, 21.100, Point.CARTESIAN),
                                         new Point(51.946, 6.243, Point.CARTESIAN),
                                         new Point(25.314, 11.400, Point.CARTESIAN)
                                 )
@@ -137,7 +137,10 @@ public class FiveSpecAuto extends CommandOpMode {
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
-                                // Line 8
+                                // Line 8\
+
+
+
                                 new BezierLine(
                                         new Point(49.216, 7.300, Point.CARTESIAN),
                                         new Point(23.314, 7.300, Point.CARTESIAN)

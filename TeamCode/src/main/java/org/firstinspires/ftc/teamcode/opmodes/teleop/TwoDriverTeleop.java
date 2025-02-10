@@ -162,6 +162,12 @@ public class TwoDriverTeleop extends CommandOpMode {
                         new InstantCommand(), () -> HOLDING_SAMPLE)
                 );
 
+        // Deposit low basket setup
+        operator.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
+                .whenPressed(new ConditionalCommand(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_LOW_BUCKET),
+                        new InstantCommand(), () -> HOLDING_SAMPLE)
+                );
+
         // Deposit sample
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(
@@ -307,7 +313,7 @@ public class TwoDriverTeleop extends CommandOpMode {
             increaseCounter ++;
             robot.liftActuator.setTargetPosition(robot.liftActuator.getTargetPosition()+1);
             //robot.liftActuator.setOverridePower(-0.5);
-            if (robot.liftActuator.getPosition() > 1600){
+            if (robot.liftActuator.getPosition() > POST_BUZZER_HANG_RELEASE_HEIGHT){
                 hangDone = true;
             }
         }

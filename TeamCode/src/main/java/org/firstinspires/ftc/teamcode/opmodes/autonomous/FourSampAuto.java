@@ -194,7 +194,7 @@ public class FourSampAuto extends CommandOpMode {
 
                         // Pickup outside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new HoverCommand(robot, 1650),
+                        new HoverCommand(robot, 1600),
                         new FollowPathChainCommand(robot.follower, paths.get(5)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),

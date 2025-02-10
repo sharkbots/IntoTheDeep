@@ -114,6 +114,8 @@ public class Globals {
     public static int LVL1_ASCENT_HEIGHT = 825;
     public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2000;
     public static int ENDGAME_ASCENT_HEIGHT = 1100;
+    public static int POST_BUZZER_HANG_RELEASE_HEIGHT = 1550; // 1600 before, which tilted the robot
+
 
     // Autonomous poses
     public static final Pose sampleAutoStartPose = new Pose(6.595, 101.105, Math.toRadians(270));
