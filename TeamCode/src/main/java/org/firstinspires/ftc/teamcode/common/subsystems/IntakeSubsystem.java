@@ -227,6 +227,6 @@ public class IntakeSubsystem extends SubsystemWrapper {
         robot.extendoActuator.setTargetPosition(0);
         setPivotState(PivotState.TRANSFER);
         setClawState(ClawState.OPEN);
-        setClawRotation(ClawRotationState.TRANSFER);
+        robot.intakeClawRotationServo.setPosition(INTAKE_CLAW_ROTATION_TRANSFER_POS);
     }
 }
