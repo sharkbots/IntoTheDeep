@@ -516,13 +516,7 @@ public class Robot extends SubsystemWrapper{
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessors(sampleDetectionPipeline)
                 .enableLiveView(true)
-                //.setCameraResolution(new Size())
                 .build();
-        try{
-            sleep(1000);
-        } catch (Exception e){
-
-        }
 
         visionPortal.setProcessorEnabled(sampleDetectionPipeline, false);
     }
@@ -532,19 +526,25 @@ public class Robot extends SubsystemWrapper{
         gainControl = visionPortal.getCameraControl(GainControl.class);
         whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
 
-        setExposureMode(ExposureControl.Mode.Manual);
-        try{
-            sleep(500);
-        } catch (Exception e){
 
+        if (exposureControl.getMode()!= ExposureControl.Mode.Manual){
+            setExposureMode(ExposureControl.Mode.Manual);
+            try{
+                sleep(50);
+            } catch (Exception e){
+
+            }
         }
+
         setExposureControl(CAMERA_EXPOSURE_MILLIS, TimeUnit.MILLISECONDS);
 
-        setWhiteBalanceMode(WhiteBalanceControl.Mode.MANUAL);
-        try{
-            sleep(500);
-        } catch (Exception e){
+        if (whiteBalanceControl.getMode()!= WhiteBalanceControl.Mode.MANUAL){
+            setWhiteBalanceMode(WhiteBalanceControl.Mode.MANUAL);
+            try{
+                sleep(50);
+            } catch (Exception e){
 
+            }
         }
         setWhiteBalanceControl(CAMERA_WHITE_BALANCE_TEMPERATURE);
 
@@ -559,8 +559,23 @@ public class Robot extends SubsystemWrapper{
         gainControl = visionPortal.getCameraControl(GainControl.class);
         whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
 
-        setExposureMode(ExposureControl.Mode.Auto);
-        setWhiteBalanceMode(WhiteBalanceControl.Mode.AUTO);
+
+        if (exposureControl.getMode()!= ExposureControl.Mode.AperturePriority){
+            setExposureMode(ExposureControl.Mode.AperturePriority);
+            try{
+                sleep(50);
+            } catch (Exception e){
+
+            }
+        }
+        if (whiteBalanceControl.getMode()!= WhiteBalanceControl.Mode.AUTO){
+            setWhiteBalanceMode(WhiteBalanceControl.Mode.AUTO);
+            try{
+                sleep(50);
+            } catch (Exception e){
+
+            }
+        }
     }
 
     public void setExposureMode(ExposureControl.Mode mode){
@@ -593,11 +608,14 @@ public class Robot extends SubsystemWrapper{
     }
 
     public void closeCamera(){
-        if (visionPortal != null) visionPortal.close();
+        if (visionPortal != null){
+            visionPortal.stopLiveView();
+            visionPortal.stopStreaming();
+            visionPortal.close();
+        }
     }
 
     public void kill(){
         instance = null;
     }
-
 }
