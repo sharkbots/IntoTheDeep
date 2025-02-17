@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.vision.sampleDetection;
 
 import static java.lang.Math.PI;
-import static java.lang.Math.cos;
 import static java.lang.Math.pow;
-import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 import android.graphics.Bitmap;
@@ -14,13 +12,11 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.android.Utils;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfPoint3f;
@@ -30,7 +26,6 @@ import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,10 +38,12 @@ public class SampleDetectionPipeline implements VisionProcessor {
     public double ARM_ANGLE_NOT_NEEDED = 0;
     public double ARM_HEIGHT_NOT_NEEDED = 0;
     public static int retVal = 0;
+
+
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 10, RLH = 160, RS = 90, RV = 70, BH = 100, BUH = 120, BS = 70, BV = 80, YH = 15, YUH = 33, YS = 80, YV = 120, AREA_RATIO_WEIGHT = -0.4, UPPIES = .5, MIN_AREA = 7000,FOR_MULT=.7,
+    public static double RUH = 5, RLH = 160, RS = 90, RV = 70, BH = 101, BUH = 120, BS = 50, BV = 75, YH = 11, YUH = 33, YS = 80, YV = 150, AREA_RATIO_WEIGHT = -0.4, UPPIES = .5, MIN_AREA = 7000,FOR_MULT=.7,
             FOR_CONST = 3;
-    public static int UPPER_THRESH = 100, LOWER_THRESH = 50, YUPPER_THRESH = 120, YLOWER_THRESH = 60, KERNEL_SIZE = 2, YELLOW_KERNEL_SIZE = 3;
+    public static int UPPER_THRESH = 130, LOWER_THRESH = 120, YUPPER_THRESH = 165, YLOWER_THRESH = 60, KERNEL_SIZE = 8, YELLOW_KERNEL_SIZE = 8;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
     Mat kernel = new Mat();
@@ -54,7 +51,7 @@ public class SampleDetectionPipeline implements VisionProcessor {
     Mat hierarchy = new Mat();
     Mat boundingImage = new Mat(), maskedImage = new Mat();
 
-    public static double AREA_THRESH = .82, FCL = 1, UP_TOLERANCE = 0.75, DOWN_TOLERANCE = 0.8, CLASSUP_TOL = 0.5, CLASSDOWN_TOL = 0.3;
+    public static double AREA_THRESH = .82, FCL = 1, UP_TOLERANCE = 0.85, DOWN_TOLERANCE = 0.8, CLASSUP_TOL = 0.5, CLASSDOWN_TOL = 0.3;
     double objectWidth = 3.5;  // Inches
     double objectHeight = 1.5;  // Inches
 
@@ -81,16 +78,16 @@ public class SampleDetectionPipeline implements VisionProcessor {
     Point[] orderedRectPoints;
     Mat rvec = new Mat();
     Mat tvec = new Mat();
-    MatOfPoint2f imagePoints = new MatOfPoint2f(), contour2f = new MatOfPoint2f();
-    private volatile double[] center = {0, 0, 0, 0};
+    MatOfPoint2f contour2f = new MatOfPoint2f();
+    private volatile Double[] closestCenter = {0.0, 0.0, 0.0, 0.0};
 
     public static int color = 0;
 
     /*
      * Camera Calibration Parameters
      */
-    Mat cameraMatrix = new Mat(3, 3, CvType.CV_64FC1);
-    MatOfDouble distCoeffs = new MatOfDouble();
+    //Mat cameraMatrix = new Mat(3, 3, CvType.CV_64FC1);
+   // MatOfDouble distCoeffs = new MatOfDouble();
     RotatedRect minAreaRect;
 
     public SampleDetectionPipeline(){
@@ -102,11 +99,11 @@ public class SampleDetectionPipeline implements VisionProcessor {
 //                fx, 0, cx,
 //                0, fy, cy,
 //                0, 0, 1);
-//        distCoeffs = new MatOfDouble(0.00981454, -0.0292495, 0.00489965, -0.000205308, -4.06933e-05);
+      //  distCoeffs = new MatOfDouble(0.00981454, -0.0292495, 0.00489965, -0.000205308, -4.06933e-05);
     }
 
     public void resetCenter() {
-        center = new double[]{0, 0, 0, 0};
+        closestCenter = new Double[]{0.0, 0.0, 0.0, 0.0};
     }
 
     @Override
@@ -121,6 +118,8 @@ public class SampleDetectionPipeline implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat input, long captureTimeNanos) {
+        closestCenter = new Double[]{0.0, 0.0, 0.0, 0.0};
+        Imgproc.GaussianBlur(input, input, new Size(CAMERA_GAUSSIAN, CAMERA_GAUSSIAN), 0);
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
         Scalar rlFilt = new Scalar(RLH, RS, RV),
                 ruFilt = new Scalar(180, 255, 255),
@@ -167,27 +166,46 @@ public class SampleDetectionPipeline implements VisionProcessor {
         contours = new ArrayList<>();
         Imgproc.findContours(closedEdges, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        //robot.telemetryA.addData("nb contours", contours.size());
 
-//        ArrayList<Double[]> colorCoords = contoursToCoords();
-//        if (!contours.isEmpty()) {
-//            Double[] centered = matchedCoords(colorCoords, colorCoords);
-//            if (centered[0] != 100) center = convertToDoubleArray(centered);
-//        }
-//        if (retVal == 0)
-//            boundingImage.copyTo(input);
-//        else if (retVal == 1)
-//            maskedImage.copyTo(input);
-//        else if (retVal == 2)
-//            return edges;
-//        else
-//            return closedEdges;
+        ArrayList<Double[]> centerCoords = contoursToCoords();
+
+        for(Double[] coord: centerCoords) {
+            Point center = new Point(coord[0].intValue(), coord[1].intValue());
+            Imgproc.circle(boundingImage, center, 5, new Scalar(255, 0, 255), 4);
+            //Imgproc.putText(boundingImage, center.toString(), center, Imgproc.FONT_HERSHEY_SIMPLEX, 1.0, new Scalar(255, 0, 255), 2);
+        }
+
+        if (!centerCoords.isEmpty()){
+            closestCenter = closestCenter(centerCoords);
+            Point closestCenterPoint = new Point(closestCenter[0].intValue(), closestCenter[1].intValue());
+            if (cameraInRange()){
+                Imgproc.circle(boundingImage, closestCenterPoint, 5, new Scalar(0, 255, 0), 4);
+                Imgproc.putText(boundingImage, this.closestCenter.toString(), closestCenterPoint, Imgproc.FONT_HERSHEY_SIMPLEX, 1.0, new Scalar(0, 255, 0), 2);
+            }
+            else {
+                Imgproc.circle(boundingImage, closestCenterPoint, 5, new Scalar(0, 0, 255), 4);
+                Imgproc.putText(boundingImage, this.closestCenter.toString(), closestCenterPoint, Imgproc.FONT_HERSHEY_SIMPLEX, 1.0, new Scalar(0, 0, 255), 2);
+
+            }
+        }
 
 
+
+        //input.copyTo(hsv);
+
+        if (retVal == 0)
+            boundingImage.copyTo(hsv);
+        else if (retVal == 1)
+            maskedImage.copyTo(hsv);
+        else if (retVal == 2)
+            edges.copyTo(hsv);
+        else
+            closedEdges.copyTo(hsv);
+//
 //        closedEdges.release();
-//        colorMask.release();
 //        edges.release();
-//        hsv.release();
+//        colorMask.release();
+//       // hsv.release();
 //        mask.release();
 //        mask2.release();
 //        maskedImage.release();
@@ -195,24 +213,26 @@ public class SampleDetectionPipeline implements VisionProcessor {
 //        hierarchy.release();
 //        boundingImage.release();
 
-        Core.rotate(maskedImage, maskedImage, Core.ROTATE_180);
+//        Core.rotate(maskedImage, maskedImage, Core.ROTATE_180);
 //        Bitmap maskedBmp = Bitmap.createBitmap(maskedImage.cols(), maskedImage.rows(), Bitmap.Config.ARGB_8888);
 //        Utils.matToBitmap(maskedImage, maskedBmp);
 //        FtcDashboard.getInstance().sendImage(maskedBmp);
 
-        Bitmap inputBmp = Bitmap.createBitmap(input.cols(), input.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(input, inputBmp);
+        Core.rotate(hsv, hsv, Core.ROTATE_180);
+        Bitmap inputBmp = Bitmap.createBitmap(hsv.cols(), hsv.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(hsv, inputBmp);
         FtcDashboard.getInstance().sendImage(inputBmp);
 
-        return hsv;
+        return input;
+
     }
 
-    public synchronized void setCenter(double[] newCenter) {
-        center = newCenter;
+    public synchronized void setCenter(Double[] newCenter) {
+        closestCenter = newCenter;
     }
 
-    public synchronized double[] getCenter() {
-        return center;
+    public synchronized Double[] getCenter() {
+        return closestCenter;
     }
 
     double[] convertToDoubleArray(Double[] wrapperArray) {
@@ -225,24 +245,24 @@ public class SampleDetectionPipeline implements VisionProcessor {
         return primitiveArray;
     }
 
-    public Double[] matchedCoords(ArrayList<Double[]> colorCoords, ArrayList<Double[]> allCoords) {
-        ArrayList<Double[]> matchedCenters = new ArrayList<>();
-        double minDist = 1000;
-        int coord = 0;
-        for (int i = 0; i < colorCoords.size(); i++) {
-
-            matchedCenters.add(colorCoords.get(i));
-            double[] relCent = convertToDoubleArray(colorCoords.get(i));
-            relCent[0] = (relCent[2] * sin(ARM_ANGLE_NOT_NEEDED * PI / 180) + relCent[0] * cos(ARM_ANGLE_NOT_NEEDED * PI / 180) - FOR_CONST)*FOR_MULT;
-            if (relCent[0]*relCent[0]+relCent[1]*relCent[1] < minDist) {
-                coord = matchedCenters.size() - 1;
-                minDist = relCent[0]*relCent[0]+relCent[1]*relCent[1];
-            }
-        }
-        if (matchedCenters.isEmpty())
-            return new Double[]{100.0, 100.0, 100.0, 100.0};
-        return matchedCenters.get(coord);
-    }
+//    public Double[] matchedCoords(ArrayList<Double[]> colorCoords, ArrayList<Double[]> allCoords) {
+//        ArrayList<Double[]> matchedCenters = new ArrayList<>();
+//        double minDist = 1000;
+//        int coord = 0;
+//        for (int i = 0; i < colorCoords.size(); i++) {
+//
+//            matchedCenters.add(colorCoords.get(i));
+//            double[] relCent = convertToDoubleArray(colorCoords.get(i));
+//            relCent[0] = (relCent[2] * sin(ARM_ANGLE_NOT_NEEDED * PI / 180) + relCent[0] * cos(ARM_ANGLE_NOT_NEEDED * PI / 180) - FOR_CONST)*FOR_MULT;
+//            if (relCent[0]*relCent[0]+relCent[1]*relCent[1] < minDist) {
+//                coord = matchedCenters.size() - 1;
+//                minDist = relCent[0]*relCent[0]+relCent[1]*relCent[1];
+//            }
+//        }
+//        if (matchedCenters.isEmpty())
+//            return new Double[]{100.0, 100.0, 100.0, 100.0};
+//        return matchedCenters.get(coord);
+//    }
 
     public ArrayList<Double[]> contoursToCoords() {
         ArrayList<Double[]> centers = new ArrayList<>();
@@ -284,76 +304,56 @@ public class SampleDetectionPipeline implements VisionProcessor {
                         // Compute the angle and store it
                         double angle = (rotRectAngle);
 
-
-                        // Order the image points in the same order as object points
-                        orderedRectPoints = orderPoints(box);
-
-                        int classify = 0;
-                        if (aspectRatio < 3.5 / 1.5 - CLASSDOWN_TOL) {
-                            classify = 1;
-                        } else if (aspectRatio > 3.5 / 1.5 + CLASSUP_TOL) {
-                            classify = 2;
-                        }
-                        if (classify == 2) {
-                            rlObjectPoints = objectPoints2;
-                        } else if (classify == 1) {
-                            rlObjectPoints = objectPoints1;
-                        } else {
-                            rlObjectPoints = objectPoints;
-                            orderedRectPoints = orderCorner(orderedRectPoints);
-                        }
-                        imagePoints = new MatOfPoint2f(orderedRectPoints);
-
-                        boolean success = Calib3d.solvePnP(
-                                rlObjectPoints, // Object points in 3D
-                                imagePoints,  // Corresponding image points
-                                cameraMatrix,
-                                distCoeffs,
-                                rvec,
-                                tvec,
-                                false,
-                                Calib3d.SOLVEPNP_SQPNP
-                        );
+                        centers.add(new Double[]{(box[0].x+box[2].x)/2, (box[0].y+box[2].y)/2, 0.0, angle}); // add x offset
                         for (int j = 0; j < 4; j++) {
-                            Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 0, 255), 2);
+                            Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(255, 0, 255), 4);
                         }
-                        if (success) {
-                            double[] coords = new double[3];
-                            tvec.get(0, 0, coords);
-                            tvec.get(0, 0, coords);
-                            double multiplia = sqrt(aspectRatio / (3.5 / 1.5));
-                            if (multiplia < 1) {
-                                multiplia = 1 / multiplia;
-                            }
-
-                            //double consta = 1.16 * pow(Imgproc.contourArea(contour) / (minAreaRect.size.height * minAreaRect.size.width), AREA_RATIO_WEIGHT) * multiplia;
-                            //double heighter = consta * (coords[2] * cos(ARM_ANGLE_NOT_NEEDED * PI / 180) + coords[0] * sin(ARM_ANGLE_NOT_NEEDED * PI / 180));
-                            centers.add(new Double[]{-coords[0], -coords[1], coords[2], angle});
-                            for (int j = 0; j < 4; j++) {
-                                Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(255, 255, 0), 2);
-                            }
-//                            if (heighter > ARM_HEIGHT_NOT_NEEDED - 1 && heighter < ARM_HEIGHT_NOT_NEEDED + 1.5) {
-//                                centers.add(new Double[]{-coords[0] * consta, -coords[1] * consta, coords[2] * consta, angle});
-//                                for (int j = 0; j < 4; j++) {
-//                                    Imgproc.line(boundingImage, box[j], box[(j + 1) % 4], new Scalar(0, 255, 0), 2);
-//                                }
-//                            }
-                            if (center != null) {
-//                                packet.put("CAM X", center[0]);
-//                                packet.put("CAM y", center[1]);
-//                                packet.put("CAM Z", center[2]);
-//                                packet.put("classif", classify);
-//                                packet.put("aspectRatio", aspectRatio);
-//                                packet.put("area", Imgproc.contourArea(contour));
-//                                packet.put("color", color);
-                            }
-
                         }
                     }
                 }
             }
-        }
+
         return centers;
+    }
+
+    public Double[] closestCenter(ArrayList<Double[]> coords){
+        double smallestXOffset = Math.abs(Robot.getParallaxXCm(coords.get(0)[0].intValue(), coords.get(0)[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, coords.get(0)[1].intValue()));
+        int closestCenterID = 0;
+        for (int i = 1; i < coords.size(); i++){
+            double xOffset = Math.abs(Robot.getParallaxXCm(coords.get(i)[0].intValue(), coords.get(0)[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, coords.get(0)[1].intValue()));
+            if (xOffset<smallestXOffset) {
+                smallestXOffset = xOffset;
+                closestCenterID = i;
+            }
+
+        }
+        return coords.get(closestCenterID);
+    }
+
+//    public Double[] getCameraOffset(Double[] closestCenter){
+//        return new Double[] {(Robot.getParallaxXCm(closestCenter[0].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2))/2.54,
+//                (Robot.getParallaxYCm(closestCenter[1].intValue()) - Robot.getParallaxYCm(CAMERA_STREAM_HEIGHT/2))/2.54, closestCenter[3]/2.54, (closestCenter[4]-(90+0))%180}; // +0 is current angle claw
+//    }
+
+    //TODO: REFACTOR TO CV MANAGER CLASS
+
+    public boolean cameraInRange(){
+        return Math.abs(getCameraYOffset()) < 0.5 && Math.abs(getCameraHeadingOffsetDegrees()) < (20.0); /*getCameraXOffset() < 0.3*/
+    }
+    public double getCameraXOffset(){
+        return (Robot.getParallaxXCm(this.closestCenter[0].intValue(), this.closestCenter[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, this.closestCenter[1].intValue()))/2.54;
+    }
+
+    public double getCameraYOffset(){
+        return (Robot.getParallaxYCm(this.closestCenter[1].intValue()) - Robot.getParallaxYCm(CAMERA_STREAM_HEIGHT/2))/2.54;
+    }
+
+    public double getCameraZOffset(){
+        return this.closestCenter[2]/2.54;
+    }
+
+    public double getCameraHeadingOffsetDegrees(){
+        return((this.closestCenter[3]-(90+0))%180); // +0 is current angle claw
     }
 
     private static double distance(Point p1, Point p2) {

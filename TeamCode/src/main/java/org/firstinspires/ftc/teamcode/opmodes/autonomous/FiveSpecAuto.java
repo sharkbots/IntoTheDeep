@@ -212,6 +212,7 @@ public class FiveSpecAuto extends CommandOpMode {
     }
     @Override
     public void initialize() {
+        super.reset();
         Globals.IS_AUTO = true;
         Globals.ALLIANCE = Globals.AllianceColor.BLUE;
 

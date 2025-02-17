@@ -42,9 +42,13 @@ public class Globals {
     }
 
     // Camera configurations
-    public static long CAMERA_EXPOSURE_MILLIS = 33; //10
-    public static int CAMERA_WHITE_BALANCE_TEMPERATURE = 5500; //5000
-    public static int CAMERA_GAIN = 70; //30
+    public static long CAMERA_EXPOSURE_MILLIS = 25; //33
+    public static int CAMERA_WHITE_BALANCE_TEMPERATURE = 5500; //5500
+    public static int CAMERA_GAIN = 30; //70
+    public static int CAMERA_GAUSSIAN = 5; //70
+
+    public static int CAMERA_STREAM_WIDTH = 800;
+    public static int CAMERA_STREAM_HEIGHT = 600;
 
 
     public static double DEFAULT_LIFT_FEEDFORWARD = 0.08;
@@ -78,7 +82,7 @@ public class Globals {
 
     // Intake Claw Pivot
     public static double INTAKE_CLAW_PIVOT_TRANSFER_POS = 0.015;
-    public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS = 0.79;
+    public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS = 0.735; //0.79
     public static double INTAKE_CLAW_PIVOT_INTAKE_POS = 0.675;
     public static double INTAKE_CLAW_PIVOT_HOLDING_POS = 0.775;
 

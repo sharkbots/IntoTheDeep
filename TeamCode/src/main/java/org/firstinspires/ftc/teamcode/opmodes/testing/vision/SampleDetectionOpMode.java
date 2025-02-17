@@ -39,6 +39,7 @@ public class SampleDetectionOpMode extends LinearOpMode {
 
         while(opModeIsActive() && !isStopRequested()){
             robot.clearBulkCache();
+            robot.intakeClawPivotServo.setPosition(INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS);
             if(gamepad1.cross){
 //            robot.telemetryA.addData("Exposure length", robot.exposureControl.getExposure(TimeUnit.MILLISECONDS));
 //            robot.telemetryA.addData("Exposure length min", robot.exposureControl.getMinExposure(TimeUnit.MILLISECONDS));

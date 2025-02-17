@@ -25,8 +25,6 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -51,8 +49,6 @@ import org.firstinspires.ftc.teamcode.common.vision.sampleDetection.SampleDetect
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.*;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,6 +124,10 @@ public class Robot extends SubsystemWrapper{
     public ExposureControl exposureControl = null;
     public GainControl gainControl = null;
     public WhiteBalanceControl whiteBalanceControl = null;
+
+    private final long CAMERA_DEFAULT_EXPOSURE_LENGTH_MILLIS = 15;
+    private final int CAMERA_DEFAULT_GAIN = 0;
+    private final int CAMERA_DEFAULT_WHITE_BALANCE_TEMPERATURE = 4600;
 
     //private boolean has
 
@@ -315,10 +315,18 @@ public class Robot extends SubsystemWrapper{
         addSubsystem(intake, lift);
 
         startCamera();
+
         visionPortal.resumeStreaming();
 
         setAutoCameraControls();
-        //setManualCameraControls();
+
+        try {
+            sleep(1000);
+        } catch (Exception e){
+
+        }
+
+        setManualCameraControls();
 
         if (!Globals.IS_AUTO) {
             drivetrain = new MecanumDrivetrain();
@@ -505,6 +513,15 @@ public class Robot extends SubsystemWrapper{
         sampleDetectionPipeline.resetCenter();
     }
 
+    public static double getParallaxYCm(int yPixelVal){
+        return 4E-05*(yPixelVal*yPixelVal) + 0.011*yPixelVal + 0.5037;
+    }
+
+    public static double getParallaxXCm(int xPixelVal, int yPixelVal){
+        return xPixelVal/((-1.0/75.0)*yPixelVal+40.0);
+    }
+
+
     public void startCamera() {
 //        AprilTagProcessor atag = new AprilTagProcessor.Builder()
 //                .setLensIntrinsics()
@@ -512,7 +529,7 @@ public class Robot extends SubsystemWrapper{
 
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .setCameraResolution(new Size(800, 600)) // 1024 768
+                .setCameraResolution(new Size(CAMERA_STREAM_WIDTH, CAMERA_STREAM_HEIGHT)) // 1024 768
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessors(sampleDetectionPipeline)
                 .enableLiveView(true)
@@ -568,6 +585,8 @@ public class Robot extends SubsystemWrapper{
 
             }
         }
+        setExposureControl(CAMERA_DEFAULT_EXPOSURE_LENGTH_MILLIS, TimeUnit.MILLISECONDS);
+
         if (whiteBalanceControl.getMode()!= WhiteBalanceControl.Mode.AUTO){
             setWhiteBalanceMode(WhiteBalanceControl.Mode.AUTO);
             try{
@@ -576,6 +595,10 @@ public class Robot extends SubsystemWrapper{
 
             }
         }
+        setWhiteBalanceControl(CAMERA_DEFAULT_WHITE_BALANCE_TEMPERATURE);
+
+        setGainControl(CAMERA_DEFAULT_GAIN);
+
     }
 
     public void setExposureMode(ExposureControl.Mode mode){
