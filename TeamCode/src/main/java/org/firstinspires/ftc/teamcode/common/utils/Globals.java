@@ -77,6 +77,9 @@ public class Globals {
     // Intake Arm Pivot
     public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.47;
     public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.7;
+//    public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
+//    public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.79
+
     public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
     public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.79;
 

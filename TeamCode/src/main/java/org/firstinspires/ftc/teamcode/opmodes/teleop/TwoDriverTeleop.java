@@ -77,9 +77,9 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.follower.setStartingPose(END_OF_AUTO_POSE);
         robot.follower.setPose(END_OF_AUTO_POSE);
 
-        robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
+        //robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
         dtHeadingLockOn = new PIDController(0.5, 0, 0);
-        robot.swapYellow();
+        //robot.swapYellow();
 
         // setup hang
         operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
@@ -122,29 +122,29 @@ public class TwoDriverTeleop extends CommandOpMode {
                         () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
                 ));
 
-//        // Shoot out intake
-//        operator.getGamepadButton(GamepadKeys.Button.A)
-//                .whenPressed(
-//                        new ConditionalCommand(
-//                                new TransferCommand(robot),
-//                                new ConditionalCommand(new HoverCommand(robot,100), new InstantCommand(),
-//                                        () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
-//                                                robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER),
-//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
-//                        )
-//
-//                );
-
+        // Shoot out intake
         operator.getGamepadButton(GamepadKeys.Button.A)
                 .whenPressed(
                         new ConditionalCommand(
-                                new CVintakeCommand(robot),
-                                new InstantCommand(),
-                                () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
-                                        robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER
+                                new TransferCommand(robot),
+                                new ConditionalCommand(new HoverCommand(robot,100), new InstantCommand(),
+                                        () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
+                                                robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER),
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
                         )
 
                 );
+
+//        operator.getGamepadButton(GamepadKeys.Button.A)
+//                .whenPressed(
+//                        new ConditionalCommand(
+//                                new CVintakeCommand(robot),
+//                                new InstantCommand(),
+//                                () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
+//                                        robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER
+//                        )
+//
+//                );
 
         // Grab sample
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
