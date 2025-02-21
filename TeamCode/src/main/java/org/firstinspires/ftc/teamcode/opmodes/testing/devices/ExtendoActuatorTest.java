@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing.devices;
 
+import android.provider.Settings;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -13,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
 
@@ -43,7 +46,7 @@ public class ExtendoActuatorTest extends OpMode {
         extendoMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         extendoMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "extendoMotor").encoder);
+        extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
 
         this.extendoActuator = new ActuatorGroupWrapper(extendoEncoder, extendoMotor)
                 .setPIDController(new PIDController(ekP, ekI, ekD))
@@ -64,7 +67,7 @@ public class ExtendoActuatorTest extends OpMode {
         telemetry.addData("extendo ticks", extendoEncoder.getPosition());
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addData("extendo position", extendoActuator.getPosition() / 26);
+        telemetry.addData("extendo position", extendoActuator.getPosition() / Globals.EXTENDO_TICKS_PER_INCH);
         telemetry.addData("extendo power", extendoActuator.getPower());
         loopTime = loop;
         telemetry.update();

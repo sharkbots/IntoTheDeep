@@ -41,6 +41,16 @@ public class Globals {
         }
     }
 
+    // Camera configurations
+    public static long CAMERA_EXPOSURE_MILLIS = 25; //33
+    public static int CAMERA_WHITE_BALANCE_TEMPERATURE = 5500; //5500
+    public static int CAMERA_GAIN = 30; //70
+    public static int CAMERA_GAUSSIAN = 5; //70
+
+    public static int CAMERA_STREAM_WIDTH = 800;
+    public static int CAMERA_STREAM_HEIGHT = 600;
+
+
     public static double DEFAULT_LIFT_FEEDFORWARD = 0.08;
     public static double LIFT_RESET_FEEDFORWARD = -0.2;
     public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.2;
@@ -58,34 +68,46 @@ public class Globals {
     public static double ROBOT_LENGTH = 13.1;
     public static double ROBOT_WIDTH = 12.8;
 
-    // Pivot times
+    // Pivot time (axon max no SPM)
     // 0.84 sec/360° -> 0.828 sec/355° -> 828 milliseconds/355°
     public static double INTAKE_ARM_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
     public static double INTAKE_CLAW_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
     public static double DEPOSIT_CLAW_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
 
+    // Rotation time (GB speed no SPM)
+    // 0.xx sec/180° -> 0.xxx sec/300° -> xxx milliseconds/300°
+    public static double INTAKE_CLAW_ROTATION_MOVEMENT_TIME = 200;
+
     // Intake Arm Pivot
     public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.47;
-    public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.75;
-    public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.79;
     public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.7;
+    public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
+    public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.79;
 
     // Intake Claw Pivot
-    public static double INTAKE_CLAW_PIVOT_TRANSFER_POS = 0.24;
-    public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS = 0.95;
-    public static double INTAKE_CLAW_PIVOT_INTAKE_POS = 0.9;
-    public static double INTAKE_CLAW_PIVOT_HOLDING_POS = 1;
+    public static double INTAKE_CLAW_PIVOT_TRANSFER_POS = 0.015;
+    public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS = 0.735; //0.79
+    public static double INTAKE_CLAW_PIVOT_INTAKE_POS = 0.675;
+    public static double INTAKE_CLAW_PIVOT_HOLDING_POS = 0.775;
 
     // Intake Claw Rotation
     public static double INTAKE_CLAW_ROTATION_TRANSFER_POS = 0.54;
+    public static double INTAKE_CLAW_ROTATION_FULLY_LEFT_POS = 0.88;
+    public static double INTAKE_CLAW_ROTATION_FULLY_RIGHT_POS = 0.20;
+
 
     // Intake Claw
-    public static double INTAKE_CLAW_OPEN_POS = 0.73;
-    public static double INTAKE_CLAW_MICRO_OPEN_POS = 0.95;
-    public static double INTAKE_CLAW_CLOSED_POS = 0.98;
+    public static double INTAKE_CLAW_OPEN_POS = 0.48;
+    public static double INTAKE_CLAW_MICRO_OPEN_POS = 0.765;
+    public static double INTAKE_CLAW_CLOSED_POS = 0.785;
 
-    // Intake Extendo
+    // Extendo
     public static int MAX_EXTENDO_EXTENSION = 1850;
+
+    // 2143 ticks / 21.26 inch --> 100.7996 ticks / 1 inch
+    public static double EXTENDO_TICKS_PER_INCH = 100.8;
+    // xxx sec / xxx ticks --> xxx sec / xxx ticks
+    public static double EXTENDO_MOVEMENT_TIME = 0;
 
     // Deposit Claw Pivot
     public static double DEPOSIT_CLAW_PIVOT_TRANSFER_POS = 0.045;

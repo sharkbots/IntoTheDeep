@@ -25,6 +25,7 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
@@ -34,19 +35,26 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
+import static java.lang.Thread.sleep;
+
+import android.util.Size;
+
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ServoWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
+import org.firstinspires.ftc.teamcode.common.vision.sampleDetection.SampleDetectionPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 //TODO: ADD COMMENTS TO CLASS
 @Config
@@ -87,23 +95,16 @@ public class Robot extends SubsystemWrapper{
     public AnalogInput depositPivotEnc;
     public AbsoluteAnalogEncoder depositPivotEncoder;
 
-
-    //public ActuatorGroupWrapper depositPivotActuator;
-
-
-
+    // Subsystems
     private ArrayList<SubsystemWrapper> subsystems;
     public IntakeSubsystem intake;
     public LiftSubsystem lift;
     public MecanumDrivetrain drivetrain;
 
+    // Pedro Pathing
     public Follower follower;
 
-
-    //public ConfigMenu configMenu;
-
-
-
+    // IMU
     private final Object imuLock = new Object();
     @GuardedBy("imuLock")
     public IMU imu;
@@ -111,14 +112,24 @@ public class Robot extends SubsystemWrapper{
     private volatile double imuYaw = 0;
     public double imuYawOffset = 0;
     private double imuYawStartOffset = 0;
+    private double imuReadTimeIntervalMS = 250;
+    long lastIMUReadTimestamp = System.currentTimeMillis();
+
 
     public Telemetry telemetryA;
 
     // vision
     private VisionPortal visionPortal;
+    public SampleDetectionPipeline sampleDetectionPipeline;
+    public ExposureControl exposureControl = null;
+    public GainControl gainControl = null;
+    public WhiteBalanceControl whiteBalanceControl = null;
 
-    private double imuReadTimeIntervalMS = 250;
-    long lastIMUReadTimestamp = System.currentTimeMillis();
+    private final long CAMERA_DEFAULT_EXPOSURE_LENGTH_MILLIS = 15;
+    private final int CAMERA_DEFAULT_GAIN = 0;
+    private final int CAMERA_DEFAULT_WHITE_BALANCE_TEMPERATURE = 4600;
+
+    //private boolean has
 
 
     private final double voltageReadTimeIntervalMS = 5000;
@@ -296,10 +307,27 @@ public class Robot extends SubsystemWrapper{
 
         }
 
+        this.sampleDetectionPipeline = new SampleDetectionPipeline();
+
         subsystems = new ArrayList<>();
         intake = new IntakeSubsystem();
         lift = new LiftSubsystem();
         addSubsystem(intake, lift);
+
+        startCamera();
+
+        visionPortal.resumeStreaming();
+
+        setAutoCameraControls();
+
+        try {
+            sleep(500);
+        } catch (Exception e){
+
+        }
+
+        setManualCameraControls();
+
         if (!Globals.IS_AUTO) {
             drivetrain = new MecanumDrivetrain();
             addSubsystem(drivetrain);
@@ -458,7 +486,140 @@ public class Robot extends SubsystemWrapper{
         }
     }
 
-    public void startCamera(){}
+    public int getCurrent(){
+        return sampleDetectionPipeline.getColor();
+    }
+    public void swapInt(int swap){
+        sampleDetectionPipeline.setColor(swap);
+    }
+    public void swapNext(){
+        int newy = sampleDetectionPipeline.getColor()+1;
+        if (newy > 2) newy = 0;
+        sampleDetectionPipeline.setColor(newy);
+    }
+    public double getLatency(){
+        return Math.min(1/ visionPortal.getFps(),.2/*,0.1+webcam.getTotalFrameTimeMs()*/);
+    }
+    public void swapRed(){
+        sampleDetectionPipeline.setColor(0);
+    }
+    public void swapBlue(){
+        sampleDetectionPipeline.setColor(1);
+    }
+    public void swapYellow(){
+        sampleDetectionPipeline.setColor(2);
+    }
+    public void resetCenter(){
+        sampleDetectionPipeline.resetCenter();
+    }
+
+    public static double getParallaxYCm(int yPixelVal){
+        return 4E-05*(yPixelVal*yPixelVal) + 0.011*yPixelVal + 0.5037;
+    }
+
+    public static double getParallaxXCm(int xPixelVal, int yPixelVal){
+        return xPixelVal/((-1.0/75.0)*yPixelVal+40.0);
+    }
+
+
+    public void startCamera() {
+//        AprilTagProcessor atag = new AprilTagProcessor.Builder()
+//                .setLensIntrinsics()
+//                .build();
+
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCameraResolution(new Size(CAMERA_STREAM_WIDTH, CAMERA_STREAM_HEIGHT)) // 1024 768
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .addProcessors(sampleDetectionPipeline)
+                .enableLiveView(true)
+                .build();
+
+        visionPortal.setProcessorEnabled(sampleDetectionPipeline, false);
+    }
+
+    public void setManualCameraControls() {
+        exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+        gainControl = visionPortal.getCameraControl(GainControl.class);
+        whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
+
+
+        if (exposureControl.getMode()!= ExposureControl.Mode.Manual){
+            setExposureMode(ExposureControl.Mode.Manual);
+            try{
+                sleep(50);
+            } catch (Exception e){
+
+            }
+        }
+
+        setExposureControl(CAMERA_EXPOSURE_MILLIS, TimeUnit.MILLISECONDS);
+
+        if (whiteBalanceControl.getMode()!= WhiteBalanceControl.Mode.MANUAL){
+            setWhiteBalanceMode(WhiteBalanceControl.Mode.MANUAL);
+            try{
+                sleep(50);
+            } catch (Exception e){
+
+            }
+        }
+        setWhiteBalanceControl(CAMERA_WHITE_BALANCE_TEMPERATURE);
+
+
+        setGainControl(CAMERA_GAIN);
+
+    }
+
+    public void setAutoCameraControls(){
+
+        exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+        gainControl = visionPortal.getCameraControl(GainControl.class);
+        whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
+
+
+        if (exposureControl.getMode()!= ExposureControl.Mode.AperturePriority){
+            setExposureMode(ExposureControl.Mode.AperturePriority);
+            try{
+                sleep(50);
+            } catch (Exception e){
+
+            }
+        }
+        setExposureControl(CAMERA_DEFAULT_EXPOSURE_LENGTH_MILLIS, TimeUnit.MILLISECONDS);
+
+        if (whiteBalanceControl.getMode()!= WhiteBalanceControl.Mode.AUTO){
+            setWhiteBalanceMode(WhiteBalanceControl.Mode.AUTO);
+            try{
+                sleep(50);
+            } catch (Exception e){
+
+            }
+        }
+        setWhiteBalanceControl(CAMERA_DEFAULT_WHITE_BALANCE_TEMPERATURE);
+
+        setGainControl(CAMERA_DEFAULT_GAIN);
+
+    }
+
+    public void setExposureMode(ExposureControl.Mode mode){
+        exposureControl.setMode(mode);
+    }
+
+    public void setExposureControl(long duration, TimeUnit unit){
+        exposureControl.setExposure(duration, unit);
+    }
+
+    public void setWhiteBalanceMode(WhiteBalanceControl.Mode mode){
+        whiteBalanceControl.setMode(mode);
+    }
+
+    public void setWhiteBalanceControl(int temperature){
+        whiteBalanceControl.setWhiteBalanceTemperature(temperature);
+    }
+
+    public void setGainControl(int gain){
+        gainControl.setGain(gain);
+    }
 
     public void setProcessorEnabled(VisionProcessor processor, boolean enabled){
         this.visionPortal.setProcessorEnabled(processor, enabled);
@@ -470,11 +631,14 @@ public class Robot extends SubsystemWrapper{
     }
 
     public void closeCamera(){
-        if (visionPortal != null) visionPortal.close();
+        if (visionPortal != null){
+            visionPortal.stopLiveView();
+            visionPortal.stopStreaming();
+            visionPortal.close();
+        }
     }
 
     public void kill(){
         instance = null;
     }
-
 }
