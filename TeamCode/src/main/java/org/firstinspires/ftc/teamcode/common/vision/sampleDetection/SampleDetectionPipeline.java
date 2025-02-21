@@ -338,8 +338,21 @@ public class SampleDetectionPipeline implements VisionProcessor {
     //TODO: REFACTOR TO CV MANAGER CLASS
 
     public boolean cameraInRange(){
-        return Math.abs(getCameraYOffset()) < 0.5 && Math.abs(getCameraHeadingOffsetDegrees()) < (20.0); /*getCameraXOffset() < 0.3*/
+        return cameraYInRange() && cameraHeadingInRange(); //&& cameraXInRange();
     }
+
+    public boolean cameraXInRange(){
+        return Math.abs(getCameraXOffset()) <0.3;
+    }
+
+    public boolean cameraYInRange(){
+        return Math.abs(getCameraYOffset()) < 0.5;
+    }
+
+    public boolean cameraHeadingInRange(){
+        return Math.abs(getCameraHeadingOffsetDegrees()) < (20.0);
+    }
+
     public double getCameraXOffset(){
         return (Robot.getParallaxXCm(this.closestCenter[0].intValue(), this.closestCenter[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, this.closestCenter[1].intValue()))/2.54;
     }

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -13,12 +12,10 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVintakeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.AutomaticIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.HangCommand;
@@ -77,9 +74,9 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.follower.setStartingPose(END_OF_AUTO_POSE);
         robot.follower.setPose(END_OF_AUTO_POSE);
 
-        //robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
+        robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
         dtHeadingLockOn = new PIDController(0.5, 0, 0);
-        //robot.swapYellow();
+        robot.swapYellow();
 
         // setup hang
         operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
@@ -107,44 +104,45 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
-        // rotate claw left
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                        .whenPressed(new ConditionalCommand(
-                                new InstantCommand(() -> robot.intake.moveLeft()),
-                                new InstantCommand(),
-                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
-                        ));
-        // rotate claw right
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(new ConditionalCommand(
-                        new InstantCommand(() -> robot.intake.moveRight()),
-                        new InstantCommand(),
-                        () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
-                ));
+//        // rotate claw left
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//                        .whenPressed(new ConditionalCommand(
+//                                new InstantCommand(() -> robot.intake.moveLeft()),
+//                                new InstantCommand(),
+//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
+//                        ));
+//        // rotate claw right
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(new ConditionalCommand(
+//                        new InstantCommand(() -> robot.intake.moveRight()),
+//                        new InstantCommand(),
+//                        () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
+//                ));
 
-        // Shoot out intake
-        operator.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new TransferCommand(robot),
-                                new ConditionalCommand(new HoverCommand(robot,100), new InstantCommand(),
-                                        () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
-                                                robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER),
-                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
-                        )
-
-                );
-
+//        // Shoot out intake
 //        operator.getGamepadButton(GamepadKeys.Button.A)
 //                .whenPressed(
 //                        new ConditionalCommand(
-//                                new CVintakeCommand(robot),
-//                                new InstantCommand(),
-//                                () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
-//                                        robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER
+//                                new TransferCommand(robot),
+//                                new ConditionalCommand(new HoverCommand(robot,100), new InstantCommand(),
+//                                        () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
+//                                                robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER),
+//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
 //                        )
 //
 //                );
+
+        // auto intake aughh
+        operator.getGamepadButton(GamepadKeys.Button.A)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new AutomaticIntakeCommand(robot),
+                                new InstantCommand(),
+                                () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
+                                        robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER
+                        )
+
+                );
 
         // Grab sample
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)

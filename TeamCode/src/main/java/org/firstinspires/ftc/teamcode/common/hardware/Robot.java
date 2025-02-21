@@ -314,19 +314,19 @@ public class Robot extends SubsystemWrapper{
         lift = new LiftSubsystem();
         addSubsystem(intake, lift);
 
-        //startCamera();
+        startCamera();
 
-        //visionPortal.resumeStreaming();
+        visionPortal.resumeStreaming();
 
-        //setAutoCameraControls();
+        setAutoCameraControls();
 
-//        try {
-//            sleep(1000);
-//        } catch (Exception e){
-//
-//        }
-//
-//        setManualCameraControls();
+        try {
+            sleep(500);
+        } catch (Exception e){
+
+        }
+
+        setManualCameraControls();
 
         if (!Globals.IS_AUTO) {
             drivetrain = new MecanumDrivetrain();

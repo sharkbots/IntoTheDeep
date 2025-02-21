@@ -68,18 +68,19 @@ public class Globals {
     public static double ROBOT_LENGTH = 13.1;
     public static double ROBOT_WIDTH = 12.8;
 
-    // Pivot times
+    // Pivot time (axon max no SPM)
     // 0.84 sec/360° -> 0.828 sec/355° -> 828 milliseconds/355°
     public static double INTAKE_ARM_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
     public static double INTAKE_CLAW_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
     public static double DEPOSIT_CLAW_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
 
+    // Rotation time (GB speed no SPM)
+    // 0.xx sec/180° -> 0.xxx sec/300° -> xxx milliseconds/300°
+    public static double INTAKE_CLAW_ROTATION_MOVEMENT_TIME = 200;
+
     // Intake Arm Pivot
     public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.47;
     public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.7;
-//    public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
-//    public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.79
-
     public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
     public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.79;
 
@@ -91,14 +92,22 @@ public class Globals {
 
     // Intake Claw Rotation
     public static double INTAKE_CLAW_ROTATION_TRANSFER_POS = 0.54;
+    public static double INTAKE_CLAW_ROTATION_FULLY_LEFT_POS = 0.88;
+    public static double INTAKE_CLAW_ROTATION_FULLY_RIGHT_POS = 0.20;
+
 
     // Intake Claw
     public static double INTAKE_CLAW_OPEN_POS = 0.48;
     public static double INTAKE_CLAW_MICRO_OPEN_POS = 0.765;
     public static double INTAKE_CLAW_CLOSED_POS = 0.785;
 
-    // Intake Extendo
+    // Extendo
     public static int MAX_EXTENDO_EXTENSION = 1850;
+
+    // 2143 ticks / 21.26 inch --> 100.7996 ticks / 1 inch
+    public static double EXTENDO_TICKS_PER_INCH = 100.8;
+    // xxx sec / xxx ticks --> xxx sec / xxx ticks
+    public static double EXTENDO_MOVEMENT_TIME = 0;
 
     // Deposit Claw Pivot
     public static double DEPOSIT_CLAW_PIVOT_TRANSFER_POS = 0.045;
