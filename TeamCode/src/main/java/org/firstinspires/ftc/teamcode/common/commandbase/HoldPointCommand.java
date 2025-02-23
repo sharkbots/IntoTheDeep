@@ -24,6 +24,8 @@ public class HoldPointCommand extends CommandBase {
     @Override
     public void initialize() {
         Globals.IS_DT_AUTO_ALIGNING = true;
+        robot.telemetryA.addData("target pose:", point.toString());
+        robot.telemetryA.update();
         follower.holdPoint(point);
     }
 
@@ -31,6 +33,7 @@ public class HoldPointCommand extends CommandBase {
     public boolean isFinished() {
         if (!follower.isBusy()){
             Globals.IS_DT_AUTO_ALIGNING = false;
+            //follower.breakFollowing();
             return true;
         }
         else return false;

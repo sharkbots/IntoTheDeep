@@ -9,7 +9,7 @@ import com.pedropathing.pathgen.Point;
 
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
-public class SampleCycleGenerator {
+public class PreloadSampleCycleGenerator {
     public Pose bucketLocation = new Pose(12.386, 128.573, Math.toRadians(315));
     private Pose cycleBucketLocation = new Pose(bucketLocation.getX()+2, bucketLocation.getY()+2, Math.toRadians(315));
     private Pose outsideSampleLocation = new Pose(19.580, 126.069, Math.toRadians(20.11));
@@ -20,24 +20,24 @@ public class SampleCycleGenerator {
     private Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
     private Follower follower;
 
-    public SampleCycleGenerator(){
+    public PreloadSampleCycleGenerator(){
 
     }
 
-    public SampleCycleGenerator(Pose bucketLocation, Pose outsideSampleLocation,
-                                Pose middleSampleLocation, Pose insideSampleLocation) {
+    public PreloadSampleCycleGenerator(Pose bucketLocation, Pose outsideSampleLocation,
+                                       Pose middleSampleLocation, Pose insideSampleLocation) {
         this.bucketLocation = bucketLocation;
         this.insideSampleLocation = insideSampleLocation;
         this.middleSampleLocation = middleSampleLocation;
         this.outsideSampleLocation = outsideSampleLocation;
     }
 
-    public SampleCycleGenerator setAlliance(Globals.AllianceColor alliance) {
+    public PreloadSampleCycleGenerator setAlliance(Globals.AllianceColor alliance) {
         allianceColor = alliance;
         return this;
     }
 
-    public SampleCycleGenerator setFollower(Follower follower) {
+    public PreloadSampleCycleGenerator setFollower(Follower follower) {
         this.follower = follower;
         return this;
     }

@@ -9,9 +9,14 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.Point;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.HoldPointCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
@@ -68,14 +73,14 @@ public class TwoDriverTeleop extends CommandOpMode {
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
 
-        robot.init(hardwareMap);
         robot.setTelemetry(telemetry);
+        robot.init(hardwareMap);
 
         robot.follower.setStartingPose(END_OF_AUTO_POSE);
         robot.follower.setPose(END_OF_AUTO_POSE);
 
         robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
-        dtHeadingLockOn = new PIDController(0.5, 0, 0);
+        //dtHeadingLockOn = new PIDController(0.5, 0, 0);
         robot.swapYellow();
 
         // setup hang
@@ -104,18 +109,43 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
+        /*
 //        // zaza testing
         operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(
-                        new InstantCommand(()->robot.intake.setClawRotationDegrees(0))
+                        new SequentialCommandGroup(
+                                new InstantCommand(()-> robot.follower.setStartingPose(END_OF_AUTO_POSE)),
+                                new FollowPathChainCommand(robot.follower, robot.follower.pathBuilder()
+                                        .addPath(
+                                                new BezierLine(
+                                                        new Point(robot.follower.getPose().getX(), robot.follower.getPose().getY(), Point.CARTESIAN),
+                                                        new Point(robot.follower.getPose().getX() + robot.sampleDetectionPipeline.getCameraXOffset(), robot.follower.getPose().getY(), Point.CARTESIAN)
+                                                )
+                                        )
+                                        .build()).setHoldEnd(true),
+                                new InstantCommand(() -> robot.follower.startTeleopDrive())
+//                                new InstantCommand(() -> {
+//                                    // Evaluate the pose at runtime
+//                                    Pose currentPose = robot.follower.getPose();
+//                                    double cameraXOffset = robot.sampleDetectionPipeline.getCameraXOffset();
+//                                    robot.telemetryA.addData("Current Pose (in alignment command) ", currentPose);
+//                                    robot.telemetryA.addData("Camera X Offset (in alignment command)", cameraXOffset);
+//                                    robot.telemetryA.update();
+//
+//                                    // Calculate the target pose
+//                                    Pose targetDtPose = new Pose(
+//                                            currentPose.getX() + cameraXOffset,
+//                                            currentPose.getY(),
+//                                            currentPose.getHeading()
+//                                    );
+//
+//                                    // Schedule the HoldPointCommand with the updated pose
+//                                    new HoldPointCommand(robot.follower, targetDtPose).schedule();
+//                                })
+                        )
                 );
+         */
 
-        // ZAAAAAAAA
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(
-                        new InstantCommand(()->robot.intake.setClawRotationDegrees(
-                                robot.intake.getClawRotationDegrees()+robot.sampleDetectionPipeline.getCameraHeadingOffsetDegrees()))
-                );
 
         // Shoot out intake
         operator.getGamepadButton(GamepadKeys.Button.A)
@@ -141,6 +171,10 @@ public class TwoDriverTeleop extends CommandOpMode {
 //                        )
 //
 //                );
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//                .whenPressed(
+//                        new HoldPointCommand(robot.follower, new Pose(robot.follower.getPose().getX()+robot.sampleDetectionPipeline.getCameraXOffset(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()))
+//                );
 
         // Grab sample
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
@@ -159,7 +193,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
                         ));
 
-        // Reset lift
+        // GENERAL RESET
         operator.getGamepadButton(GamepadKeys.Button.X)
                 .whenPressed(
                         new ResetLiftCommand(robot)
@@ -253,6 +287,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.read();
         super.run();
         while (opModeInInit()) {
+            robot.telemetryA.addData("right trigger", gamepad2.right_trigger);
             robot.telemetryA.addLine("Robot Initialized.");
             robot.telemetryA.update();
         }
@@ -260,6 +295,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
     @Override
     public void run(){
+        //  Runs FTCLib Command Scheduler
         super.run();
         robot.clearBulkCache();
         robot.read();
@@ -287,7 +323,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 (robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
                 || robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)){
             //robot.extendoActuator.enableManualPower();
-            robot.intake.setExtendoTargetTicks((int)(robot.intake.getExtendoPosTicks()+(-gamepad2.right_stick_y*15)));
+            robot.intake.setExtendoTargetTicks((int)(robot.intake.getExtendoPosTicks()+(-gamepad2.right_stick_y*150)));
         }
 
         // emergency lift override
@@ -296,8 +332,8 @@ public class TwoDriverTeleop extends CommandOpMode {
             robot.liftActuator.enableManualPower();
             robot.liftActuator.setOverridePower(-gamepad2.left_stick_y);
         }
-        robot.telemetryA.addData("left trigger", gamepad2.left_trigger);
-        robot.telemetryA.addData("right trigger", gamepad2.right_trigger);
+        //robot.telemetryA.addData("left trigger", gamepad2.left_trigger);
+        //robot.telemetryA.addData("right trigger", gamepad2.right_trigger);
 
         // Slowly come down from hang
         if (readyToLetGo && timer.seconds() > (matchLength+3) && !hangDone){
@@ -309,22 +345,6 @@ public class TwoDriverTeleop extends CommandOpMode {
                 hangDone = true;
             }
         }
-
-//        // flick 180
-//        if (driver.wasJustPressed(GamepadKeys.Button.B) || flicking){
-//            flicking = true;
-//            double alignmentHeading = ((int) Math.round(currentHeading / Math.PI)) * Math.PI;
-//
-//            if (Math.abs(alignmentHeading-currentHeading) > Math.toRadians(0.5)){
-//                rotation = dtHeadingLockOn.calculate(currentHeading, alignmentHeading);
-//                rotation = MathUtils.clamp(rotation,-1, 1);
-//            }
-//            else {
-//                flicking = false;
-//            }
-//            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
-//            robot.follower.update();
-//        }
 
         double currentHeading = robot.follower.poseUpdater.getPose().getHeading();
         double forward = -gamepad1.left_stick_y;
@@ -353,21 +373,25 @@ public class TwoDriverTeleop extends CommandOpMode {
 //                    -rotation), 0);
         }
 
-        if(Math.abs(forward) >= 0.1 && Math.abs(strafe) >= 0.1 && Math.abs(rotation) >= 0.1){
-            if(!IS_DT_MANUAL_CONTROL)robot.follower.breakFollowing();
-            IS_DT_MANUAL_CONTROL = true;
-            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
-            robot.previousPose = robot.follower.getPose();
-        }
-        else if (IS_DT_AUTO_ALIGNING){
-            robot.previousPose = robot.follower.getPose();
-        }
-        else{
-            robot.follower.holdPoint(robot.previousPose); //unpushable robot
-            IS_DT_MANUAL_CONTROL = false;
-        }
+//        if(Math.abs(forward) >= 0.1 && Math.abs(strafe) >= 0.1 && Math.abs(rotation) >= 0.1){
+//            //if(!IS_DT_MANUAL_CONTROL)robot.follower.breakFollowing();
+//            IS_DT_MANUAL_CONTROL = true;
+//            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
+//            robot.previousPose = robot.follower.getPose();
+//        }
+//        else if (IS_DT_AUTO_ALIGNING){
+//            robot.previousPose = robot.follower.getPose();
+//        }
+//        else{
+//            robot.follower.holdPoint(robot.previousPose); //unpushable robot
+//            IS_DT_MANUAL_CONTROL = false;
+//        }
 
-
+        robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
+//        if (!IS_DT_AUTO_ALIGNING){
+//            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
+//        }
+        robot.follower.update();
         //gamepad button mapped to -> follower.followPath(), auto=true;
         //robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
 
@@ -378,12 +402,15 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         double loop = System.nanoTime();
         robot.telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
-        robot.telemetryA.addData("lift pos", robot.liftActuator.getPosition());
-        robot.telemetryA.addData("extendo pos ticks", robot.intake.getExtendoPosTicks());
-        robot.telemetryA.addData("extendo pos inches", robot.intake.getExtendoPosInches());
-        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
+//        robot.telemetryA.addData("lift pos", robot.liftActuator.getPosition());
+//        robot.telemetryA.addData("extendo pos ticks", robot.intake.getExtendoPosTicks());
+//        robot.telemetryA.addData("extendo pos inches", robot.intake.getExtendoPosInches());
+//        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
         robot.telemetryA.addData("runtime", timer.seconds());
-        robot.telemetryA.addData("camera y offset", robot.sampleDetectionPipeline.getCameraYOffset());
+        //robot.telemetryA.addData("camera y offset", robot.sampleDetectionPipeline.getCameraYOffset());
+        robot.telemetryA.addData("camera x offset (loop)", robot.sampleDetectionPipeline.getCameraXOffset());
+        robot.telemetryA.addData("Pose (during loop)", robot.follower.getPose());
+        robot.telemetryA.addData("Follower Isbusy", robot.follower.isBusy());
         robot.telemetryA.update();
 
         loopTime = loop;

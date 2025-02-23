@@ -83,6 +83,7 @@ public class Robot extends SubsystemWrapper{
 
 
     // intake
+    public ServoImplEx intakeClawLED;
     public ServoWrapper intakeArmPivotLeftServo, intakeArmPivotRightServo, intakeClawPivotServo, intakeClawServo, intakeClawRotationServo;
 
     public AnalogInput intakeArmPivotLeftEnc, intakeArmPivotRightEnc, intakeClawPivotEnc;
@@ -222,6 +223,9 @@ public class Robot extends SubsystemWrapper{
                 .setMaxPos(MAX_EXTENDO_EXTENSION);
 
         // INTAKE
+        intakeClawLED = hardwareMap.get(ServoImplEx.class, "intakeClawLED");
+        intakeClawLED.setPwmDisable();
+
         intakeArmPivotLeftServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotLeftServo"));
 
         intakeArmPivotRightServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotRightServo"));
@@ -315,24 +319,24 @@ public class Robot extends SubsystemWrapper{
         lift = new LiftSubsystem();
         addSubsystem(intake, lift);
 
-        startCamera();
 
         // TODO: CATCH EXCEPTION TO NOT INIT CAMERA IF ITS NOT FOUND
         try {
+            startCamera();
+            visionPortal.resumeStreaming();
+            setAutoCameraControls();
 
+            try {
+                sleep(500);
+            } catch (Exception e){
+
+            }
+            setManualCameraControls();
         }
         catch (Exception e){
 
         }
-        visionPortal.resumeStreaming();
-        setAutoCameraControls();
 
-        try {
-            sleep(500);
-        } catch (Exception e){
-
-        }
-        setManualCameraControls();
 
 
 
@@ -350,21 +354,13 @@ public class Robot extends SubsystemWrapper{
             this.previousPose = END_OF_AUTO_POSE;
         }
 
-
-
-        if(Globals.IS_AUTONOMOUS){
-            //ConfigMenu configMenu = new ConfigMenu();
-        }
-
-        synchronized (imuLock){
-            imu = hardwareMap.get(IMU.class, "imu");
-            imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-        }
-        imuYawOffset = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+//        synchronized (imuLock){
+//            imu = hardwareMap.get(IMU.class, "imu");
+//            imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+//        }
+//        imuYawOffset = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         sensorValues.put(Sensors.SensorType.VOLTAGE, hardwareMap.voltageSensor.iterator().next().getVoltage());
-
-
     }
 
     public void addSubsystem(SubsystemWrapper... subsystems){

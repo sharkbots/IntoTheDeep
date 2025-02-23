@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.testing;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
+@Disabled
 @TeleOp(name = "A CONFIG MENU")
 public class ConfigMenuTest extends LinearOpMode {
 

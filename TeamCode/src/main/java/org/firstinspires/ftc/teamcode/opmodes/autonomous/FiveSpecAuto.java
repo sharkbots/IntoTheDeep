@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
@@ -19,6 +20,7 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
@@ -27,6 +29,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.L
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
+import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator;
 
 import java.util.ArrayList;
@@ -42,6 +45,9 @@ public class FiveSpecAuto extends CommandOpMode {
     private double loopTime = 0.0;
     private final ElapsedTime timer = new ElapsedTime();
     private double endTime = 0;
+
+    public GamepadEx operator;
+    ConfigMenu menu;
 
     private final ArrayList<PathChain> paths = new ArrayList<>();
 
@@ -210,6 +216,8 @@ public class FiveSpecAuto extends CommandOpMode {
         Globals.IS_AUTONOMOUS = true;
         Globals.ALLIANCE = Globals.AllianceColor.BLUE;
 
+        operator = new GamepadEx(gamepad2);
+
         robot.setTelemetry(telemetry);
 
         timer.reset();
@@ -354,6 +362,7 @@ public class FiveSpecAuto extends CommandOpMode {
         robot.reset();
         robot.lift.updateState(LiftSubsystem.LiftState.HOLDING_SPECIMEN);
         robot.lift.updateState(LiftSubsystem.ClawState.CLOSED);
+
     }
 
     @Override

@@ -355,6 +355,7 @@ public class SampleDetectionPipeline implements VisionProcessor {
         return Math.abs(getCameraHeadingOffsetDegrees()) < (20.0);
     }
 
+    // TODO: FIX SIGN (RIGHT -> POSITIVE & LEFT -> NEGATIVE)
     public double getCameraXOffset(){
         if (this.closestCenter[0] == 0){
             return 0;

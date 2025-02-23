@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
@@ -27,7 +27,8 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.L
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SampleCycleGenerator;
+import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.PreloadSampleCycleGenerator;
 
 
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class FourSampAuto extends CommandOpMode {
 
     private final Robot robot = Robot.getInstance();
 
+    ConfigMenu menu;
+    GamepadEx operator;
     private final Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
     private double loopTime = 0.0;
     private final ElapsedTime timer = new ElapsedTime();
@@ -53,7 +56,7 @@ public class FourSampAuto extends CommandOpMode {
         robot.follower.setPose(allianceColor.convert(Globals.sampleAutoStartPose, Pose.class));
 
 
-        SampleCycleGenerator sampleCyclePaths = new SampleCycleGenerator()
+        PreloadSampleCycleGenerator sampleCyclePaths = new PreloadSampleCycleGenerator()
                 .setAlliance(allianceColor)
                 .setFollower(robot.follower);
 
@@ -74,15 +77,15 @@ public class FourSampAuto extends CommandOpMode {
                         .build()
         );
 
-        paths.add(sampleCyclePaths.getSamplePath(SampleCycleGenerator.SampleLocation.INSIDE));
-        paths.add(sampleCyclePaths.getBucketPath(SampleCycleGenerator.SampleLocation.INSIDE));
+        paths.add(sampleCyclePaths.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.INSIDE));
+        paths.add(sampleCyclePaths.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.INSIDE));
 
 
-        paths.add(sampleCyclePaths.getSamplePath(SampleCycleGenerator.SampleLocation.MIDDLE));
-        paths.add(sampleCyclePaths.getBucketPath(SampleCycleGenerator.SampleLocation.MIDDLE));
+        paths.add(sampleCyclePaths.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.MIDDLE));
+        paths.add(sampleCyclePaths.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.MIDDLE));
 
-        paths.add(sampleCyclePaths.getSamplePath(SampleCycleGenerator.SampleLocation.OUTSIDE));
-        paths.add(sampleCyclePaths.getBucketPath(SampleCycleGenerator.SampleLocation.OUTSIDE));
+        paths.add(sampleCyclePaths.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
+        paths.add(sampleCyclePaths.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
 
         // park
         paths.add(
@@ -115,12 +118,16 @@ public class FourSampAuto extends CommandOpMode {
         super.reset();
         Globals.IS_AUTONOMOUS = true;
         Globals.ALLIANCE = Globals.AllianceColor.BLUE;
-
-        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        operator = new GamepadEx(gamepad2);
 
         timer.reset();
 
-        super.reset();
+        robot.setTelemetry(telemetry);
+        robot.telemetryA.setDisplayFormat(Telemetry.DisplayFormat.HTML);
+        sleep(500);
+        menu = new ConfigMenu(operator, telemetry);
+        menu.setConfigurationObject(new Globals.SampleAutonomousConfig());
+        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(menu::backupCurrentField);
 
         robot.init(hardwareMap);
 
@@ -229,21 +236,24 @@ public class FourSampAuto extends CommandOpMode {
         );
         robot.reset();
         robot.lift.updateState(LiftSubsystem.ClawState.CLOSED);
+        while(opModeInInit()){
+            menu.periodic();
+        }
     }
 
     @Override
     public void run(){
         super.run();
 
-        telemetryA.addData("Robot Pose", robot.follower.getPose());
+        robot.telemetryA.addData("Robot Pose", robot.follower.getPose());
         double loop = System.nanoTime();
-        telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetryA.addLine(robot.follower.getPose().toString());
-        telemetryA.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
-        telemetryA.addData("Lift pos", robot.liftActuator.getPosition());
-        telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
-        telemetryA.addData("t value", robot.follower.getCurrentTValue());
-        telemetryA.update();
+        robot.telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
+        robot.telemetryA.addLine(robot.follower.getPose().toString());
+        robot.telemetryA.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
+        robot.telemetryA.addData("Lift pos", robot.liftActuator.getPosition());
+        robot.telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
+        robot.telemetryA.addData("t value", robot.follower.getCurrentTValue());
+        robot.telemetryA.update();
 
         loopTime = loop;
         Globals.END_OF_AUTO_POSE = robot.follower.poseUpdater.getPose();

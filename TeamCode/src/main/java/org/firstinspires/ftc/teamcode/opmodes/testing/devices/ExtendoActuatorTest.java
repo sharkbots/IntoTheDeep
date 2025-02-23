@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
 
 @Config
+@Disabled
 @TeleOp(name = "ExtendoActuatorTest")
 public class ExtendoActuatorTest extends OpMode {
     private DcMotorEx extendoMotor;

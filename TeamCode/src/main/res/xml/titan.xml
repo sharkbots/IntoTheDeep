@@ -25,12 +25,23 @@
             <goBILDA5202SeriesMotor name="liftBottomMotor" port="2" />
             <goBILDA5202SeriesMotor name="extendoMotor" port="3" />
 
-            <Servo name="intakeClawServo" port="0" />
-            <Servo name="intakeArmPivotLeftServo" port="1" />
-            <Servo name="intakeClawLED" port="2" />
-            <Servo name="intakeClawRotationServo" port="3" />
-            <Servo name="intakeClawPivotServo" port="4" />
-            <Servo name="intakeArmPivotRightServo" port="5" />
+<!--            <Servo name="intakeClawServo" port="0" />-->
+<!--            <Servo name="intakeArmPivotLeftServo" port="2" /> &lt;!&ndash;1&ndash;&gt;-->
+<!--            <Servo name="intakeClawLED" port="2" />-->
+<!--            <Servo name="intakeClawRotationServo" port="3" />-->
+<!--            <Servo name="intakeClawPivotServo" port="4" />-->
+<!--            <Servo name="intakeArmPivotRightServo" port="5" />-->
+
+            <Servo name="intakeArmPivotLeftServo" port="0" />
+            <Servo name="intakeClawServo" port="1" />
+            <Servo name="intakeArmPivotRightServo" port="2" />
+            <Servo name="intakeClawPivotServo" port="3" />
+            <Servo name="intakeClawLED" port="4" />
+            <Servo name="intakeClawRotationServo" port="5" />
+
+
+
+
 
             <AnalogInput name="intakeArmPivotLeftEncoder" port="0" />
             <AnalogInput name="intakeArmPivotRightEncoder" port="1" />

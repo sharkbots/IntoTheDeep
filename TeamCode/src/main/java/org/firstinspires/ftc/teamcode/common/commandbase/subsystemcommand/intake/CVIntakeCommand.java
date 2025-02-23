@@ -38,14 +38,13 @@ public class CVIntakeCommand extends SequentialCommandGroup {
 
                         // Step 4: Wait for the extendo to reach its target position
                         new WaitUntilCommand(() -> robot.intake.extendoReached())
-                ).alongWith(
+                )/*.alongWith(
                         // Step 2: Adjust drivetrain in the x direction based on camera X offset
                         new InstantCommand(() -> {
                             Pose targetDtPose = new Pose(robot.follower.getPose().getX()+robot.sampleDetectionPipeline.getCameraXOffset(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading());
                             new HoldPointCommand(robot.follower, targetDtPose).schedule();
-
                         })
-                ),
+                )*/,
 
                 // Step 5: Close the claw
                 new WaitCommand(30),
