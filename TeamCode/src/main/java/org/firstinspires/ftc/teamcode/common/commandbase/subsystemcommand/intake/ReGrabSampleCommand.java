@@ -11,8 +11,9 @@ public class ReGrabSampleCommand extends SequentialCommandGroup {
     public ReGrabSampleCommand(Robot robot){
         super(
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN)),
-                new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE)),
-                new WaitCommand(100)
+                new SetIntake(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE),
+                //new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE)),
+                new WaitCommand(20)
         );
     }
 }

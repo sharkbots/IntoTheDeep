@@ -118,7 +118,6 @@ public class SampleDetectionPipeline implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat input, long captureTimeNanos) {
-        closestCenter = new Double[]{0.0, 0.0, 0.0, 0.0};
         Imgproc.GaussianBlur(input, input, new Size(CAMERA_GAUSSIAN, CAMERA_GAUSSIAN), 0);
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
         Scalar rlFilt = new Scalar(RLH, RS, RV),
@@ -180,13 +179,16 @@ public class SampleDetectionPipeline implements VisionProcessor {
             Point closestCenterPoint = new Point(closestCenter[0].intValue(), closestCenter[1].intValue());
             if (cameraInRange()){
                 Imgproc.circle(boundingImage, closestCenterPoint, 5, new Scalar(0, 255, 0), 4);
-                Imgproc.putText(boundingImage, this.closestCenter.toString(), closestCenterPoint, Imgproc.FONT_HERSHEY_SIMPLEX, 1.0, new Scalar(0, 255, 0), 2);
+                Imgproc.putText(boundingImage, closestCenter[3].toString(), closestCenterPoint, Imgproc.FONT_HERSHEY_SIMPLEX, 1.0, new Scalar(0, 255, 0), 2);
             }
             else {
                 Imgproc.circle(boundingImage, closestCenterPoint, 5, new Scalar(0, 0, 255), 4);
-                Imgproc.putText(boundingImage, this.closestCenter.toString(), closestCenterPoint, Imgproc.FONT_HERSHEY_SIMPLEX, 1.0, new Scalar(0, 0, 255), 2);
+                Imgproc.putText(boundingImage, closestCenter[3].toString(), closestCenterPoint, Imgproc.FONT_HERSHEY_SIMPLEX, 1.0, new Scalar(0, 0, 255), 2);
 
             }
+        }
+        else {
+            closestCenter = new Double[]{0.0, 0.0, 0.0, 0.0};
         }
 
 
@@ -354,11 +356,21 @@ public class SampleDetectionPipeline implements VisionProcessor {
     }
 
     public double getCameraXOffset(){
-        return (Robot.getParallaxXCm(this.closestCenter[0].intValue(), this.closestCenter[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, this.closestCenter[1].intValue()))/2.54;
+        if (this.closestCenter[0] == 0){
+            return 0;
+        }
+        else {
+            return (Robot.getParallaxXCm(this.closestCenter[0].intValue(), this.closestCenter[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, this.closestCenter[1].intValue()))/2.54;
+        }
     }
 
     public double getCameraYOffset(){
-        return (Robot.getParallaxYCm(this.closestCenter[1].intValue()) - Robot.getParallaxYCm(CAMERA_STREAM_HEIGHT/2))/2.54;
+        if (this.closestCenter[1] == 0){
+            return 0;
+        }
+        else {
+            return (Robot.getParallaxYCm(this.closestCenter[1].intValue()) - Robot.getParallaxYCm(CAMERA_STREAM_HEIGHT/2))/2.54;
+        }
     }
 
     public double getCameraZOffset(){
@@ -366,7 +378,12 @@ public class SampleDetectionPipeline implements VisionProcessor {
     }
 
     public double getCameraHeadingOffsetDegrees(){
-        return((this.closestCenter[3]-(90+0))%180); // +0 is current angle claw
+        if (this.closestCenter[3] == 0) {
+            return 0;
+        }
+        else{
+            return ((this.closestCenter[3]-(90+0))%180); // +0 is current angle claw
+        }
     }
 
     private static double distance(Point p1, Point p2) {

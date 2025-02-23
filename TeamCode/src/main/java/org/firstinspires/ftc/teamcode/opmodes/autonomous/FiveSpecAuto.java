@@ -3,14 +3,10 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.specAutoStartPose;
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.depositLocation;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -23,9 +19,7 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.IntakeSpecimenCommand;
@@ -213,7 +207,7 @@ public class FiveSpecAuto extends CommandOpMode {
     @Override
     public void initialize() {
         super.reset();
-        Globals.IS_AUTO = true;
+        Globals.IS_AUTONOMOUS = true;
         Globals.ALLIANCE = Globals.AllianceColor.BLUE;
 
         robot.setTelemetry(telemetry);

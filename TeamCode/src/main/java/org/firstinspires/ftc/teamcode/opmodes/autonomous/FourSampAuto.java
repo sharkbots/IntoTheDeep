@@ -113,7 +113,7 @@ public class FourSampAuto extends CommandOpMode {
     @Override
     public void initialize() {
         super.reset();
-        Globals.IS_AUTO = true;
+        Globals.IS_AUTONOMOUS = true;
         Globals.ALLIANCE = Globals.AllianceColor.BLUE;
 
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());

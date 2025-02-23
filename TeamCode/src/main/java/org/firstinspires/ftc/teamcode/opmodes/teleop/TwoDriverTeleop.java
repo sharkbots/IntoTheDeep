@@ -12,10 +12,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.AutomaticIntakeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.HangCommand;
@@ -27,7 +28,6 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
-import org.firstinspires.ftc.teamcode.common.utils.math.geometry.Pose;
 
 @Config
 @TeleOp(name = "Two Driver Teleop", group = "Teleop")
@@ -63,7 +63,7 @@ public class TwoDriverTeleop extends CommandOpMode {
     public void initialize() {
         super.reset();
 
-        IS_AUTO = false;
+        IS_AUTONOMOUS = false;
 
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
@@ -104,50 +104,48 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
-//        // rotate claw left
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-//                        .whenPressed(new ConditionalCommand(
-//                                new InstantCommand(() -> robot.intake.moveLeft()),
-//                                new InstantCommand(),
-//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
-//                        ));
-//        // rotate claw right
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-//                .whenPressed(new ConditionalCommand(
-//                        new InstantCommand(() -> robot.intake.moveRight()),
-//                        new InstantCommand(),
-//                        () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
-//                ));
+//        // zaza testing
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new InstantCommand(()->robot.intake.setClawRotationDegrees(0))
+                );
 
-//        // Shoot out intake
-//        operator.getGamepadButton(GamepadKeys.Button.A)
-//                .whenPressed(
-//                        new ConditionalCommand(
-//                                new TransferCommand(robot),
-//                                new ConditionalCommand(new HoverCommand(robot,100), new InstantCommand(),
-//                                        () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
-//                                                robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER),
-//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
-//                        )
-//
-//                );
+        // ZAAAAAAAA
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(
+                        new InstantCommand(()->robot.intake.setClawRotationDegrees(
+                                robot.intake.getClawRotationDegrees()+robot.sampleDetectionPipeline.getCameraHeadingOffsetDegrees()))
+                );
 
-        // auto intake aughh
+        // Shoot out intake
         operator.getGamepadButton(GamepadKeys.Button.A)
                 .whenPressed(
                         new ConditionalCommand(
-                                new AutomaticIntakeCommand(robot),
-                                new InstantCommand(),
-                                () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
-                                        robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER
+                                new TransferCommand(robot),
+                                new ConditionalCommand(new HoverCommand(robot,100), new InstantCommand(),
+                                        () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
+                                                robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER),
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
                         )
 
                 );
 
+//        // auto intake aughh
+//        operator.getGamepadButton(GamepadKeys.Button.A)
+//                .whenPressed(
+//                        new ConditionalCommand(
+//                                new AutomaticIntakeCommand(robot),
+//                                new InstantCommand(),
+//                                () -> !HOLDING_SPECIMEN && !HOLDING_SAMPLE && !INTAKING_SPECIMENS &&
+//                                        robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER
+//                        )
+//
+//                );
+
         // Grab sample
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
-                        new ConditionalCommand(new IntakeSampleCommand(robot)
+                        new ConditionalCommand(new CVIntakeCommand(robot)
                                 .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
                                 new InstantCommand(),
                                 () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
@@ -253,9 +251,10 @@ public class TwoDriverTeleop extends CommandOpMode {
 
 
         robot.read();
+        super.run();
         while (opModeInInit()) {
-            telemetry.addLine("Robot Initialized.");
-            telemetry.update();
+            robot.telemetryA.addLine("Robot Initialized.");
+            robot.telemetryA.update();
         }
     }
 
@@ -283,12 +282,12 @@ public class TwoDriverTeleop extends CommandOpMode {
         }
 
         // manual extendo control
-        robot.extendoActuator.disableManualPower();
+        //robot.extendoActuator.disableManualPower();
         if (Math.abs(gamepad2.right_stick_y)>= 0.2 &&
                 (robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
                 || robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)){
-            robot.extendoActuator.enableManualPower();
-            robot.extendoActuator.setManualPower(-gamepad2.right_stick_y);
+            //robot.extendoActuator.enableManualPower();
+            robot.intake.setExtendoTargetTicks((int)(robot.intake.getExtendoPosTicks()+(-gamepad2.right_stick_y*15)));
         }
 
         // emergency lift override
@@ -297,30 +296,10 @@ public class TwoDriverTeleop extends CommandOpMode {
             robot.liftActuator.enableManualPower();
             robot.liftActuator.setOverridePower(-gamepad2.left_stick_y);
         }
-        telemetry.addData("left trigger", gamepad2.left_trigger);
-        telemetry.addData("right trigger", gamepad2.right_trigger);
+        robot.telemetryA.addData("left trigger", gamepad2.left_trigger);
+        robot.telemetryA.addData("right trigger", gamepad2.right_trigger);
 
-        robot.periodic();
-        robot.write();
-
-        double currentHeading = robot.follower.poseUpdater.getPose().getHeading();
-        double forward = -gamepad1.left_stick_y;
-        double strafe = -gamepad1.left_stick_x;
-        double rotation = -gamepad1.right_stick_x;
-
-        // slow mode
-        if (driver.isDown(GamepadKeys.Button.LEFT_BUMPER)){
-            forward *= 0.3;
-            strafe *= 0.3;
-            rotation *= 0.3;
-        }
-
-//        if (robot.lift.liftState == LiftSubsystem.LiftState.LVL2_ASCENT_SETUP ||
-//                robot.lift.liftState == LiftSubsystem.LiftState.LVL2_ASCENT_DOWN){
-//            robot.liftActuator.enableManualPower();
-//        }
-
-
+        // Slowly come down from hang
         if (readyToLetGo && timer.seconds() > (matchLength+3) && !hangDone){
             //robot.liftActuator.enableManualPower();
             increaseCounter ++;
@@ -330,13 +309,6 @@ public class TwoDriverTeleop extends CommandOpMode {
                 hangDone = true;
             }
         }
-//        if (robot.lift.liftState == LiftSubsystem.LiftState.LVL2_ASCENT_DOWN && !readyToLetGo){
-//            robot.liftActuator.enableManualPower();
-//            robot.liftActuator.setOverridePower(-1);
-//            if (robot.liftActuator.getPosition() > ENDGAME_ASCENT_HEIGHT){
-//                readyToLetGo = true;
-//            }
-//        }
 
 //        // flick 180
 //        if (driver.wasJustPressed(GamepadKeys.Button.B) || flicking){
@@ -354,6 +326,18 @@ public class TwoDriverTeleop extends CommandOpMode {
 //            robot.follower.update();
 //        }
 
+        double currentHeading = robot.follower.poseUpdater.getPose().getHeading();
+        double forward = -gamepad1.left_stick_y;
+        double strafe = -gamepad1.left_stick_x;
+        double rotation = -gamepad1.right_stick_x;
+
+        // slow mode
+        if (driver.isDown(GamepadKeys.Button.LEFT_BUMPER)){
+            forward *= 0.3;
+            strafe *= 0.3;
+            rotation *= 0.3;
+        }
+
         // align to closest cardinal point
         if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
             double alignmentHeading = ((int) Math.round(currentHeading / (Math.PI/2))) * (Math.PI/2);
@@ -362,29 +346,46 @@ public class TwoDriverTeleop extends CommandOpMode {
                 rotation = dtHeadingLockOn.calculate(currentHeading, alignmentHeading);
                 rotation = MathUtils.clamp(rotation,-1, 1);
             }
-            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
-            robot.follower.update();
         }
         else {
-            robot.drivetrain.set(new Pose(-strafe,
-                    forward,
-                    -rotation), 0);
+//            robot.drivetrain.set(new Pose(-strafe,
+//                    forward,
+//                    -rotation), 0);
         }
+
+        if(Math.abs(forward) >= 0.1 && Math.abs(strafe) >= 0.1 && Math.abs(rotation) >= 0.1){
+            if(!IS_DT_MANUAL_CONTROL)robot.follower.breakFollowing();
+            IS_DT_MANUAL_CONTROL = true;
+            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
+            robot.previousPose = robot.follower.getPose();
+        }
+        else if (IS_DT_AUTO_ALIGNING){
+            robot.previousPose = robot.follower.getPose();
+        }
+        else{
+            robot.follower.holdPoint(robot.previousPose); //unpushable robot
+            IS_DT_MANUAL_CONTROL = false;
+        }
+
+
+        //gamepad button mapped to -> follower.followPath(), auto=true;
+        //robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
+
+        robot.periodic();
+        robot.write();
+        robot.follower.update();
 
 
         double loop = System.nanoTime();
-        telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addData("lift pos", robot.liftActuator.getPosition());
-//        telemetry.addData("lift target pos", robot.liftActuator.getTargetPosition());
-        telemetry.addData("extendo pos", robot.extendoActuator.getPosition());
-        telemetry.addData("heading", Math.toDegrees(currentHeading));
-//        telemetry.addData("state", robot.lift.liftState.toString());
-        telemetry.addData("runtime", timer.seconds());
-        telemetry.addData("camera in range", robot.sampleDetectionPipeline.cameraInRange());
-//        telemetry.addData("hang done", hangDone);
-//        telemetry.addData("ready to let go", readyToLetGo);
-//        telemetry.addData("increase counter", increaseCounter);
+        robot.telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
+        robot.telemetryA.addData("lift pos", robot.liftActuator.getPosition());
+        robot.telemetryA.addData("extendo pos ticks", robot.intake.getExtendoPosTicks());
+        robot.telemetryA.addData("extendo pos inches", robot.intake.getExtendoPosInches());
+        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
+        robot.telemetryA.addData("runtime", timer.seconds());
+        robot.telemetryA.addData("camera y offset", robot.sampleDetectionPipeline.getCameraYOffset());
+        robot.telemetryA.update();
+
         loopTime = loop;
-        telemetry.update();
     }
 }

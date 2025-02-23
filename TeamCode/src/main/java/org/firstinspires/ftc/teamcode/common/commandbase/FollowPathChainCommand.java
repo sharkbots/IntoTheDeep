@@ -9,7 +9,6 @@ import com.pedropathing.pathgen.PathChain;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
 public class FollowPathChainCommand extends CommandBase {
-
     private final Follower follower;
     private final PathChain path;
     private boolean holdEnd = true;

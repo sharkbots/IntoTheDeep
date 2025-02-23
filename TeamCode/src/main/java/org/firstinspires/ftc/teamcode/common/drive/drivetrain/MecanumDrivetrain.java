@@ -38,7 +38,7 @@ public class MecanumDrivetrain extends SubsystemWrapper implements Drivetrain {
         wheelSpeeds[RobotDrive.MotorType.kBackRight.value] = (forwardSpeed + strafeSpeed - turnSpeed);
 
 
-        if (Globals.IS_AUTO) {
+        if (Globals.IS_AUTONOMOUS) {
             // feedforward & voltage compensation
             double correction = 12 / robot.getVoltage();
             for (int i = 0; i < wheelSpeeds.length; i++) {

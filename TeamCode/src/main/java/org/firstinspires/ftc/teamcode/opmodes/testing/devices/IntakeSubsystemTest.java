@@ -35,7 +35,7 @@ public class IntakeSubsystemTest extends CommandOpMode {
         CommandScheduler.getInstance().reset();
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
-        Globals.IS_AUTO = false;
+        Globals.IS_AUTONOMOUS = false;
         Globals.ALLIANCE = Globals.ALLIANCE.BLUE;
 
         gamepadEx2 = new GamepadEx(gamepad2);
@@ -59,6 +59,16 @@ public class IntakeSubsystemTest extends CommandOpMode {
         gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new ConditionalCommand(new IntakeSampleCommand(robot), new InstantCommand(),
                         () ->robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE));
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new InstantCommand(() -> robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees()-10))
+                );
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(
+                        new InstantCommand(() -> robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees()+10))
+                );
 
 //        // rotate claw left
 //        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)

@@ -7,7 +7,9 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+
 import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.MathFunctions;
 import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -103,6 +105,7 @@ public class Robot extends SubsystemWrapper{
 
     // Pedro Pathing
     public Follower follower;
+    public Pose previousPose = new Pose(0, 0, 0);
 
     // IMU
     private final Object imuLock = new Object();
@@ -128,8 +131,6 @@ public class Robot extends SubsystemWrapper{
     private final long CAMERA_DEFAULT_EXPOSURE_LENGTH_MILLIS = 15;
     private final int CAMERA_DEFAULT_GAIN = 0;
     private final int CAMERA_DEFAULT_WHITE_BALANCE_TEMPERATURE = 4600;
-
-    //private boolean has
 
 
     private final double voltageReadTimeIntervalMS = 5000;
@@ -277,8 +278,8 @@ public class Robot extends SubsystemWrapper{
         liftTopMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         liftTopMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
-        liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
+        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftTopMotor").encoder);
+        liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.FORWARD);
 
         double lkP = 0.005;
         double lkI = 0.05;
@@ -316,8 +317,14 @@ public class Robot extends SubsystemWrapper{
 
         startCamera();
 
-        visionPortal.resumeStreaming();
+        // TODO: CATCH EXCEPTION TO NOT INIT CAMERA IF ITS NOT FOUND
+        try {
 
+        }
+        catch (Exception e){
+
+        }
+        visionPortal.resumeStreaming();
         setAutoCameraControls();
 
         try {
@@ -325,20 +332,27 @@ public class Robot extends SubsystemWrapper{
         } catch (Exception e){
 
         }
-
         setManualCameraControls();
 
-        if (!Globals.IS_AUTO) {
-            drivetrain = new MecanumDrivetrain();
-            addSubsystem(drivetrain);
-        }
+
+
+//        if (!Globals.IS_AUTO) {
+//            drivetrain = new MecanumDrivetrain();
+//            addSubsystem(drivetrain);
+//        }
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
 
+        if(!IS_AUTONOMOUS){
+            follower.setStartingPose(END_OF_AUTO_POSE);
+            follower.setPose(END_OF_AUTO_POSE);
+            this.previousPose = END_OF_AUTO_POSE;
+        }
 
 
-        if(Globals.IS_AUTO){
+
+        if(Globals.IS_AUTONOMOUS){
             //ConfigMenu configMenu = new ConfigMenu();
         }
 
@@ -384,7 +398,7 @@ public class Robot extends SubsystemWrapper{
     }
 
     public void periodic(){
-        if(Globals.IS_AUTO){
+        if(Globals.IS_AUTONOMOUS){
             //configMenu.periodic();
         }
         for (SubsystemWrapper subsystem : subsystems){

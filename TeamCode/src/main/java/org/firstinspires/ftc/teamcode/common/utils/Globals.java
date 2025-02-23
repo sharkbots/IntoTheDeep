@@ -56,13 +56,16 @@ public class Globals {
     public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.2;
 
     public static AllianceColor ALLIANCE = AllianceColor.RED;
-    public static boolean IS_AUTO = false;
+    public static boolean IS_AUTONOMOUS = false;
     public static boolean COMING_FROM_AUTONOMOUS = false;
     public static boolean IS_FIELD_CENTRIC = true;
     public static boolean INTAKING_SAMPLES = false;
     public static boolean HOLDING_SAMPLE = false;
     public static boolean INTAKING_SPECIMENS = false;
     public static boolean HOLDING_SPECIMEN = false;
+
+    public static boolean IS_DT_MANUAL_CONTROL = false;
+    public static boolean IS_DT_AUTO_ALIGNING = false;
 
     // Size of robot (in inches)
     public static double ROBOT_LENGTH = 13.1;
@@ -78,6 +81,7 @@ public class Globals {
     // 0.xx sec/180° -> 0.xxx sec/300° -> xxx milliseconds/300°
     public static double INTAKE_CLAW_ROTATION_MOVEMENT_TIME = 200;
 
+    public static double AA_claw_rotation_heading_degrees = 0;
     // Intake Arm Pivot
     public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.47;
     public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.7;

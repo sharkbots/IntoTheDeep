@@ -28,7 +28,7 @@ public class LiftSubsystemTest extends CommandOpMode {
         CommandScheduler.getInstance().reset();
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
-        Globals.IS_AUTO = false;
+        Globals.IS_AUTONOMOUS = false;
         Globals.ALLIANCE = Globals.ALLIANCE.BLUE;
 
         gamepadEx2 = new GamepadEx(gamepad2);
