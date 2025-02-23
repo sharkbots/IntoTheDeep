@@ -5,9 +5,9 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-/*
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.utils.ConfigMenu;
+import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 @TeleOp(name = "A CONFIG MENU")
@@ -17,20 +17,36 @@ public class ConfigMenuTest extends LinearOpMode {
     GamepadEx gamepadEx2;
     ConfigMenu menu;
 
+    public enum QUADRANT {
+        CHAMBER_BASKET,
+        CHAMBER_MIDDLE,
+        CHAMBER_OBSZONE,
+        CENTER_BASKET,
+        CENTER_MIDDLE,
+        CENTER_OBSZONE
+    };
+
+    public enum ALLIANCE {
+        BLUE,
+        RED
+    };
+
     class TEST {
+
         boolean bool = false;
         int integer = 0;
         float fl = 0.0f;
         double dbl = 0.0;
+        QUADRANT quadrant = QUADRANT.CHAMBER_BASKET;
+        ALLIANCE alliance = ALLIANCE.BLUE;
+
     }
     public void Setup() {
-        telemetry = telemetry;
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         sleep(500);
         gamepadEx2 = new GamepadEx(gamepad2);
-        menu = new ConfigMenu();
+        menu = new ConfigMenu(gamepadEx2, telemetry);
         menu.setConfigurationObject(new TEST());
-        menu.setGamepad(gamepadEx2);
 
         while(!isStarted() && !isStopRequested()){
         }
@@ -44,12 +60,11 @@ public class ConfigMenuTest extends LinearOpMode {
         Setup();
         waitForStart();
         while(opModeIsActive()){
-            telemetry.addLine("<!doctype html><html><head><title>Logs</title></head><body>" +
-                    "<b>TEST </b><i>TEST</i><p style=\"color:yellow\">GREEN</p></body></html>");
+          //  telemetry.addLine("<!doctype html><html><head><title>Logs</title></head><body>" +
+          //          "<b>TEST </b><i>TEST</i><p style=\"color:yellow\">GREEN</p></body></html>");
             menu.periodic();
         }
 
     }
 }
 
- */

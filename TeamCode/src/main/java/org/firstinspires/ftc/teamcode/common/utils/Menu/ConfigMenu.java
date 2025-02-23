@@ -1,21 +1,21 @@
-package org.firstinspires.ftc.teamcode.common.utils;
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+package org.firstinspires.ftc.teamcode.common.utils.Menu;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-/*
+
 public class ConfigMenu extends SubsystemWrapper {
 
     private final Robot robot;
-    GamepadEx gamepad;
+    GamepadEx operator;
     Object object;
     Object fieldBackup = null;
 
@@ -25,8 +25,13 @@ public class ConfigMenu extends SubsystemWrapper {
     StateMachine sm;
     StateMachine.State navigateMenu, editMenuItem, lockMenu;
 
+    Telemetry telemetry;
 
-    public ConfigMenu() {
+
+    public ConfigMenu(GamepadEx operator_, Telemetry telemetry_) {
+        operator = operator_;
+        telemetry = telemetry_;
+
         robot = Robot.getInstance();
 
         sm = new StateMachine();
@@ -35,26 +40,62 @@ public class ConfigMenu extends SubsystemWrapper {
         lockMenu = new StateMachine.State("lockMenu");
         sm.setInitialState(navigateMenu);
 
-        navigateMenu.addTransitionTo(editMenuItem, buttons.handlerA::Pressed, new Action("enterEdit", this::backupCurrentField));
-        editMenuItem.addTransitionTo(navigateMenu, buttons.handlerA::Pressed, new Action("nextMenuItem", ()->{fieldBackup=null; return true;}));
-        editMenuItem.addTransitionTo(navigateMenu, buttons.handlerB::Pressed, new Action("nextMenuItem", this::restoreCurrentField));
+        navigateMenu.addTransitionTo(
+                editMenuItem,
+                () -> operator.wasJustPressed(GamepadKeys.Button.A),
+                new Actions(new Action("enterEdit", this::backupCurrentField)));
 
-        navigateMenu.addTransitionTo(navigateMenu, buttons.handlerDPad_Down::Pressed, new Action("nextMenuItem", this::nextMenuItem));
-        navigateMenu.addTransitionTo(navigateMenu, buttons.handlerDPad_Up::Pressed, new Action("previousMenuItem", this::previousMenuItem));
+        editMenuItem.addTransitionTo(
+                navigateMenu,
+                () -> operator.wasJustPressed(GamepadKeys.Button.A),
+                new Actions(new Action("nextMenuItem", () -> { fieldBackup = null; return true; })));
 
-        editMenuItem.addTransitionTo(editMenuItem, buttons.handlerDPad_Right::Pressed, new Action("incrementField", ()->changeFieldBy(1.0)));
-        editMenuItem.addTransitionTo(editMenuItem, buttons.handlerDPad_Left::Pressed, new Action("decrementField",  ()->changeFieldBy(-1.0)));
+        editMenuItem.addTransitionTo(
+                navigateMenu,
+                () -> operator.wasJustPressed(GamepadKeys.Button.B),
+                new Actions( new Action("nextMenuItem", this::restoreCurrentField)));
 
-        editMenuItem.addTransitionTo(editMenuItem, buttons.handlerRightBumper::Pressed, new Action("incrementField", ()->changeFieldBy(0.1)));
-        editMenuItem.addTransitionTo(editMenuItem, buttons.handlerLeftBumper::Pressed, new Action("decrementField",  ()->changeFieldBy(-0.1)));
+        navigateMenu.addTransitionTo(
+                navigateMenu,
+                () -> operator.wasJustPressed(GamepadKeys.Button.DPAD_DOWN),
+                new Actions(new Action("nextMenuItem", this::nextMenuItem)));
 
-        navigateMenu.addTransitionTo(lockMenu, buttons.handlerX::Pressed, new Action("menu locked", ()->true));
-        lockMenu.addTransitionTo(navigateMenu, buttons.handlerX::Pressed, new Action("menu locked", ()->true));
+        navigateMenu.addTransitionTo(
+                navigateMenu,
+                () -> operator.wasJustPressed(GamepadKeys.Button.DPAD_UP),
+                new Actions(new Action("previousMenuItem", this::previousMenuItem)));
+
+        editMenuItem.addTransitionTo(
+                editMenuItem,
+                () -> operator.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT),
+                new Actions(new Action("incrementField", () -> changeFieldBy(1.0))));
+
+        editMenuItem.addTransitionTo(
+                editMenuItem,
+                () -> operator.wasJustPressed(GamepadKeys.Button.DPAD_LEFT),
+                new Actions(new Action("decrementField", () -> changeFieldBy(-1.0))));
+
+        editMenuItem.addTransitionTo(
+                editMenuItem,
+                () -> operator.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER),
+                new Actions(new Action("incrementField", () -> changeFieldBy(0.1))));
+
+        editMenuItem.addTransitionTo(
+                editMenuItem,
+                () -> operator.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER),
+                new Actions(new Action("decrementField", () -> changeFieldBy(-0.1))));
+
+        navigateMenu.addTransitionTo(
+                lockMenu,
+                () -> operator.wasJustPressed(GamepadKeys.Button.X),
+                new Actions(new Action("menu locked", () -> true)));
+
+        lockMenu.addTransitionTo(
+                navigateMenu,
+                () -> operator.wasJustPressed(GamepadKeys.Button.X),
+                new Actions(new Action("menu locked", () -> true)));
     }
 
-    public void setGamepad(GamepadEx gamepad){
-        this.gamepad = gamepad;
-    }
 
     public void setConfigurationObject(Object object){
         this.object = object;
@@ -62,7 +103,7 @@ public class ConfigMenu extends SubsystemWrapper {
     }
 
 
-    private Boolean backupCurrentField() {
+    public Boolean backupCurrentField() {
         Field field = fields[currentField];
         field.setAccessible(true);
         try {
@@ -193,7 +234,7 @@ public class ConfigMenu extends SubsystemWrapper {
 
     @Override
     public void periodic() {
-        buttons.update();
+        operator.readButtons();
         sm.updateState();
         updateDisplay();
     }
@@ -213,4 +254,3 @@ public class ConfigMenu extends SubsystemWrapper {
 
     }
 }
-*/
