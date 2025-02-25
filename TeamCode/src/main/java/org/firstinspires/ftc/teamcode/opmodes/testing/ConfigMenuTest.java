@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.opmodes.testing;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.LED;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -47,6 +50,15 @@ public class ConfigMenuTest extends LinearOpMode {
         gamepadEx2 = new GamepadEx(gamepad2);
         menu = new ConfigMenu(gamepadEx2, telemetry);
         menu.setConfigurationObject(new TEST());
+
+        ServoImplEx led = (ServoImplEx) hardwareMap.get("intakeClawServo");
+        led.setPosition(42.0);
+        led.setPwmEnable();
+        sleep(3000);
+        led.setPwmEnable();
+        sleep(3000);
+        led.setPwmDisable();
+
 
         while(!isStarted() && !isStopRequested()){
         }
