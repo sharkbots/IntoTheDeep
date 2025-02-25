@@ -55,7 +55,8 @@ public class FollowPathChainCommand extends CommandBase {
     @Override
     public void initialize() {
         follower.followPath(path, holdEnd);
-        robot.telemetryA.addData("End Pose (follow path command", path.getPath(0).getLastControlPoint());
+        robot.telemetryA.addData("End Pose (follow path command)",String.format(" (%.2f,%.2f)", path.getPath(0).getLastControlPoint().getX(), path.getPath(0).getLastControlPoint().getY()));
+
 //        robot.telemetryA.addData("FollowPathChainCommand - Path Started", true);
 //        robot.telemetryA.addData("Path Size", path.size());
         robot.telemetryA.update();
@@ -75,8 +76,8 @@ public class FollowPathChainCommand extends CommandBase {
         if (useIsBusy) {
             boolean isFinished = !follower.isBusy(); // or custom logic
 //            robot.telemetryA.addData("FollowPathChainCommand - Is Finished", isFinished);
-//            robot.telemetryA.addData("Follower - Is Busy", follower.isBusy());
-//            robot.telemetryA.update();
+            robot.telemetryA.addData("Follower - Is Busy", follower.isBusy());
+            robot.telemetryA.update();
             return isFinished;
 
         } else {

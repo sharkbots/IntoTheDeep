@@ -80,11 +80,13 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.setTelemetry(telemetry);
         robot.init(hardwareMap);
 
-        dashboardPoseTracker = new DashboardPoseTracker(robot.poseUpdater);
-        //robot.follower.setStartingPose(END_OF_AUTO_POSE);
+        robot.poseUpdater.setStartingPose(END_OF_AUTO_POSE);
+        robot.poseUpdater.setPose(END_OF_AUTO_POSE);
+
+        robot.follower.setStartingPose(END_OF_AUTO_POSE);
         robot.follower.setPose(END_OF_AUTO_POSE);
-        robot.poseUpdater.setPose(robot.follower.getPose());
-//        robot.poseUpdater.setStartingPose(robot.follower.getPose());
+
+        dashboardPoseTracker = new DashboardPoseTracker(robot.poseUpdater);
 
         robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
         //dtHeadingLockOn = new PIDController(0.5, 0, 0);
@@ -125,7 +127,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 new InstantCommand(()->{
                                     Pose currentPose = robot.follower.getPose();
                                     double cameraXOffset = robot.sampleDetectionPipeline.getCameraXOffset();
-                                    robot.telemetryA.addData("Current Pose (in alignment command) ", currentPose);
+                                    robot.telemetryA.addData("Current Pose (in alignment command)",String.format(" (%.2f,%.2f,%.2f)", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
                                     robot.telemetryA.update();
 
                                     PathChain path = robot.follower.pathBuilder()
@@ -139,7 +141,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
                                     new FollowPathChainCommand(robot.follower, path).setHoldEnd(true).schedule();
                                 }
-                                ),
+                                )
 //                                new FollowPathChainCommand(robot.follower, robot.follower.pathBuilder()
 //                                        .addPath(
 //                                                new BezierLine(
@@ -148,7 +150,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 //                                                )
 //                                        )
 //                                        .build()).setHoldEnd(true),
-                                new InstantCommand(() -> robot.follower.startTeleopDrive())
+                               //new InstantCommand(() -> robot.follower.startTeleopDrive())
 
 
 //                                new InstantCommand(() -> {
@@ -422,7 +424,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 //            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
 //        }
         //gamepad button mapped to -> follower.followPath(), auto=true;
-        //robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
+        //robot.follo(during loop, from followewer.setTeleOpMovementVectors(forward, strafe, rotation, true);
 
         robot.periodic();
         robot.write();
@@ -438,8 +440,10 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.telemetryA.addData("runtime", timer.seconds());
         //robot.telemetryA.addData("camera y offset", robot.sampleDetectionPipeline.getCameraYOffset());
         robot.telemetryA.addData("camera x offset (loop)", robot.sampleDetectionPipeline.getCameraXOffset());
-        robot.telemetryA.addData("Pose (during loop, from follower)", robot.follower.getPose());
-        robot.telemetryA.addData("Pose (during loop, from pose updater)", robot.poseUpdater.getPose());
+        robot.telemetryA.addData("Pose (during loop, from follower)",String.format(" (%.2f,%.2f,%.2f)", robot.follower.getPose().getX(), robot.follower.getPose().getY(), Math.toDegrees(robot.follower.getPose().getHeading())));
+        robot.telemetryA.addData("Pose (during loop, from pose updater)",String.format(" (%.2f,%.2f,%.2f)", robot.poseUpdater.getPose().getX(), robot.poseUpdater.getPose().getY(), Math.toDegrees(robot.poseUpdater.getPose().getHeading())));
+
+
         Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
         Drawing.drawRobot(robot.poseUpdater.getPose(), "#4CAF50");
         Drawing.sendPacket();

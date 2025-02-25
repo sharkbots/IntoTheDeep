@@ -159,5 +159,7 @@ public class Globals {
     // Specimen auto pose
     public static final Pose specAutoStartPose = new Pose(6.465, 63.715, Math.toRadians(180));
 
-    public static Pose END_OF_AUTO_POSE = new Pose(72, 72, Math.toRadians(90));
+    public static Pose END_OF_AUTO_POSE = new Pose(36, 36, Math.toRadians(90));
+    //public static Pose END_OF_AUTO_POSE = new Pose(0, 0, Math.toRadians(0));
+
 }
