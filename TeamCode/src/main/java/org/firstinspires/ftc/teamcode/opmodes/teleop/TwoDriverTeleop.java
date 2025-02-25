@@ -11,7 +11,10 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.DashboardPoseTracker;
+import com.pedropathing.util.Drawing;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -37,6 +40,7 @@ import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 @Config
 @TeleOp(name = "Two Driver Teleop", group = "Teleop")
 public class TwoDriverTeleop extends CommandOpMode {
+    private DashboardPoseTracker dashboardPoseTracker;
 
     private final Robot robot = Robot.getInstance();
 
@@ -76,8 +80,11 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.setTelemetry(telemetry);
         robot.init(hardwareMap);
 
-        robot.follower.setStartingPose(END_OF_AUTO_POSE);
+        dashboardPoseTracker = new DashboardPoseTracker(robot.poseUpdater);
+        //robot.follower.setStartingPose(END_OF_AUTO_POSE);
         robot.follower.setPose(END_OF_AUTO_POSE);
+        robot.poseUpdater.setPose(robot.follower.getPose());
+//        robot.poseUpdater.setStartingPose(robot.follower.getPose());
 
         robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
         //dtHeadingLockOn = new PIDController(0.5, 0, 0);
@@ -109,21 +116,41 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
-        /*
+
 //        // zaza testing
         operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(
                         new SequentialCommandGroup(
-                                new InstantCommand(()-> robot.follower.setStartingPose(END_OF_AUTO_POSE)),
-                                new FollowPathChainCommand(robot.follower, robot.follower.pathBuilder()
-                                        .addPath(
-                                                new BezierLine(
-                                                        new Point(robot.follower.getPose().getX(), robot.follower.getPose().getY(), Point.CARTESIAN),
-                                                        new Point(robot.follower.getPose().getX() + robot.sampleDetectionPipeline.getCameraXOffset(), robot.follower.getPose().getY(), Point.CARTESIAN)
-                                                )
-                                        )
-                                        .build()).setHoldEnd(true),
+                                //new InstantCommand(()-> robot.follower.setStartingPose(END_OF_AUTO_POSE)),
+                                new InstantCommand(()->{
+                                    Pose currentPose = robot.follower.getPose();
+                                    double cameraXOffset = robot.sampleDetectionPipeline.getCameraXOffset();
+                                    robot.telemetryA.addData("Current Pose (in alignment command) ", currentPose);
+                                    robot.telemetryA.update();
+
+                                    PathChain path = robot.follower.pathBuilder()
+                                            .addPath(
+                                                    new BezierLine(
+                                                            new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN),
+                                                            new Point(currentPose.getX() + 3, currentPose.getY(), Point.CARTESIAN)
+                                                    )
+                                            ).build();
+
+
+                                    new FollowPathChainCommand(robot.follower, path).setHoldEnd(true).schedule();
+                                }
+                                ),
+//                                new FollowPathChainCommand(robot.follower, robot.follower.pathBuilder()
+//                                        .addPath(
+//                                                new BezierLine(
+//                                                        new Point(robot.follower.getPose().getX(), robot.follower.getPose().getY(), Point.CARTESIAN),
+//                                                        new Point(robot.follower.getPose().getX() + 3/*robot.sampleDetectionPipeline.getCameraXOffset()*/, robot.follower.getPose().getY(), Point.CARTESIAN)
+//                                                )
+//                                        )
+//                                        .build()).setHoldEnd(true),
                                 new InstantCommand(() -> robot.follower.startTeleopDrive())
+
+
 //                                new InstantCommand(() -> {
 //                                    // Evaluate the pose at runtime
 //                                    Pose currentPose = robot.follower.getPose();
@@ -144,7 +171,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 //                                })
                         )
                 );
-         */
+
 
 
         // Shoot out intake
@@ -289,6 +316,8 @@ public class TwoDriverTeleop extends CommandOpMode {
         while (opModeInInit()) {
             robot.telemetryA.addData("right trigger", gamepad2.right_trigger);
             robot.telemetryA.addLine("Robot Initialized.");
+            Drawing.drawRobot(robot.poseUpdater.getPose(), "#4CAF50");
+            Drawing.sendPacket();
             robot.telemetryA.update();
         }
     }
@@ -299,6 +328,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         super.run();
         robot.clearBulkCache();
         robot.read();
+        robot.poseUpdater.update();
 
         if (timer == null){
             robot.reset();
@@ -391,7 +421,6 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        if (!IS_DT_AUTO_ALIGNING){
 //            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
 //        }
-        robot.follower.update();
         //gamepad button mapped to -> follower.followPath(), auto=true;
         //robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
 
@@ -409,8 +438,11 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.telemetryA.addData("runtime", timer.seconds());
         //robot.telemetryA.addData("camera y offset", robot.sampleDetectionPipeline.getCameraYOffset());
         robot.telemetryA.addData("camera x offset (loop)", robot.sampleDetectionPipeline.getCameraXOffset());
-        robot.telemetryA.addData("Pose (during loop)", robot.follower.getPose());
-        robot.telemetryA.addData("Follower Isbusy", robot.follower.isBusy());
+        robot.telemetryA.addData("Pose (during loop, from follower)", robot.follower.getPose());
+        robot.telemetryA.addData("Pose (during loop, from pose updater)", robot.poseUpdater.getPose());
+        Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
+        Drawing.drawRobot(robot.poseUpdater.getPose(), "#4CAF50");
+        Drawing.sendPacket();
         robot.telemetryA.update();
 
         loopTime = loop;

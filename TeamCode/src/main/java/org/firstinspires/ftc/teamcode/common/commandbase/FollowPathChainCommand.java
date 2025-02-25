@@ -55,12 +55,29 @@ public class FollowPathChainCommand extends CommandBase {
     @Override
     public void initialize() {
         follower.followPath(path, holdEnd);
+        robot.telemetryA.addData("End Pose (follow path command", path.getPath(0).getLastControlPoint());
+//        robot.telemetryA.addData("FollowPathChainCommand - Path Started", true);
+//        robot.telemetryA.addData("Path Size", path.size());
+        robot.telemetryA.update();
     }
+
+    // Not breaking following at the end breaks it for teleop
+    // maybe not i had constant camera offsets
+//    @Override
+//    public void end(boolean interrupted){
+//        follower.breakFollowing();
+//        robot.telemetryA.addData("FollowPathChainCommand - Ended", true);
+//        robot.telemetryA.update();
+//    }
 
     @Override
     public boolean isFinished() {
         if (useIsBusy) {
-            return !follower.isBusy();
+            boolean isFinished = !follower.isBusy(); // or custom logic
+//            robot.telemetryA.addData("FollowPathChainCommand - Is Finished", isFinished);
+//            robot.telemetryA.addData("Follower - Is Busy", follower.isBusy());
+//            robot.telemetryA.update();
+            return isFinished;
 
         } else {
             robot.telemetryA.addData("Current Path Number (not done)", follower.getCurrentPathNumber());

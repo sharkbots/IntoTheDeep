@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants.*;
+import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 /**
  * This is the LocalizationTest OpMode. This is basically just a simple mecanum drive attached to a
@@ -40,7 +41,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants.*;
  * @version 1.0, 5/6/2024
  */
 @Config
-@Disabled
+
 @TeleOp(group = "Teleop Test", name = "Localization Test")
 public class LocalizationTest extends OpMode {
     private PoseUpdater poseUpdater;
@@ -63,7 +64,8 @@ public class LocalizationTest extends OpMode {
 
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 
-        poseUpdater.setPose(new Pose(6.465, 63.715, Math.toRadians(180)));
+        poseUpdater.setPose(Globals.END_OF_AUTO_POSE);
+//        poseUpdater.setStartingPose(Globals.END_OF_AUTO_POSE);
 
         leftFront = hardwareMap.get(DcMotorEx.class, leftFrontMotorName);
         leftRear = hardwareMap.get(DcMotorEx.class, leftRearMotorName);
@@ -124,7 +126,7 @@ public class LocalizationTest extends OpMode {
 
         telemetryA.addData("x", poseUpdater.getPose().getX());
         telemetryA.addData("y", poseUpdater.getPose().getY());
-        telemetryA.addData("heading", poseUpdater.getPose().getHeading());
+        telemetryA.addData("heading", Math.toDegrees(poseUpdater.getPose().getHeading()));
         telemetryA.addData("total heading", poseUpdater.getTotalHeading());
         telemetryA.update();
 

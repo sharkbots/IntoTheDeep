@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
+import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.pathgen.MathFunctions;
 import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -107,6 +108,7 @@ public class Robot extends SubsystemWrapper{
     // Pedro Pathing
     public Follower follower;
     public Pose previousPose = new Pose(0, 0, 0);
+    public PoseUpdater poseUpdater;
 
     // IMU
     private final Object imuLock = new Object();
@@ -347,9 +349,10 @@ public class Robot extends SubsystemWrapper{
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
+        poseUpdater = new PoseUpdater(hardwareMap);
 
         if(!IS_AUTONOMOUS){
-            follower.setStartingPose(END_OF_AUTO_POSE);
+            //follower.setStartingPose(END_OF_AUTO_POSE);
             follower.setPose(END_OF_AUTO_POSE);
             this.previousPose = END_OF_AUTO_POSE;
         }
@@ -387,16 +390,12 @@ public class Robot extends SubsystemWrapper{
     }
 
     public void write(){
-        // Write all hardware devices here
         for (SubsystemWrapper subsystem : subsystems){
             subsystem.write();
         }
     }
 
     public void periodic(){
-        if(Globals.IS_AUTONOMOUS){
-            //configMenu.periodic();
-        }
         for (SubsystemWrapper subsystem : subsystems){
             subsystem.periodic();
         }
@@ -407,7 +406,7 @@ public class Robot extends SubsystemWrapper{
             subsystem.reset();
         }
 
-        imuYawOffset = imuYaw;
+        //imuYawOffset = imuYaw;
     }
 
     public void setTelemetry(Telemetry telemetry){
