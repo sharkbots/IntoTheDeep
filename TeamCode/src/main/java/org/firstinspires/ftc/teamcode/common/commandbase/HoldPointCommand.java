@@ -11,8 +11,13 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 public class HoldPointCommand extends CommandBase {
     private final Follower follower;
-    private final Pose point;
+    private Pose point;
     private final Robot robot;
+    boolean dynMode = false;
+    private DynBuilder dynPoseBuilder;
+    public interface DynBuilder{
+        Pose run();
+    }
 
     public HoldPointCommand(Follower follower, Pose point) {
         this.follower = follower;
@@ -20,13 +25,22 @@ public class HoldPointCommand extends CommandBase {
         robot = Robot.getInstance();
     }
 
+    public HoldPointCommand(Follower follower, DynBuilder dynPoseBuilder){
+        this(follower, (Pose) null);
+        this.dynPoseBuilder = dynPoseBuilder;
+        dynMode = true;
+    }
+
 
     @Override
     public void initialize() {
+        if (dynMode) point = dynPoseBuilder.run();
         Globals.IS_DT_AUTO_ALIGNING = true;
         robot.telemetryA.addData("target pose:", point.toString());
         robot.telemetryA.update();
         follower.holdPoint(point);
+
+        if (dynMode) point = null;
     }
 
     @Override
