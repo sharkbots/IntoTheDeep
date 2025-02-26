@@ -10,16 +10,29 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
 public class FollowPathChainCommand extends CommandBase {
     private final Follower follower;
-    private final PathChain path;
+    private PathChain path;
     private boolean holdEnd = true;
     private double completionThreshold = FollowerConstants.pathEndTValueConstraint;
     private boolean useIsBusy = true;
     private final Robot robot;
+    private DynBuilder dynPathBuilder;
+    boolean dynMode = false;
+    public interface DynBuilder {
+        PathChain run();
+    }
+
 
     public FollowPathChainCommand(Follower follower, PathChain path) {
         this.follower = follower;
         this.path = path;
         robot = Robot.getInstance();
+    }
+
+
+    public FollowPathChainCommand(Follower follower, DynBuilder dynamicPathRunnable) {
+        this(follower, (PathChain) null);
+        dynMode = true;
+        this.dynPathBuilder = dynamicPathRunnable;
     }
 
     public FollowPathChainCommand(Follower follower, Path path) {
@@ -54,11 +67,11 @@ public class FollowPathChainCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        if (dynMode) path = dynPathBuilder.run();
         follower.followPath(path, holdEnd);
-        robot.telemetryA.addData("End Pose (follow path command)",String.format(" (%.2f,%.2f)", path.getPath(0).getLastControlPoint().getX(), path.getPath(0).getLastControlPoint().getY()));
 
-//        robot.telemetryA.addData("FollowPathChainCommand - Path Started", true);
-//        robot.telemetryA.addData("Path Size", path.size());
+        robot.telemetryA.addData("End Pose (follow path command)",String.format(" (%.2f,%.2f)", path.getPath(0).getLastControlPoint().getX(), path.getPath(0).getLastControlPoint().getY()));
+        if (dynMode) path = null;
         robot.telemetryA.update();
     }
 

@@ -26,6 +26,10 @@ public class CVIntakeCommand extends SequentialCommandGroup {
 
                         // Step 3: Dynamically calculate target claw rotation and set intake
                         // Not dynamically somehow messes up and only calculates it once
+
+                        // TODO: Change InstantCommand() block to setIntake() command below. Use .beforeStarting()
+                       // new SetIntake(robot, IntakeSubsystem.PivotState.INTAKE, robot.intake.getClawRotationDegrees()+robot.sampleDetectionPipeline.getCameraHeadingOffsetDegrees()),
+
                         new InstantCommand(() -> {
                             // Calculate target claw rotation dynamically
                             double currentClawRotation = robot.intake.getClawRotationDegrees();
@@ -36,8 +40,10 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                             new SetIntake(robot, IntakeSubsystem.PivotState.INTAKE, targetClawRotation).schedule();
                         }),
 
+
                         // Step 4: Wait for the extendo to reach its target position
                         new WaitUntilCommand(() -> robot.intake.extendoReached())
+                        // TODO: Once dynamic HoldPoint() works, add it below. .alongWith() is to make it a parallel command group.
                 )/*.alongWith(
                         // Step 2: Adjust drivetrain in the x direction based on camera X offset
                         new InstantCommand(() -> {
@@ -47,7 +53,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                 )*/,
 
                 // Step 5: Close the claw
-                new WaitCommand(30),
+                //new WaitCommand(30),
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.CLOSED)),
 
                 // Step 6: Wait and transition to HOVERING_WITH_SAMPLE

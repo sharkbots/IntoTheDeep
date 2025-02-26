@@ -40,6 +40,7 @@ import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 @Config
 @TeleOp(name = "Two Driver Teleop", group = "Teleop")
 public class TwoDriverTeleop extends CommandOpMode {
+
     private DashboardPoseTracker dashboardPoseTracker;
 
     private final Robot robot = Robot.getInstance();
@@ -119,60 +120,85 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
 
 
-//        // zaza testing
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(
-                        new SequentialCommandGroup(
-                                //new InstantCommand(()-> robot.follower.setStartingPose(END_OF_AUTO_POSE)),
-                                new InstantCommand(()->{
-                                    Pose currentPose = robot.follower.getPose();
-                                    double cameraXOffset = robot.sampleDetectionPipeline.getCameraXOffset();
-                                    robot.telemetryA.addData("Current Pose (in alignment command)",String.format(" (%.2f,%.2f,%.2f)", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
-                                    robot.telemetryA.update();
-
-                                    PathChain path = robot.follower.pathBuilder()
-                                            .addPath(
-                                                    new BezierLine(
-                                                            new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN),
-                                                            new Point(currentPose.getX() + 3, currentPose.getY(), Point.CARTESIAN)
-                                                    )
-                                            ).build();
-
-
-                                    new FollowPathChainCommand(robot.follower, path).setHoldEnd(true).schedule();
-                                }
-                                )
+////        // zaza testing
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//                .whenPressed(
+//                        new SequentialCommandGroup(
+//                                //new InstantCommand(()-> robot.follower.setStartingPose(END_OF_AUTO_POSE)),
+////                                new InstantCommand(()->{
+////                                    Pose currentPose = robot.follower.getPose();
+////                                    double cameraXOffset = robot.sampleDetectionPipeline.getCameraXOffset();
+////                                    robot.telemetryA.addData("Current Pose (in alignment command)",String.format(" (%.2f,%.2f,%.2f)", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading())));
+////                                    robot.telemetryA.update();
+////
+////                                    PathChain path = robot.follower.pathBuilder()
+////                                            .addPath(
+////                                                    new BezierLine(
+////                                                            new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN),
+////                                                            new Point(currentPose.getX() + 3, currentPose.getY(), Point.CARTESIAN)
+////                                                    )
+////                                            )
+////                                            .setConstantHeadingInterpolation(robot.follower.getPose().getHeading())
+////                                            .build();
+////
+////
+////                                    new FollowPathChainCommand(robot.follower, path).setHoldEnd(true).schedule();
+////                                }
+////                                )
 //                                new FollowPathChainCommand(robot.follower, robot.follower.pathBuilder()
 //                                        .addPath(
 //                                                new BezierLine(
 //                                                        new Point(robot.follower.getPose().getX(), robot.follower.getPose().getY(), Point.CARTESIAN),
 //                                                        new Point(robot.follower.getPose().getX() + 3/*robot.sampleDetectionPipeline.getCameraXOffset()*/, robot.follower.getPose().getY(), Point.CARTESIAN)
 //                                                )
-//                                        )
+//                                        ).setConstantHeadingInterpolation(robot.follower.getPose().getHeading())
 //                                        .build()).setHoldEnd(true),
-                               //new InstantCommand(() -> robot.follower.startTeleopDrive())
+//
+//
+//                                new InstantCommand(() -> robot.follower.startTeleopDrive())
+//
+//
+////                                new InstantCommand(() -> {
+////                                    // Evaluate the pose at runtime
+////                                    Pose currentPose = robot.follower.getPose();
+////                                    double cameraXOffset = robot.sampleDetectionPipeline.getCameraXOffset();
+////                                    robot.telemetryA.addData("Current Pose (in alignment command) ", currentPose);
+////                                    robot.telemetryA.addData("Camera X Offset (in alignment command)", cameraXOffset);
+////                                    robot.telemetryA.update();
+////
+////                                    // Calculate the target pose
+////                                    Pose targetDtPose = new Pose(
+////                                            currentPose.getX() + cameraXOffset,
+////                                            currentPose.getY(),
+////                                            currentPose.getHeading()
+////                                    );
+////
+////                                    // Schedule the HoldPointCommand with the updated pose
+////                                    new HoldPointCommand(robot.follower, targetDtPose).schedule();
+////                                })
+//                        )
+//                );
 
 
-//                                new InstantCommand(() -> {
-//                                    // Evaluate the pose at runtime
-//                                    Pose currentPose = robot.follower.getPose();
-//                                    double cameraXOffset = robot.sampleDetectionPipeline.getCameraXOffset();
-//                                    robot.telemetryA.addData("Current Pose (in alignment command) ", currentPose);
-//                                    robot.telemetryA.addData("Camera X Offset (in alignment command)", cameraXOffset);
-//                                    robot.telemetryA.update();
-//
-//                                    // Calculate the target pose
-//                                    Pose targetDtPose = new Pose(
-//                                            currentPose.getX() + cameraXOffset,
-//                                            currentPose.getY(),
-//                                            currentPose.getHeading()
-//                                    );
-//
-//                                    // Schedule the HoldPointCommand with the updated pose
-//                                    new HoldPointCommand(robot.follower, targetDtPose).schedule();
-//                                })
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(
+                        new SequentialCommandGroup(
+                                // TODO: Use HoldPointCommand() instead
+                                new FollowPathChainCommand(robot.follower, () -> robot.follower.pathBuilder()
+                                        .addPath(
+                                                new BezierLine(
+                                                        new Point(robot.follower.getPose().getX(), robot.follower.getPose().getY(), Point.CARTESIAN),
+                                                        new Point(robot.follower.getPose().getX() + 3/*robot.sampleDetectionPipeline.getCameraXOffset()*/, robot.follower.getPose().getY(), Point.CARTESIAN)
+                                                )
+                                        ).setConstantHeadingInterpolation(robot.follower.getPose().getHeading())
+                                        .build()).setHoldEnd(true),
+                                // TODO: Use .beforeStarting() to run getPose and getCameraXOffset()
+                                // TODO: CameraXOffset needs the sign to be flipped. Right now towards the right is negative / left is positive.
+                                new InstantCommand(() -> robot.follower.startTeleopDrive())
                         )
                 );
+
+
 
 
 

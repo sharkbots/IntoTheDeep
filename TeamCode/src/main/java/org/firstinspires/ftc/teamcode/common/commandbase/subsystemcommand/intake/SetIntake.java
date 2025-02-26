@@ -11,15 +11,21 @@ import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 public class SetIntake extends CommandBase {
     private final Robot robot;
     private final IntakeSubsystem.PivotState pivotState;
-    private final Double clawTargetRotationDegrees; // Optional rotation target
+    private Double clawTargetRotationDegrees; // Optional rotation target
 
     ElapsedTime timer;
     private double prevClawPivotPos, prevArmPivotPos, prevClawRotationPos;
     private double currClawPivotPos, currArmPivotPos, currClawRotationPos;
 
+    private DynBuilder dynDoubleBuilder;
+    boolean dynMode = false;
+    public interface DynBuilder{
+        Double run();
+    }
+
     // Constructor without target rotation (uses pivot state for claw rotation)
     public SetIntake(Robot robot, IntakeSubsystem.PivotState pivotState) {
-        this(robot, pivotState, null);
+        this(robot, pivotState, (Double) null);
     }
 
     // Constructor with target rotation (overloaded)
@@ -30,9 +36,16 @@ public class SetIntake extends CommandBase {
         this.timer = new ElapsedTime();
     }
 
+    public SetIntake(Robot robot, IntakeSubsystem.PivotState pivotState, DynBuilder dynDoubleBuilder) {
+        this(robot, pivotState, (Double) null);
+        dynMode = true;
+        this.dynDoubleBuilder = dynDoubleBuilder;
+    }
+
 
     @Override
     public void initialize(){
+        if (dynMode) clawTargetRotationDegrees = dynDoubleBuilder.run();
         // Update pivot and cache positions for timing
         prevClawPivotPos = robot.intakeClawPivotServo.getPosition();
         prevArmPivotPos = robot.intakeArmPivotLeftServo.getPosition();
@@ -49,6 +62,7 @@ public class SetIntake extends CommandBase {
             // Otherwise, use the pivot state to set the claw rotation
             robot.intake.setClawRotation(pivotState);
         }
+        if (dynMode) clawTargetRotationDegrees = null;
 
         currClawPivotPos = robot.intakeClawPivotServo.getPosition();
         currArmPivotPos = robot.intakeArmPivotLeftServo.getPosition();
@@ -61,6 +75,7 @@ public class SetIntake extends CommandBase {
     public boolean isFinished(){
         return (timer.milliseconds() > Math.abs(prevClawPivotPos - currClawPivotPos) * INTAKE_CLAW_PIVOT_MOVEMENT_TIME)
                 && (timer.milliseconds() > Math.abs(prevArmPivotPos - currArmPivotPos) * INTAKE_ARM_PIVOT_MOVEMENT_TIME)
-                && (timer.milliseconds() > Math.abs(prevClawRotationPos - currClawRotationPos) * INTAKE_CLAW_ROTATION_MOVEMENT_TIME);
+                && (timer.milliseconds() > Math.abs(prevClawRotationPos - currClawRotationPos) * INTAKE_CLAW_ROTATION_MOVEMENT_TIME)
+                && (timer.milliseconds() > 10000);
     }
 }
