@@ -1,13 +1,19 @@
 package org.firstinspires.ftc.teamcode.common.commandbase;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.MathFunctions;
 import com.pedropathing.pathgen.Point;
+import com.pedropathing.pathgen.Vector;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
+import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 
 public class HoldPointCommand extends CommandBase {
     private final Follower follower;
@@ -15,9 +21,13 @@ public class HoldPointCommand extends CommandBase {
     private final Robot robot;
     boolean dynMode = false;
     private DynBuilder dynPoseBuilder;
+    private double targetMagnitude;
+
     public interface DynBuilder{
         Pose run();
     }
+    ElapsedTime timer;
+    double timeout;
 
     public HoldPointCommand(Follower follower, Pose point) {
         this.follower = follower;
@@ -37,19 +47,28 @@ public class HoldPointCommand extends CommandBase {
         if (dynMode) point = dynPoseBuilder.run();
         Globals.IS_DT_AUTO_ALIGNING = true;
         robot.telemetryA.addData("target pose:", point.toString());
-        robot.telemetryA.update();
         follower.holdPoint(point);
 
-        if (dynMode) point = null;
+        targetMagnitude = MathFunctions.subtractVectors(robot.follower.getPose().getVector(), point.getVector()).getMagnitude();
+        robot.telemetryA.addData("target magnitude", targetMagnitude);
+        robot.telemetryA.update();
+        //timeout = Math.min(750, MathFunctions.subtractVectors(robot.follower.getPose().getVector(), point.getVector()).getMagnitude() * );
+
+        timer = new ElapsedTime();
+        timer.startTime();
     }
 
     @Override
     public boolean isFinished() {
-        if (!follower.isBusy()){
+        // TODO: add timeout in globals
+        timeout = MathUtils.clamp(targetMagnitude/3.3 * 750, 250, 750);
+        if (timer.milliseconds() > timeout){
             Globals.IS_DT_AUTO_ALIGNING = false;
-            //follower.breakFollowing();
+            if (dynMode) point = null;
             return true;
         }
-        else return false;
+        else {
+            return false;
+        }
     }
 }

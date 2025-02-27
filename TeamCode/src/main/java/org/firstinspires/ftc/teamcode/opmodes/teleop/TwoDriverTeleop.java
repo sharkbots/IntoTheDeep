@@ -82,13 +82,9 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.setTelemetry(telemetry);
         robot.init(hardwareMap);
 
-        robot.poseUpdater.setStartingPose(END_OF_AUTO_POSE);
-        robot.poseUpdater.setPose(END_OF_AUTO_POSE);
 
         robot.follower.setStartingPose(END_OF_AUTO_POSE);
         robot.follower.setPose(END_OF_AUTO_POSE);
-
-        dashboardPoseTracker = new DashboardPoseTracker(robot.poseUpdater);
 
         robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
         //dtHeadingLockOn = new PIDController(0.5, 0, 0);
@@ -142,9 +138,10 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 // TODO: Use HoldPointCommand() instead
                                 new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
                                         new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
-                                        MathFunctions.rotatePose(new Pose(robot.sampleDetectionPipeline.getCameraXOffset(), 0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
+                                        MathFunctions.rotatePose(new Pose(Math.copySign(0.25, robot.sampleDetectionPipeline.getCameraXOffset()) + robot.sampleDetectionPipeline.getCameraXOffset() ,
+                                                0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
                                 ).alongWith(
-                                        new WaitCommand(2000)
+                                        new WaitCommand(750)
                                 ),
 
                                 // TODO: Use .beforeStarting() to run getPose and getCameraXOffset()
@@ -299,8 +296,6 @@ public class TwoDriverTeleop extends CommandOpMode {
         while (opModeInInit()) {
             robot.telemetryA.addData("right trigger", gamepad2.right_trigger);
             robot.telemetryA.addLine("Robot Initialized.");
-            Drawing.drawRobot(robot.poseUpdater.getPose(), "#4CAF50");
-            Drawing.sendPacket();
             robot.telemetryA.update();
         }
     }
@@ -311,7 +306,6 @@ public class TwoDriverTeleop extends CommandOpMode {
         super.run();
         robot.clearBulkCache();
         robot.read();
-        robot.poseUpdater.update();
 
         if (timer == null){
             robot.reset();
@@ -420,14 +414,11 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
         robot.telemetryA.addData("runtime", timer.seconds());
         //robot.telemetryA.addData("camera y offset", robot.sampleDetectionPipeline.getCameraYOffset());
-        robot.telemetryA.addData("camera x offset (loop)", robot.sampleDetectionPipeline.getCameraXOffset());
-        robot.telemetryA.addData("Pose (during loop, from follower)",String.format(" (%.2f,%.2f,%.2f)", robot.follower.getPose().getX(), robot.follower.getPose().getY(), Math.toDegrees(robot.follower.getPose().getHeading())));
-        robot.telemetryA.addData("Pose (during loop, from pose updater)",String.format(" (%.2f,%.2f,%.2f)", robot.poseUpdater.getPose().getX(), robot.poseUpdater.getPose().getY(), Math.toDegrees(robot.poseUpdater.getPose().getHeading())));
+        //robot.telemetryA.addData("camera x offset (loop)", robot.sampleDetectionPipeline.getCameraXOffset());
+//        robot.telemetryA.addData("Pose (during loop, from follower)",String.format(" (%.2f,%.2f,%.2f)", robot.follower.getPose().getX(), robot.follower.getPose().getY(), Math.toDegrees(robot.follower.getPose().getHeading())));
+//        robot.telemetryA.addData("Pose (during loop, from pose updater)",String.format(" (%.2f,%.2f,%.2f)", robot.poseUpdater.getPose().getX(), robot.poseUpdater.getPose().getY(), Math.toDegrees(robot.poseUpdater.getPose().getHeading())));
+        robot.telemetryA.addData("is busy", robot.follower.isBusy());
 
-
-        Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
-        Drawing.drawRobot(robot.poseUpdater.getPose(), "#4CAF50");
-        Drawing.sendPacket();
         robot.telemetryA.update();
 
         loopTime = loop;

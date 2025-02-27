@@ -51,9 +51,6 @@ public class SetIntake extends CommandBase {
         prevArmPivotPos = robot.intakeArmPivotLeftServo.getPosition();
         prevClawRotationPos = robot.intakeClawRotationServo.getPosition();
 
-        // Set the pivot state for the arm and claw
-        robot.intake.setPivotState(pivotState);
-
         // If targetRotationDegrees is provided, set the claw rotation to the specified angle
         if (clawTargetRotationDegrees != null) {
             robot.telemetryA.update();
@@ -62,6 +59,10 @@ public class SetIntake extends CommandBase {
             // Otherwise, use the pivot state to set the claw rotation
             robot.intake.setClawRotation(pivotState);
         }
+
+        // Set the pivot state for the arm and claw
+        robot.intake.setPivotState(pivotState);
+
         if (dynMode) clawTargetRotationDegrees = null;
 
         currClawPivotPos = robot.intakeClawPivotServo.getPosition();
@@ -75,7 +76,6 @@ public class SetIntake extends CommandBase {
     public boolean isFinished(){
         return (timer.milliseconds() > Math.abs(prevClawPivotPos - currClawPivotPos) * INTAKE_CLAW_PIVOT_MOVEMENT_TIME)
                 && (timer.milliseconds() > Math.abs(prevArmPivotPos - currArmPivotPos) * INTAKE_ARM_PIVOT_MOVEMENT_TIME)
-                && (timer.milliseconds() > Math.abs(prevClawRotationPos - currClawRotationPos) * INTAKE_CLAW_ROTATION_MOVEMENT_TIME)
-                && (timer.milliseconds() > 10000);
+                && (timer.milliseconds() > Math.abs(prevClawRotationPos - currClawRotationPos) * INTAKE_CLAW_ROTATION_MOVEMENT_TIME);
     }
 }

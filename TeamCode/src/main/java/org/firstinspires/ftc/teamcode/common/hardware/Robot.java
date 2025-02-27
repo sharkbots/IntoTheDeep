@@ -14,7 +14,6 @@ import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.pathgen.MathFunctions;
 import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -42,7 +41,6 @@ import static java.lang.Thread.sleep;
 
 import android.util.Size;
 
-import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
@@ -108,7 +106,6 @@ public class Robot extends SubsystemWrapper{
     // Pedro Pathing
     public Follower follower;
     public Pose previousPose = new Pose(0, 0, 0);
-    public PoseUpdater poseUpdater;
 
     // IMU
     private final Object imuLock = new Object();
@@ -349,7 +346,6 @@ public class Robot extends SubsystemWrapper{
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
-        poseUpdater = new PoseUpdater(hardwareMap);
 
         if(!IS_AUTONOMOUS){
             //follower.setStartingPose(END_OF_AUTO_POSE);
