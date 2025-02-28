@@ -47,9 +47,15 @@ public class HoldPointCommand extends CommandBase {
         if (dynMode) point = dynPoseBuilder.run();
         Globals.IS_DT_AUTO_ALIGNING = true;
         robot.telemetryA.addData("target pose:", point.toString());
-        follower.holdPoint(point);
 
-        targetMagnitude = MathFunctions.subtractVectors(robot.follower.getPose().getVector(), point.getVector()).getMagnitude();
+        Pose robotPose = robot.follower.getPose();
+        Vector targetVector = MathFunctions.subtractVectors(point.getVector(), robotPose.getVector());
+        targetMagnitude = targetVector.getMagnitude();
+        Vector ffTargetVector = new Vector(targetMagnitude+Globals.HOLDPOINT_MANUAL_FEEDFORWARD, targetVector.getTheta());
+        robotPose.add(new Pose(ffTargetVector.getXComponent(), ffTargetVector.getYComponent(), 0));
+
+        follower.holdPoint(robotPose);
+
         robot.telemetryA.addData("target magnitude", targetMagnitude);
         robot.telemetryA.update();
         //timeout = Math.min(750, MathFunctions.subtractVectors(robot.follower.getPose().getVector(), point.getVector()).getMagnitude() * );

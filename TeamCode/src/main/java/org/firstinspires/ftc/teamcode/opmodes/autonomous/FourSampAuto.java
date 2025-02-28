@@ -107,7 +107,7 @@ public class FourSampAuto extends CommandOpMode {
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(90))
-                        .addParametricCallback(0.9, ()-> robot.follower.setMaxPower(0.7))
+                        .addParametricCallback(0.9, ()-> robot.follower.setMaxPower(1))
                         .setPathEndTValueConstraint(0.99)
                         .setPathEndTimeoutConstraint(250)
                         .build()
@@ -131,7 +131,7 @@ public class FourSampAuto extends CommandOpMode {
 
         robot.init(hardwareMap);
 
-        robot.follower.setMaxPower(0.7);
+        robot.follower.setMaxPower(1);
 
         generatePaths();
 

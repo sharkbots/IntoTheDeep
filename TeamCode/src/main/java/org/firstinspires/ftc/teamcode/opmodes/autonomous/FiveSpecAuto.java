@@ -164,7 +164,7 @@ public class FiveSpecAuto extends CommandOpMode {
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .addParametricCallback(0.0, ()-> robot.follower.setMaxPower(0.7))
+                        .addParametricCallback(0.0, ()-> robot.follower.setMaxPower(1))
                         .build()
         );
 
@@ -258,7 +258,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(1)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.99)
                                 .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(400),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true)
                                 )
@@ -283,7 +283,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(3)).setHoldEnd(false).disableUseIsBusy()
                                 .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(400),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
                         ),
@@ -306,7 +306,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(5)).setHoldEnd(false).disableUseIsBusy()
                                 .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(400),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
                         ),
@@ -328,7 +328,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).disableUseIsBusy().setCompletionThreshold(0.99)
                                 .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(400),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
                         ),

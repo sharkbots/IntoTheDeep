@@ -109,7 +109,7 @@ public class PreloadSampleCycleGenerator {
         }
 
         return builder
-                .addParametricCallback(0.5, () -> follower.setMaxPower(0.6))
+                .addParametricCallback(0.5, () -> follower.setMaxPower(1))
                 .setPathEndTValueConstraint(0.9)
                 .build();
     }

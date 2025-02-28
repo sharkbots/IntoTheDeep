@@ -116,39 +116,39 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(
-                        new SequentialCommandGroup(
-                                new FollowPathChainCommand(robot.follower, () -> robot.follower.pathBuilder()
-                                        .addPath(
-                                                new BezierLine(
-                                                        new Point(robot.follower.getPose().getX(), robot.follower.getPose().getY(), Point.CARTESIAN),
-                                                        new Point(robot.follower.getPose().getX() + 3/*robot.sampleDetectionPipeline.getCameraXOffset()*/, robot.follower.getPose().getY(), Point.CARTESIAN)
-                                                )
-                                        ).setConstantHeadingInterpolation(robot.follower.getPose().getHeading())
-                                        .build()).setHoldEnd(true),
-                                new InstantCommand(() -> robot.follower.startTeleopDrive())
-                        )
-                );
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//                .whenPressed(
+//                        new SequentialCommandGroup(
+//                                new FollowPathChainCommand(robot.follower, () -> robot.follower.pathBuilder()
+//                                        .addPath(
+//                                                new BezierLine(
+//                                                        new Point(robot.follower.getPose().getX(), robot.follower.getPose().getY(), Point.CARTESIAN),
+//                                                        new Point(robot.follower.getPose().getX() + 3/*robot.sampleDetectionPipeline.getCameraXOffset()*/, robot.follower.getPose().getY(), Point.CARTESIAN)
+//                                                )
+//                                        ).setConstantHeadingInterpolation(robot.follower.getPose().getHeading())
+//                                        .build()).setHoldEnd(true),
+//                                new InstantCommand(() -> robot.follower.startTeleopDrive())
+//                        )
+//                );
 
 
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(
-                        new SequentialCommandGroup(
-                                // TODO: Use HoldPointCommand() instead
-                                new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
-                                        new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
-                                        MathFunctions.rotatePose(new Pose(Math.copySign(0.25, robot.sampleDetectionPipeline.getCameraXOffset()) + robot.sampleDetectionPipeline.getCameraXOffset() ,
-                                                0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
-                                ).alongWith(
-                                        new WaitCommand(750)
-                                ),
-
-                                // TODO: Use .beforeStarting() to run getPose and getCameraXOffset()
-                                // TODO: CameraXOffset needs the sign to be flipped. Right now towards the right is negative / left is positive.
-                                new InstantCommand(() -> robot.follower.startTeleopDrive())
-                        )
-                );
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(
+//                        new SequentialCommandGroup(
+//                                // TODO: Use HoldPointCommand() instead
+//                                new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
+//                                        new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
+//                                        MathFunctions.rotatePose(new Pose(Math.copySign(0.25, robot.sampleDetectionPipeline.getCameraXOffset()) + robot.sampleDetectionPipeline.getCameraXOffset() ,
+//                                                0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
+//                                ).alongWith(
+//                                        new WaitCommand(750)
+//                                ),
+//
+//                                // TODO: Use .beforeStarting() to run getPose and getCameraXOffset()
+//                                // TODO: CameraXOffset needs the sign to be flipped. Right now towards the right is negative / left is positive.
+//                                new InstantCommand(() -> robot.follower.startTeleopDrive())
+//                        )
+//                );
 
 
 
@@ -409,11 +409,11 @@ public class TwoDriverTeleop extends CommandOpMode {
         double loop = System.nanoTime();
         robot.telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
 //        robot.telemetryA.addData("lift pos", robot.liftActuator.getPosition());
-//        robot.telemetryA.addData("extendo pos ticks", robot.intake.getExtendoPosTicks());
+        robot.telemetryA.addData("extendo pos ticks", robot.intake.getExtendoPosTicks());
 //        robot.telemetryA.addData("extendo pos inches", robot.intake.getExtendoPosInches());
 //        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
         robot.telemetryA.addData("runtime", timer.seconds());
-        //robot.telemetryA.addData("camera y offset", robot.sampleDetectionPipeline.getCameraYOffset());
+        robot.telemetryA.addData("camera y offset", robot.sampleDetectionPipeline.getCameraYOffset());
         //robot.telemetryA.addData("camera x offset (loop)", robot.sampleDetectionPipeline.getCameraXOffset());
 //        robot.telemetryA.addData("Pose (during loop, from follower)",String.format(" (%.2f,%.2f,%.2f)", robot.follower.getPose().getX(), robot.follower.getPose().getY(), Math.toDegrees(robot.follower.getPose().getHeading())));
 //        robot.telemetryA.addData("Pose (during loop, from pose updater)",String.format(" (%.2f,%.2f,%.2f)", robot.poseUpdater.getPose().getX(), robot.poseUpdater.getPose().getY(), Math.toDegrees(robot.poseUpdater.getPose().getHeading())));

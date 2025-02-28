@@ -45,6 +45,11 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     public void setExtendoTargetTicks(int pos){
         this.extendoTargetPos = Math.max(Math.min(pos, MAX_EXTENDO_EXTENSION), 0);
+        if (extendoTargetPos > EXTENDO_FEEDFORWARD_TRIGGER_THRESHOLD){
+            if (getExtendoPosTicks() < extendoTargetPos) robot.extendoActuator.updateFeedforward(EXTENDO_FEEDFORWARD_EXTENDING);
+            else robot.extendoActuator.updateFeedforward(EXTENDO_FEEDFORWARD_RETRACTING);
+        }
+        else robot.extendoActuator.updateFeedforward(0);
         robot.extendoActuator.setTargetPosition(this.extendoTargetPos);
     }
 
