@@ -7,10 +7,10 @@ import com.pedropathing.pathgen.Point;
 @Config
 public class Globals {
     public static class SampleAutonomousConfig{
-        double samp1X = 48;
-        double samp1Y = 60;
-        double samp2X = 48;
-        double samp2Y = 48;
+        public static double samp1X = 48;
+        public static double samp1Y = 60;
+        public static double samp2X = 48;
+        public static double samp2Y = 48;
     }
 
     public enum AllianceColor{
@@ -120,6 +120,7 @@ public class Globals {
     // Extendo
     public static int MAX_EXTENDO_EXTENSION = 1850;
     public static int EXTENDO_FEEDFORWARD_TRIGGER_THRESHOLD = 1300;
+    public static double INTAKE_MINIMUM_EXTENSION = 5.375;
 
     // 2143 ticks / 21.26 inch --> 100.7996 ticks / 1 inch
     public static double EXTENDO_TICKS_PER_INCH = 100.8;
@@ -139,8 +140,8 @@ public class Globals {
 
     // Deposit Claw Rotation
     public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.35;
-    public static double DEPOSIT_CLAW_ROTATION_BUCKET_SCORING_RED_POS = 0.02;
-    public static double DEPOSIT_CLAW_ROTATION_BUCKET_SCORING_BLUE_POS = 0.685;
+    public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.02;
+    public static double DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS = 0.685;
 
     // Deposit Slides
     public static int MAX_SLIDES_EXTENSION = 2050;
@@ -161,7 +162,7 @@ public class Globals {
     // Sample autonomous poses
     public static final Pose sampleAutoStartPose = new Pose(6.595, 111.355, Math.toRadians(270));
     public static final Pose preloadSampleStartPoseCorrected = new Pose(sampleAutoStartPose.getX() - 6.595, sampleAutoStartPose.getY() + 0.6, Math.toRadians(270));
-    public static final Pose bucketPose = new Pose(12.386, 128.573, Math.toRadians(315));
+    public static final Pose bucketPose = new Pose(12.386+1.4, 128.573+1.4, Math.toRadians(315));
     // Specimen auto pose
     public static final Pose specAutoStartPose = new Pose(6.465, 63.715, Math.toRadians(180));
 

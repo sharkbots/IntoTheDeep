@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -11,7 +10,6 @@ import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
@@ -23,7 +21,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
@@ -32,6 +29,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.PreloadSampleCycleGenerator;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SubSampleCycleGenerator;
 
 
 import java.util.ArrayList;
@@ -44,6 +42,7 @@ public class FourSampAuto extends CommandOpMode {
     private final Robot robot = Robot.getInstance();
 
     ConfigMenu menu;
+    boolean alreadyCompiled = false;
     GamepadEx operator;
     private final Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
     private double loopTime = 0.0;
@@ -54,14 +53,13 @@ public class FourSampAuto extends CommandOpMode {
 
     private DashboardPoseTracker dashboardPoseTracker;
 
+    PreloadSampleCycleGenerator preloadSampleCyclePathGen;
+    SubSampleCycleGenerator subSampleCyclePathGen;
+
     public void generatePaths(){
         //robot.follower.setStartingPose(allianceColor.convert(Globals.sampleAutoStartPose, Pose.class));
         robot.follower.setPose(allianceColor.convert(Globals.sampleAutoStartPose, Pose.class));
 
-
-        PreloadSampleCycleGenerator sampleCyclePaths = new PreloadSampleCycleGenerator()
-                .setAlliance(allianceColor)
-                .setFollower(robot.follower);
 
         // sample preload
         paths.add(
@@ -94,41 +92,43 @@ public class FourSampAuto extends CommandOpMode {
                         .build()
         );
 
-        paths.add(sampleCyclePaths.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.INSIDE));
-        paths.add(sampleCyclePaths.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.INSIDE));
+        paths.add(preloadSampleCyclePathGen.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.INSIDE));
+        paths.add(preloadSampleCyclePathGen.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.INSIDE));
 
 
-        paths.add(sampleCyclePaths.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.MIDDLE));
-        paths.add(sampleCyclePaths.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.MIDDLE));
+        paths.add(preloadSampleCyclePathGen.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.MIDDLE));
+        paths.add(preloadSampleCyclePathGen.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.MIDDLE));
 
-        paths.add(sampleCyclePaths.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
-        paths.add(sampleCyclePaths.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
+        paths.add(preloadSampleCyclePathGen.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
+        paths.add(preloadSampleCyclePathGen.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
 
-        // park
-        paths.add(
-                robot.follower.pathBuilder()
-                        .addPath(
-                                // Line 6
-                                new BezierCurve(
-                                        allianceColor.convert(new Point(12.386, 128.573, Point.CARTESIAN)),
-                                        allianceColor.convert(new Point(41.514, 117.189, Point.CARTESIAN)),
-                                        allianceColor.convert(new Point(59.027, 122.162, Point.CARTESIAN))
-                                )
-                        )
-                        .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(90))
-                        .addPath(
-                                // Line 7
-                                new BezierLine(
-                                        allianceColor.convert(new Point(59.027, 122.162, Point.CARTESIAN)),
-                                        allianceColor.convert(new Point(62.054, 91.527, Point.CARTESIAN))
-                                )
-                        )
-                        .setConstantHeadingInterpolation(Math.toRadians(90))
-                        .addParametricCallback(0.9, ()-> robot.follower.setMaxPower(1))
-                        .setPathEndTValueConstraint(0.99)
-                        .setPathEndTimeoutConstraint(250)
-                        .build()
-        );
+        paths.add(subSampleCyclePathGen.getSubPickupPath(0));
+
+//        // park
+//        paths.add(
+//                robot.follower.pathBuilder()
+//                        .addPath(
+//                                // Line 6
+//                                new BezierCurve(
+//                                        allianceColor.convert(new Point(12.386, 128.573, Point.CARTESIAN)),
+//                                        allianceColor.convert(new Point(41.514, 117.189, Point.CARTESIAN)),
+//                                        allianceColor.convert(new Point(59.027, 122.162, Point.CARTESIAN))
+//                                )
+//                        )
+//                        .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(90))
+//                        .addPath(
+//                                // Line 7
+//                                new BezierLine(
+//                                        allianceColor.convert(new Point(59.027, 122.162, Point.CARTESIAN)),
+//                                        allianceColor.convert(new Point(62.054, 91.527, Point.CARTESIAN))
+//                                )
+//                        )
+//                        .setConstantHeadingInterpolation(Math.toRadians(90))
+//                        .addParametricCallback(0.9, ()-> robot.follower.setMaxPower(1))
+//                        .setPathEndTValueConstraint(0.99)
+//                        .setPathEndTimeoutConstraint(250)
+//                        .build()
+//        );
     }
     @Override
     public void initialize() {
@@ -142,7 +142,7 @@ public class FourSampAuto extends CommandOpMode {
         robot.setTelemetry(telemetry);
         robot.telemetryA.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         sleep(500);
-        menu = new ConfigMenu(operator, telemetry);
+        menu = new ConfigMenu(operator, robot);
         menu.setConfigurationObject(new Globals.SampleAutonomousConfig());
         operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(menu::backupCurrentField);
 
@@ -153,8 +153,40 @@ public class FourSampAuto extends CommandOpMode {
 
         robot.follower.setMaxPower(1);
 
-        generatePaths();
+        preloadSampleCyclePathGen = new PreloadSampleCycleGenerator()
+                .setAlliance(allianceColor)
+                .setFollower(robot.follower);
 
+        subSampleCyclePathGen = new SubSampleCycleGenerator()
+                .setAlliance(allianceColor)
+                .setFollower(robot.follower);
+
+//        generatePaths();
+//        generateSchedule();
+
+
+        robot.reset();
+        robot.lift.updateState(LiftSubsystem.ClawState.CLOSED);
+        while(opModeInInit()){
+            menu.periodic();
+
+
+            if (menu.isLocked() && !alreadyCompiled){
+                alreadyCompiled = true;
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X, Globals.SampleAutonomousConfig.samp1Y, Point.CARTESIAN));
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X, Globals.SampleAutonomousConfig.samp2Y, Point.CARTESIAN));
+                generatePaths();
+                generateSchedule();
+            }
+            else if (!menu.isLocked()){
+                alreadyCompiled = false;
+                super.reset();
+            }
+            robot.telemetryA.addData("right trigger", operator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+        }
+    }
+
+    private void generateSchedule() {
         schedule(
                 new RunCommand(robot::clearChubCache),
                 new RunCommand(robot::read),
@@ -181,11 +213,12 @@ public class FourSampAuto extends CommandOpMode {
 
                         // Pickup inside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new HoverCommand(robot, 900),
                         new FollowPathChainCommand(robot.follower, paths.get(1)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
+                                                new HoverCommand(robot, 900)
+                                        )
                                 )
                         ),
                         new SequentialCommandGroup(
@@ -222,11 +255,12 @@ public class FourSampAuto extends CommandOpMode {
 
                         // Pickup middle sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new HoverCommand(robot, 800),
                         new FollowPathChainCommand(robot.follower, paths.get(3)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
+                                                new HoverCommand(robot, 800)
+                                        )
                                 )
                         ),
                         //new IntakeSampleCommand(robot),
@@ -252,11 +286,12 @@ public class FourSampAuto extends CommandOpMode {
 
                         // Pickup outside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new HoverCommand(robot, 900),
                         new FollowPathChainCommand(robot.follower, paths.get(5)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
+                                                new HoverCommand(robot, 900)
+                                        )
                                 )
                         ),
                         new SequentialCommandGroup(
@@ -277,7 +312,16 @@ public class FourSampAuto extends CommandOpMode {
 
                         ),
                         new WaitCommand(200),
-                        new DepositSampleCommand(robot)
+                        new DepositSampleCommand(robot),
+
+                        // sub cycle #1 (5th samp)
+                        new FollowPathChainCommand(robot.follower, paths.get(7)).alongWith(
+                                new SequentialCommandGroup(
+                                        new WaitCommand(300),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
+                                )
+                        ),
+                        new HoverCommand(robot, (90.5 - Globals.SampleAutonomousConfig.samp1Y - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH)
 
 //                        // Park
 //                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
@@ -292,12 +336,6 @@ public class FourSampAuto extends CommandOpMode {
 
                 )
             );
-
-        robot.reset();
-        robot.lift.updateState(LiftSubsystem.ClawState.CLOSED);
-        while(opModeInInit()){
-            menu.periodic();
-        }
     }
 
     @Override

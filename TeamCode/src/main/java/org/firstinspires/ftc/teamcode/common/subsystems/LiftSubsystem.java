@@ -151,8 +151,7 @@ public class LiftSubsystem extends SubsystemWrapper {
                 return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
-                return Globals.ALLIANCE == Globals.AllianceColor.RED ?
-                        DEPOSIT_CLAW_ROTATION_BUCKET_SCORING_RED_POS : DEPOSIT_CLAW_ROTATION_BUCKET_SCORING_BLUE_POS;
+                return IS_AUTONOMOUS ? DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS : DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS;
 
             default:
                 throw new IllegalArgumentException("Unknown LiftState: " + state);
