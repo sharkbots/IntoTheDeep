@@ -78,34 +78,22 @@ public class PreloadSampleCycleGenerator {
         if (sampleLocation == SampleLocation.INSIDE) {
             builder.addPath(new BezierLine(
                             allianceColor.convert(insideSampleLocation, Point.class),
-                            allianceColor.convert(new Point(insideSampleLocation.getX()+2, insideSampleLocation.getY()-3, Point.CARTESIAN))))
-                    .setLinearHeadingInterpolation(allianceColor.convertHeading(insideSampleLocation.getHeading()), allianceColor.convertHeading(cycleBucketLocation.getHeading()));
-            builder.addPath(new BezierLine(
-                            allianceColor.convert(new Point(insideSampleLocation.getX()+2, insideSampleLocation.getY()-3, Point.CARTESIAN)),
-                            allianceColor.convert(cycleBucketLocation, Point.class)))
-                    .setConstantHeadingInterpolation(allianceColor.convertHeading(cycleBucketLocation.getHeading()));
+                            allianceColor.convert(bucketLocation, Point.class)))
+                    .setLinearHeadingInterpolation(insideSampleLocation.getHeading(), bucketLocation.getHeading());
         }
 
         else if (sampleLocation == SampleLocation.MIDDLE) {
             builder.addPath(new BezierLine(
                             allianceColor.convert(middleSampleLocation, Point.class),
-                            allianceColor.convert(new Point(middleSampleLocation.getX()+2, middleSampleLocation.getY()-3, Point.CARTESIAN))))
-                    .setLinearHeadingInterpolation(Math.toRadians(allianceColor.convertHeading(middleSampleLocation.getHeading())), allianceColor.convertHeading(cycleBucketLocation.getHeading()));
-            builder.addPath(new BezierLine(
-                            allianceColor.convert(new Point(middleSampleLocation.getX()+2, middleSampleLocation.getY()-3, Point.CARTESIAN)),
-                            allianceColor.convert(cycleBucketLocation, Point.class)))
-                    .setConstantHeadingInterpolation(allianceColor.convertHeading(cycleBucketLocation.getHeading()));
+                            allianceColor.convert(bucketLocation, Point.class)))
+                    .setLinearHeadingInterpolation(middleSampleLocation.getHeading(), bucketLocation.getHeading());
         }
 
         else if (sampleLocation == SampleLocation.OUTSIDE) {
             builder.addPath(new BezierLine(
                             allianceColor.convert(outsideSampleLocation, Point.class),
-                            allianceColor.convert(new Point(outsideSampleLocation.getX(), outsideSampleLocation.getY()-3, Point.CARTESIAN))))
-                    .setLinearHeadingInterpolation(Math.toRadians(allianceColor.convertHeading(outsideSampleLocation.getHeading())), allianceColor.convertHeading(cycleBucketLocation.getHeading()));
-            builder.addPath(new BezierLine(
-                            allianceColor.convert(new Point(outsideSampleLocation.getX(), outsideSampleLocation.getY()-3, Point.CARTESIAN)),
-                            allianceColor.convert(cycleBucketLocation, Point.class)))
-                    .setConstantHeadingInterpolation(allianceColor.convertHeading(cycleBucketLocation.getHeading()));
+                            allianceColor.convert(bucketLocation, Point.class)))
+                    .setLinearHeadingInterpolation(outsideSampleLocation.getHeading(), bucketLocation.getHeading());
         }
 
         return builder

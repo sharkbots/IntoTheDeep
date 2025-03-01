@@ -148,6 +148,9 @@ public class FourSampAuto extends CommandOpMode {
 
         robot.init(hardwareMap);
 
+        robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
+        robot.swapYellow();
+
         robot.follower.setMaxPower(1);
 
         generatePaths();
@@ -185,47 +188,62 @@ public class FourSampAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
+                        new SequentialCommandGroup(
+                                new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
+                                new CVIntakeCommand(robot)
+                        ),
 //                        new ParallelRaceGroup(
-//                                new SequentialCommandGroup(
-//                                        new WaitUntilCommand(robot.sampleDetectionPipeline.get)
-//                                        new CVIntakeCommand(robot),
 //
-//                                )
-//                        )
-//                        new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.59)),
-//                        new IntakeSampleCommand(robot),
-                        new TransferCommand(robot)
+////                                new SequentialCommandGroup(
+////                                        new WaitCommand(1500),
+////                                        new WaitCommand(500)
+////
+////                                        // backup (manual) intake goes here
+                        //                        new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.59)),
+//                                                new IntakeSampleCommand(robot),
+////                                )
+//                        ),
 
-                        /*
+                        new TransferCommand(robot),
+
 
                         // Deposit inside sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(800),
-                                        new FollowPathChainCommand(robot.follower, paths.get(2)).setHoldEnd(true)
+                                        new WaitCommand(600),
+                                        new FollowPathChainCommand(robot.follower, paths.get(2)).disableUseIsBusy()
+                                                .setCompletionThreshold(0.9)
                                 )
 
                         ),
                         new WaitCommand(200),
                         new DepositSampleCommand(robot),
 
+
                         // Pickup middle sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new HoverCommand(robot, 1480),
+                        new HoverCommand(robot, 800),
                         new FollowPathChainCommand(robot.follower, paths.get(3)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-                        new IntakeSampleCommand(robot),
+                        //new IntakeSampleCommand(robot),
+
+                        new SequentialCommandGroup(
+                                new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
+                                new CVIntakeCommand(robot)
+                        ),
+
                         new TransferCommand(robot),
 
                         // Deposit middle sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(800),
-                                        new FollowPathChainCommand(robot.follower, paths.get(4)).setHoldEnd(true)
+                                        new WaitCommand(600),
+                                        new FollowPathChainCommand(robot.follower, paths.get(4)).disableUseIsBusy()
+                                                .setCompletionThreshold(0.9)
                                 )
 
                         ),
@@ -234,37 +252,42 @@ public class FourSampAuto extends CommandOpMode {
 
                         // Pickup outside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new HoverCommand(robot, 1600),
+                        new HoverCommand(robot, 900),
                         new FollowPathChainCommand(robot.follower, paths.get(5)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-                        new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.45)),
-                        new IntakeSampleCommand(robot),
+                        new SequentialCommandGroup(
+                                new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
+                                new CVIntakeCommand(robot)
+                        ),
+//                        new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.45)),
+//                        new IntakeSampleCommand(robot),
                         new TransferCommand(robot),
 
                         // Deposit outside sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(800),
-                                        new FollowPathChainCommand(robot.follower, paths.get(6)).setHoldEnd(true)
+                                        new WaitCommand(600),
+                                        new FollowPathChainCommand(robot.follower, paths.get(6)).disableUseIsBusy()
+                                                .setCompletionThreshold(0.9)
                                 )
 
                         ),
                         new WaitCommand(200),
-                        new DepositSampleCommand(robot),
+                        new DepositSampleCommand(robot)
 
-                        // Park
-                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).alongWith(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(500),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
-                                )
-                        )
-                        */
+//                        // Park
+//                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
+//                        new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).alongWith(
+//                                new SequentialCommandGroup(
+//                                        new WaitCommand(500),
+//                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
+//                                )
+//                        )
+
 
 
                 )
@@ -293,5 +316,14 @@ public class FourSampAuto extends CommandOpMode {
 
         loopTime = loop;
         Globals.END_OF_AUTO_POSE = robot.follower.poseUpdater.getPose();
+    }
+
+    @Override
+    public void reset(){
+        super.reset();
+        robot.telemetryA.addLine("eye of Sauron shutting down...");
+        robot.setAutoCameraControls();
+        robot.closeCamera();
+
     }
 }
