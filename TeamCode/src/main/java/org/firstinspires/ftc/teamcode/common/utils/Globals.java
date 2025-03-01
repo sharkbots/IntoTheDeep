@@ -61,10 +61,10 @@ public class Globals {
 
 
     public static double DEFAULT_LIFT_FEEDFORWARD = 0.08;
-    public static double LIFT_RESET_FEEDFORWARD = -0.2;
-    public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.2;
-    public static double EXTENDO_FEEDFORWARD_EXTENDING = 0;
-    public static double EXTENDO_FEEDFORWARD_RETRACTING = 0;
+    public static double LIFT_RESET_FEEDFORWARD = -0.0;
+    public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.0;
+    public static double EXTENDO_FEEDFORWARD_EXTENDING = 0.2;
+    public static double EXTENDO_FEEDFORWARD_RETRACTING = -0.2;
 
     public static AllianceColor ALLIANCE = AllianceColor.RED;
     public static boolean IS_AUTONOMOUS = false;

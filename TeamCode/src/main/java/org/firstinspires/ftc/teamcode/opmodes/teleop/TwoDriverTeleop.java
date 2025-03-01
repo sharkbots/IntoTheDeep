@@ -183,14 +183,24 @@ public class TwoDriverTeleop extends CommandOpMode {
 //                        new HoldPointCommand(robot.follower, new Pose(robot.follower.getPose().getX()+robot.sampleDetectionPipeline.getCameraXOffset(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()))
 //                );
 
-        // Grab sample
+
+        // Auto grab
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(
+                .whileHeld(
                         new ConditionalCommand(new CVIntakeCommand(robot)
                                 .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
                                 new InstantCommand(),
-                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
-                            ));
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE && robot.sampleDetectionPipeline.getCameraOffsetMagnitude() != 0
+                        ));
+
+        // Grab sample (manual activation w/ camera assistance)
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+//                .whenPressed(
+//                        new ConditionalCommand(new CVIntakeCommand(robot)
+//                                .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
+//                                new InstantCommand(),
+//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
+//                            ));
 
         // ReGrab sample in case of failed grab
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -365,16 +375,19 @@ public class TwoDriverTeleop extends CommandOpMode {
             rotation *= 0.3;
         }
 
-        // align to closest cardinal point
-        if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
-            double alignmentHeading = ((int) Math.round(currentHeading / (Math.PI/2))) * (Math.PI/2);
+        // TODO: fix using turn to
+//        // align to closest cardinal point
+//        if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
+//            double alignmentHeading = ((int) Math.round(currentHeading / (Math.PI/2))) * (Math.PI/2);
+//
+//            if (Math.abs(alignmentHeading-currentHeading) > Math.toRadians(0.5)){
+//                rotation = dtHeadingLockOn.calculate(currentHeading, alignmentHeading);
+//                rotation = MathUtils.clamp(rotation,-1, 1);
+//            }
+//        }
+        if (robot.sampleDetectionPipeline.getCameraOffsetMagnitude() != 0){
 
-            if (Math.abs(alignmentHeading-currentHeading) > Math.toRadians(0.5)){
-                rotation = dtHeadingLockOn.calculate(currentHeading, alignmentHeading);
-                rotation = MathUtils.clamp(rotation,-1, 1);
-            }
         }
-
 
 
 //        if(Math.abs(forward) >= 0.1 && Math.abs(strafe) >= 0.1 && Math.abs(rotation) >= 0.1){
@@ -415,6 +428,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.telemetryA.addData("Pose (during loop, from follower)",String.format(" (%.2f,%.2f,%.2f)", robot.follower.getPose().getX(), robot.follower.getPose().getY(), Math.toDegrees(robot.follower.getPose().getHeading())));
 //        robot.telemetryA.addData("Pose (during loop, from pose updater)",String.format(" (%.2f,%.2f,%.2f)", robot.poseUpdater.getPose().getX(), robot.poseUpdater.getPose().getY(), Math.toDegrees(robot.poseUpdater.getPose().getHeading())));
         robot.telemetryA.addData("is busy", robot.follower.isBusy());
+        robot.telemetryA.addData("intake pivot state", robot.intake.pivotState);
 
         robot.telemetryA.update();
 

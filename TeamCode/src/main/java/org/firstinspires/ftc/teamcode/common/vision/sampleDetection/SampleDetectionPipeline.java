@@ -175,6 +175,7 @@ public class SampleDetectionPipeline implements VisionProcessor {
         }
 
         if (!centerCoords.isEmpty()){
+            // TODO: add a stack to store last 5 frames (use list)
             closestCenter = closestCenter(centerCoords);
             Point closestCenterPoint = new Point(closestCenter[0].intValue(), closestCenter[1].intValue());
             if (cameraInRange()){
@@ -318,16 +319,16 @@ public class SampleDetectionPipeline implements VisionProcessor {
         return centers;
     }
 
+    // TODO: rewrite by adding in x/y parallax
     public Double[] closestCenter(ArrayList<Double[]> coords){
-        double smallestXOffset = Math.abs(Robot.getParallaxXCm(coords.get(0)[0].intValue(), coords.get(0)[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, coords.get(0)[1].intValue()));
+        double smallestMagnitude = Math.sqrt(coords.get(0)[0].intValue()*coords.get(0)[0].intValue() + coords.get(0)[1].intValue()*coords.get(0)[1]);
         int closestCenterID = 0;
         for (int i = 1; i < coords.size(); i++){
-            double xOffset = Math.abs(Robot.getParallaxXCm(coords.get(i)[0].intValue(), coords.get(0)[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, coords.get(0)[1].intValue()));
-            if (xOffset<smallestXOffset) {
-                smallestXOffset = xOffset;
+            double offsetMagnitude = Math.sqrt(coords.get(i)[0].intValue()*coords.get(i)[0].intValue() + coords.get(i)[1].intValue()*coords.get(i)[1]);
+            if (offsetMagnitude<smallestMagnitude) {
+                smallestMagnitude = offsetMagnitude;
                 closestCenterID = i;
             }
-
         }
         return coords.get(closestCenterID);
     }
@@ -374,9 +375,15 @@ public class SampleDetectionPipeline implements VisionProcessor {
         }
     }
 
-//    public double getCameraOffsetMagnitude(){
-//
-//    }
+    public double getCameraOffsetMagnitude(){
+        if(getCameraXOffset() == 0 && getCameraYOffset() == 0){
+            return 0.0;
+        }
+        else {
+            return Math.sqrt(getCameraXOffset()*getCameraXOffset() + getCameraYOffset()*getCameraYOffset());
+        }
+
+    }
 
     public double getCameraZOffset(){
         return this.closestCenter[2]/2.54;

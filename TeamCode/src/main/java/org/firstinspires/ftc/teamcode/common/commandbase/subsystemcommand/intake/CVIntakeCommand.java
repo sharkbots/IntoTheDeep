@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -24,10 +25,17 @@ public class CVIntakeCommand extends SequentialCommandGroup {
 //                                targetExtendoPos += (robot.intake.getExtendoPosTicks()-660)*(-0.0805)/Globals.EXTENDO_TICKS_PER_INCH;
 //                            }
                             robot.intake.setExtendoTargetInches(targetExtendoPos);
+
+                        }),
+                        new InstantCommand(()-> {
+                            robot.telemetryA.addData("extendo target pos (intake)", robot.extendoActuator.getTargetPosition());
                         }),
 
                         // Step 4: Wait for the extendo to reach its target position
-                        new WaitUntilCommand(() -> robot.intake.extendoReached())
+                        new ParallelRaceGroup(
+                                new WaitUntilCommand(() -> robot.intake.extendoReached()),
+                                new WaitCommand(1200)
+                        )
                         // TODO: Once dynamic HoldPoint() works, add it below. .alongWith() is to make it a parallel command group.
                 ).alongWith(
                         new SequentialCommandGroup(
@@ -49,6 +57,9 @@ public class CVIntakeCommand extends SequentialCommandGroup {
 
                 // Step 6: Wait and transition to HOVERING_WITH_SAMPLE
                 new WaitCommand(230),
+                // REMOVE ASAP
+                //new InstantCommand(()-> robot.intake.pivotState = IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE),
+                //new SetIntake(robot, IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE))
         );
     }
