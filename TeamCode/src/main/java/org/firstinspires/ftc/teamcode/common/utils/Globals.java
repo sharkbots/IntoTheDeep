@@ -52,15 +52,19 @@ public class Globals {
     public static long CAMERA_EXPOSURE_MILLIS = 25; //33
     public static int CAMERA_WHITE_BALANCE_TEMPERATURE = 5500; //5500
     public static int CAMERA_GAIN = 30; //70
-    public static int CAMERA_GAUSSIAN = 5; //70
+    public static int CAMERA_GAUSSIAN = 11; //70
 
     public static int CAMERA_STREAM_WIDTH = 800;
     public static int CAMERA_STREAM_HEIGHT = 600;
 
+    public final static double CAMERA_OFFSET_FROM_CENTER_Y_IN = 3.0/8.0;
+
 
     public static double DEFAULT_LIFT_FEEDFORWARD = 0.08;
-    public static double LIFT_RESET_FEEDFORWARD = -0.2;
-    public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.2;
+    public static double LIFT_RESET_FEEDFORWARD = -0.0;
+    public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.0;
+    public static double EXTENDO_FEEDFORWARD_EXTENDING = 0.2;
+    public static double EXTENDO_FEEDFORWARD_RETRACTING = -0.2;
 
     public static AllianceColor ALLIANCE = AllianceColor.RED;
     public static boolean IS_AUTONOMOUS = false;
@@ -73,6 +77,7 @@ public class Globals {
 
     public static boolean IS_DT_MANUAL_CONTROL = false;
     public static boolean IS_DT_AUTO_ALIGNING = false;
+    public static double HOLDPOINT_MANUAL_FEEDFORWARD = 0.5;
 
     // Size of robot (in inches)
     public static double ROBOT_LENGTH = 13.1;
@@ -93,7 +98,7 @@ public class Globals {
     public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.47;
     public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.7;
     public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
-    public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.79;
+    public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.79; // 0.79
 
     // Intake Claw Pivot
     public static double INTAKE_CLAW_PIVOT_TRANSFER_POS = 0.015;
@@ -114,6 +119,7 @@ public class Globals {
 
     // Extendo
     public static int MAX_EXTENDO_EXTENSION = 1850;
+    public static int EXTENDO_FEEDFORWARD_TRIGGER_THRESHOLD = 1300;
 
     // 2143 ticks / 21.26 inch --> 100.7996 ticks / 1 inch
     public static double EXTENDO_TICKS_PER_INCH = 100.8;

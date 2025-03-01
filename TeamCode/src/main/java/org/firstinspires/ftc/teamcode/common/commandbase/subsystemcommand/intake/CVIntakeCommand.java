@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -21,29 +20,32 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                         // Step 1: Adjust the extendo position based on camera Y offset
                         new InstantCommand(() -> {
-                            double targetExtendoPos = robot.intake.getExtendoPosInches() + robot.sampleDetectionPipeline.getCameraYOffset();
+                            double targetExtendoPos = robot.intake.getExtendoPosInches() + robot.sampleDetectionPipeline.getCameraYOffset() - Globals.CAMERA_OFFSET_FROM_CENTER_Y_IN;
+//                            if (robot.intake.getExtendoPosTicks() > 660){
+//                                targetExtendoPos += (robot.intake.getExtendoPosTicks()-660)*(-0.0805)/Globals.EXTENDO_TICKS_PER_INCH;
+//                            }
                             robot.intake.setExtendoTargetInches(targetExtendoPos);
+
+                        }),
+                        new InstantCommand(()-> {
+                            robot.telemetryA.addData("extendo target pos (intake)", robot.extendoActuator.getTargetPosition());
                         }),
 
-                        // Step 3: Dynamically calculate target claw rotation and set intake
-                        // Not dynamically somehow messes up and only calculates it once
-
-                        // TODO: Change InstantCommand() block to setIntake() command below. Use .beforeStarting()
-                        new SetIntake(robot, IntakeSubsystem.PivotState.INTAKE, () -> robot.intake.getClawRotationDegrees()+robot.sampleDetectionPipeline.getCameraHeadingOffsetDegrees()),
-
                         // Step 4: Wait for the extendo to reach its target position
-                        new WaitUntilCommand(() -> robot.intake.extendoReached())
+                        new ParallelRaceGroup(
+                                new WaitUntilCommand(() -> robot.intake.extendoReached()),
+                                new WaitCommand(1200)
+                        )
                         // TODO: Once dynamic HoldPoint() works, add it below. .alongWith() is to make it a parallel command group.
                 ).alongWith(
                         new SequentialCommandGroup(
                                 // Step 2: Adjust drivetrain in the x direction based on camera X offset
                                 new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
                                         new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
-                                        MathFunctions.rotatePose(new Pose(Math.copySign(0.7, robot.sampleDetectionPipeline.getCameraXOffset()) + robot.sampleDetectionPipeline.getCameraXOffset(),
+                                        MathFunctions.rotatePose(new Pose(robot.sampleDetectionPipeline.getCameraXOffset(),
                                                 0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
-                                )/*.alongWith(
-                                        new WaitCommand(450)
-                                )*/,
+                                ),
+                                new SetIntake(robot, IntakeSubsystem.PivotState.INTAKE, () -> robot.intake.getClawRotationDegrees()+robot.sampleDetectionPipeline.getCameraHeadingOffsetDegrees()),
                                 new InstantCommand(() -> robot.follower.startTeleopDrive())
                         )
 
@@ -55,6 +57,9 @@ public class CVIntakeCommand extends SequentialCommandGroup {
 
                 // Step 6: Wait and transition to HOVERING_WITH_SAMPLE
                 new WaitCommand(230),
+                // REMOVE ASAP
+                //new InstantCommand(()-> robot.intake.pivotState = IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE),
+                //new SetIntake(robot, IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE))
         );
     }

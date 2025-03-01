@@ -53,7 +53,6 @@ public class SetIntake extends CommandBase {
 
         // If targetRotationDegrees is provided, set the claw rotation to the specified angle
         if (clawTargetRotationDegrees != null) {
-            robot.telemetryA.update();
             robot.intake.setClawRotationDegrees(clawTargetRotationDegrees);
         } else {
             // Otherwise, use the pivot state to set the claw rotation

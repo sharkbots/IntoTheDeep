@@ -223,7 +223,9 @@ public class Robot extends SubsystemWrapper{
 
         // INTAKE
         intakeClawLED = hardwareMap.get(ServoImplEx.class, "intakeClawLED");
-        intakeClawLED.setPwmDisable();
+//        intakeClawLED.setPwmEnable();
+//        intakeClawLED.setPosition(0.42);
+//        intakeClawLED.setPwmDisable();
 
         intakeArmPivotLeftServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotLeftServo"));
 
@@ -326,7 +328,7 @@ public class Robot extends SubsystemWrapper{
             setAutoCameraControls();
 
             try {
-                sleep(500);
+                sleep(300);
             } catch (Exception e){
 
             }
