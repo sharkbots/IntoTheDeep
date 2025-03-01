@@ -10,11 +10,11 @@ import com.pedropathing.pathgen.Point;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 public class PreloadSampleCycleGenerator {
-    public Pose bucketLocation = new Pose(12.386, 128.573, Math.toRadians(315));
+    public Pose bucketLocation = Globals.bucketPose;
     private Pose cycleBucketLocation = new Pose(bucketLocation.getX()+2, bucketLocation.getY()+2, Math.toRadians(315));
-    private Pose outsideSampleLocation = new Pose(19.580, 126.069, Math.toRadians(20.11));
-    private Pose middleSampleLocation = new Pose(19.001, 129.372, Math.toRadians(0));
-    private Pose insideSampleLocation = new Pose(21.472, 128.140, Math.toRadians(339));
+    private Pose outsideSampleLocation = new Pose(25, 130, Math.toRadians(25.6));
+    private Pose middleSampleLocation = new Pose(25, 130, Math.toRadians(0));
+    private Pose insideSampleLocation = new Pose(25, 130, Math.toRadians(333.8));
 
 
     private Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
@@ -52,19 +52,19 @@ public class PreloadSampleCycleGenerator {
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(insideSampleLocation, Point.class)))
-                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(339));
+                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), insideSampleLocation.getHeading());
 
         else if (sampleLocation == SampleLocation.MIDDLE)
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(middleSampleLocation, Point.class)))
-                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(0));
+                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), middleSampleLocation.getHeading());
 
         else if (sampleLocation == SampleLocation.OUTSIDE)
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(middleSampleLocation, Point.class)))
-                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(22.11));
+                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), outsideSampleLocation.getHeading());
 
         return builder.setZeroPowerAccelerationMultiplier(1).build();
     }

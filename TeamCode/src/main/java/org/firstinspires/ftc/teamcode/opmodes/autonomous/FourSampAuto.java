@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.localization.Pose;
@@ -19,6 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
@@ -52,7 +55,7 @@ public class FourSampAuto extends CommandOpMode {
     private DashboardPoseTracker dashboardPoseTracker;
 
     public void generatePaths(){
-        //robot.follower.setStartingPose(allianceColor.convertPose(Globals.preloadSampleStartPose));
+        //robot.follower.setStartingPose(allianceColor.convert(Globals.sampleAutoStartPose, Pose.class));
         robot.follower.setPose(allianceColor.convert(Globals.sampleAutoStartPose, Pose.class));
 
 
@@ -63,17 +66,31 @@ public class FourSampAuto extends CommandOpMode {
         // sample preload
         paths.add(
                 robot.follower.pathBuilder()
-                        .addPath(new BezierCurve(
-                                allianceColor.convert(new Point(6.595, 101.105, Point.CARTESIAN)),
-                                allianceColor.convert(new Point(22.486, 117.189, Point.CARTESIAN)),
-                                allianceColor.convert(new Point(12.386, 128.573, Point.CARTESIAN))
-                        ))
-                        .addParametricCallback(0.7, () -> robot.follower.setMaxPower(0.3))
-                        //.setPathEndTValueConstraint(0.5) // faster end due to overshoot
-                        //.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
+                        .addPath(
+                                new BezierLine(
+                                        new Point(6.595, 111.355, Point.CARTESIAN),
+                                        new Point(15.351, 126.486, Point.CARTESIAN)
+                                )
+                        )
                         .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
-                        .setPathEndTValueConstraint(0.9)
-                        .setPathEndVelocityConstraint(3)
+                        .addPath(
+                                new BezierLine(
+                                        new Point(15.351, 126.486, Point.CARTESIAN),
+                                        allianceColor.convert(Globals.bucketPose, Point.class)
+                                )
+                        )
+                        .setConstantHeadingInterpolation(Math.toRadians(315))
+//                        .addPath(new BezierCurve(
+//                                allianceColor.convert(new Point(6.595, 101.105, Point.CARTESIAN)),
+//                                allianceColor.convert(new Point(22.486, 117.189, Point.CARTESIAN)),
+//                                allianceColor.convert(new Point(12.386, 128.573, Point.CARTESIAN))
+//                        ))
+//                        .addParametricCallback(0.7, () -> robot.follower.setMaxPower(0.3))
+//                        //.setPathEndTValueConstraint(0.5) // faster end due to overshoot
+//                        //.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
+//                        .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
+//                        .setPathEndTValueConstraint(0.9)
+//                        .setPathEndVelocityConstraint(3)
                         .build()
         );
 
@@ -144,27 +161,42 @@ public class FourSampAuto extends CommandOpMode {
 
                 new SequentialCommandGroup(
                         // Deposit preload sample
-                        new FollowPathChainCommand(robot.follower, paths.get(0)).setHoldEnd(true).alongWith(
+                        new FollowPathChainCommand(robot.follower, paths.get(0)).setHoldEnd(false)
+//                                .alongWith(
+//                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
+//                                ),
+                                .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(1000),
+                                        new WaitCommand(200), // see if we can put this to 0
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
                                 )
-                        ),
+                                ),
+
                         new WaitCommand(200),
                         new DepositSampleCommand(robot),
 
+
                         // Pickup inside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new HoverCommand(robot, 1320),
+                        new HoverCommand(robot, 900),
                         new FollowPathChainCommand(robot.follower, paths.get(1)).setHoldEnd(true).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-                        new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.59)),
-                        new IntakeSampleCommand(robot),
-                        new TransferCommand(robot),
+//                        new ParallelRaceGroup(
+//                                new SequentialCommandGroup(
+//                                        new WaitUntilCommand(robot.sampleDetectionPipeline.get)
+//                                        new CVIntakeCommand(robot),
+//
+//                                )
+//                        )
+//                        new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.59)),
+//                        new IntakeSampleCommand(robot),
+                        new TransferCommand(robot)
+
+                        /*
 
                         // Deposit inside sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
@@ -232,8 +264,12 @@ public class FourSampAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
                                 )
                         )
-            )
-        );
+                        */
+
+
+                )
+            );
+
         robot.reset();
         robot.lift.updateState(LiftSubsystem.ClawState.CLOSED);
         while(opModeInInit()){
