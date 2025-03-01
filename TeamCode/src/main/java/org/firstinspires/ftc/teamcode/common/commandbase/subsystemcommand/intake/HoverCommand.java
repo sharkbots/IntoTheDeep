@@ -15,6 +15,7 @@ public class HoverCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.extendoActuator.setTargetPosition(extension)),
                 new SetIntake(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE),
                 new WaitUntilCommand(()-> robot.intake.extendoReached()),
+                //new InstantCommand(()-> robot.intakeClawLED.setPwmEnable()),
 
                 /*new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE)),
                 new WaitCommand(600),*/

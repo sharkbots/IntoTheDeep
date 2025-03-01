@@ -20,9 +20,9 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                         // Step 1: Adjust the extendo position based on camera Y offset
                         new InstantCommand(() -> {
                             double targetExtendoPos = robot.intake.getExtendoPosInches() + robot.sampleDetectionPipeline.getCameraYOffset() - Globals.CAMERA_OFFSET_FROM_CENTER_Y_IN;
-                            if (robot.intake.getExtendoPosTicks() > 660){
-                                targetExtendoPos += (robot.intake.getExtendoPosTicks()-660)*(-0.0805)/Globals.EXTENDO_TICKS_PER_INCH;
-                            }
+//                            if (robot.intake.getExtendoPosTicks() > 660){
+//                                targetExtendoPos += (robot.intake.getExtendoPosTicks()-660)*(-0.0805)/Globals.EXTENDO_TICKS_PER_INCH;
+//                            }
                             robot.intake.setExtendoTargetInches(targetExtendoPos);
                         }),
 

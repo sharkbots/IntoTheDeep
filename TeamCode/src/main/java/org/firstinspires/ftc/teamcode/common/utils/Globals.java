@@ -52,7 +52,7 @@ public class Globals {
     public static long CAMERA_EXPOSURE_MILLIS = 25; //33
     public static int CAMERA_WHITE_BALANCE_TEMPERATURE = 5500; //5500
     public static int CAMERA_GAIN = 30; //70
-    public static int CAMERA_GAUSSIAN = 5; //70
+    public static int CAMERA_GAUSSIAN = 11; //70
 
     public static int CAMERA_STREAM_WIDTH = 800;
     public static int CAMERA_STREAM_HEIGHT = 600;
@@ -77,7 +77,7 @@ public class Globals {
 
     public static boolean IS_DT_MANUAL_CONTROL = false;
     public static boolean IS_DT_AUTO_ALIGNING = false;
-    public static double HOLDPOINT_MANUAL_FEEDFORWARD = 0.7;
+    public static double HOLDPOINT_MANUAL_FEEDFORWARD = 0.5;
 
     // Size of robot (in inches)
     public static double ROBOT_LENGTH = 13.1;

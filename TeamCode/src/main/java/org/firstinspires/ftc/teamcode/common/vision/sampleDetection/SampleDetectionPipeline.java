@@ -41,9 +41,9 @@ public class SampleDetectionPipeline implements VisionProcessor {
 
 
     List<MatOfPoint> contours = new ArrayList<>();
-    public static double RUH = 5, RLH = 160, RS = 90, RV = 70, BH = 101, BUH = 120, BS = 50, BV = 75, YH = 11, YUH = 33, YS = 80, YV = 150, AREA_RATIO_WEIGHT = -0.4, UPPIES = .5, MIN_AREA = 7000,FOR_MULT=.7,
+    public static double RUH = 5, RLH = 160, RS = 95, RV = 70, BH = 100, BUH = 120, BS = 120, BV = 30, YH = 11, YUH = 33, YS = 80, YV = 120, AREA_RATIO_WEIGHT = -0.4, UPPIES = .5, MIN_AREA = 7000,FOR_MULT=.7,
             FOR_CONST = 3;
-    public static int UPPER_THRESH = 130, LOWER_THRESH = 120, YUPPER_THRESH = 165, YLOWER_THRESH = 60, KERNEL_SIZE = 8, YELLOW_KERNEL_SIZE = 8;
+    public static int UPPER_THRESH = 130, LOWER_THRESH = 50, YUPPER_THRESH = 140, YLOWER_THRESH = 60, KERNEL_SIZE = 8, YELLOW_KERNEL_SIZE = 8;
     Mat hsv = new Mat();
     Mat mask = new Mat(), mask2 = new Mat(), closedEdges = new Mat(), edges = new Mat();
     Mat kernel = new Mat();
@@ -373,6 +373,10 @@ public class SampleDetectionPipeline implements VisionProcessor {
             return (Robot.getParallaxYCm(this.closestCenter[1].intValue()) - Robot.getParallaxYCm(CAMERA_STREAM_HEIGHT/2))/2.54;
         }
     }
+
+//    public double getCameraOffsetMagnitude(){
+//
+//    }
 
     public double getCameraZOffset(){
         return this.closestCenter[2]/2.54;

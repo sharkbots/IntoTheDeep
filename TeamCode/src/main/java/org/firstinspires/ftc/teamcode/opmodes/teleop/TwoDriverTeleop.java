@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -116,39 +117,38 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-//                .whenPressed(
-//                        new SequentialCommandGroup(
-//                                new FollowPathChainCommand(robot.follower, () -> robot.follower.pathBuilder()
-//                                        .addPath(
-//                                                new BezierLine(
-//                                                        new Point(robot.follower.getPose().getX(), robot.follower.getPose().getY(), Point.CARTESIAN),
-//                                                        new Point(robot.follower.getPose().getX() + 3/*robot.sampleDetectionPipeline.getCameraXOffset()*/, robot.follower.getPose().getY(), Point.CARTESIAN)
-//                                                )
-//                                        ).setConstantHeadingInterpolation(robot.follower.getPose().getHeading())
-//                                        .build()).setHoldEnd(true),
-//                                new InstantCommand(() -> robot.follower.startTeleopDrive())
-//                        )
-//                );
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new SequentialCommandGroup(
+                            new InstantCommand(() -> {
+                                double targetExtendoPos = robot.intake.getExtendoPosInches() + robot.sampleDetectionPipeline.getCameraYOffset() - CAMERA_OFFSET_FROM_CENTER_Y_IN;
+                                if (robot.intake.getExtendoPosTicks() > 660){
+                                    targetExtendoPos += (robot.intake.getExtendoPosTicks()-660)*(-0.0805)/EXTENDO_TICKS_PER_INCH;
+                                }
+                                robot.intake.setExtendoTargetInches(targetExtendoPos);
+                            }),
+                                new WaitUntilCommand(() -> robot.intake.extendoReached())
+                        )
+                );
 
 
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-//                .whenPressed(
-//                        new SequentialCommandGroup(
-//                                // TODO: Use HoldPointCommand() instead
-//                                new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
-//                                        new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
-//                                        MathFunctions.rotatePose(new Pose(Math.copySign(0.25, robot.sampleDetectionPipeline.getCameraXOffset()) + robot.sampleDetectionPipeline.getCameraXOffset() ,
-//                                                0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
-//                                ).alongWith(
-//                                        new WaitCommand(750)
-//                                ),
-//
-//                                // TODO: Use .beforeStarting() to run getPose and getCameraXOffset()
-//                                // TODO: CameraXOffset needs the sign to be flipped. Right now towards the right is negative / left is positive.
-//                                new InstantCommand(() -> robot.follower.startTeleopDrive())
-//                        )
-//                );
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(
+                        new SequentialCommandGroup(
+                                // TODO: Use HoldPointCommand() instead
+                                new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
+                                        new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
+                                        MathFunctions.rotatePose(new Pose(robot.sampleDetectionPipeline.getCameraXOffset() ,
+                                                0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
+                                ).alongWith(
+                                        new WaitCommand(750)
+                                ),
+
+                                // TODO: Use .beforeStarting() to run getPose and getCameraXOffset()
+                                // TODO: CameraXOffset needs the sign to be flipped. Right now towards the right is negative / left is positive.
+                                new InstantCommand(() -> robot.follower.startTeleopDrive())
+                        )
+                );
 
 
 
@@ -374,11 +374,8 @@ public class TwoDriverTeleop extends CommandOpMode {
                 rotation = MathUtils.clamp(rotation,-1, 1);
             }
         }
-        else {
-//            robot.drivetrain.set(new Pose(-strafe,
-//                    forward,
-//                    -rotation), 0);
-        }
+
+
 
 //        if(Math.abs(forward) >= 0.1 && Math.abs(strafe) >= 0.1 && Math.abs(rotation) >= 0.1){
 //            //if(!IS_DT_MANUAL_CONTROL)robot.follower.breakFollowing();
