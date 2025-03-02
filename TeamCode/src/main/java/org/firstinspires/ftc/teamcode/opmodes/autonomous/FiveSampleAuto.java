@@ -38,7 +38,7 @@ import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "A🔵 Blue sample (0+4) Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
+@Autonomous(name = "A🔵 FIVE Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
 public class FiveSampleAuto extends CommandOpMode {
     private Telemetry telemetryA;
 
@@ -81,18 +81,7 @@ public class FiveSampleAuto extends CommandOpMode {
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(315))
-                        .setPathEndTimeoutConstraint(0.92)
-//                        .addPath(new BezierCurve(
-//                                allianceColor.convert(new Point(6.595, 101.105, Point.CARTESIAN)),
-//                                allianceColor.convert(new Point(22.486, 117.189, Point.CARTESIAN)),
-//                                allianceColor.convert(new Point(12.386, 128.573, Point.CARTESIAN))
-//                        ))
-//                        .addParametricCallback(0.7, () -> robot.follower.setMaxPower(0.3))
-//                        //.setPathEndTValueConstraint(0.5) // faster end due to overshoot
-//                        //.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
-//                        .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
-//                        .setPathEndTValueConstraint(0.9)
-//                        .setPathEndVelocityConstraint(3)
+                        .setPathEndTimeoutConstraint(0.9)
                         .build()
         );
 
@@ -106,8 +95,11 @@ public class FiveSampleAuto extends CommandOpMode {
         paths.add(preloadSampleCyclePathGen.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
         paths.add(preloadSampleCyclePathGen.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
 
-        paths.add(subSampleCyclePathGen.getSubPickupPath(0));
-        paths.add(subSampleCyclePathGen.getSubDepositPath(0));
+        paths.add(subSampleCyclePathGen.getSubPickupPath(1));
+        paths.add(subSampleCyclePathGen.getSubDepositPath(1));
+
+        paths.add(subSampleCyclePathGen.getSubPickupPath(2));
+        paths.add(subSampleCyclePathGen.getSubDepositPath(2));
 
 
 //        // park
@@ -345,8 +337,39 @@ public class FiveSampleAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
                                 )
                         ),
-                        new WaitCommand(200),
+                        new WaitCommand(150),
+                        new DepositSampleCommand(robot),
+
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
+                        // sub cycle #2 pickup (6th samp)
+                        new FollowPathChainCommand(robot.follower, paths.get(9)).alongWith(
+                                new SequentialCommandGroup(
+                                        new WaitCommand(500),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
+                                                new WaitCommand(600),
+                                                new HoverCommand(robot, (91.5 - Globals.SampleAutonomousConfig.samp1Y - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH),new SequentialCommandGroup(
+                                                )
+                                        )
+                                ),
+                                new SequentialCommandGroup(
+                                        new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0).alongWith(
+                                                new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY)
+                                        ),
+                                        new CVIntakeCommand(robot))
+                        ),
+
+                        // sub cycle #2 deposit (6th samp)
+                        new FollowPathChainCommand(robot.follower, paths.get(10)).alongWith(
+                                new SequentialCommandGroup(
+                                        new TransferCommand(robot),
+                                        //new WaitCommand(0),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
+                                )
+                        ),
+                        new WaitCommand(150),
                         new DepositSampleCommand(robot)
+
+
 
 //                        // Park
 //                        new InstantCommand(()-> robot.follower.setMaxPower(1)),

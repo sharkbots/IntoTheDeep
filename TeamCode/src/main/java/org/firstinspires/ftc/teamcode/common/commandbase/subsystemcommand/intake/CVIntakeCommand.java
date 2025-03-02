@@ -16,14 +16,13 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class CVIntakeCommand extends SequentialCommandGroup {
     public CVIntakeCommand(Robot robot) {
         // Build the command sequence
-        addCommands(
+        super(
+                //new InstantCommand(()->robot.visionPortal.setProcessorEnabled(robot.sampleDetectionPipeline, false)),
                 new SequentialCommandGroup(
                         // Step 1: Adjust the extendo position based on camera Y offset
                         new InstantCommand(() -> {
-                            double targetExtendoPos = robot.intake.getExtendoPosInches() + robot.sampleDetectionPipeline.getCameraYOffset() - Globals.CAMERA_OFFSET_FROM_CENTER_Y_IN;
-//                            if (robot.intake.getExtendoPosTicks() > 660){
-//                                targetExtendoPos += (robot.intake.getExtendoPosTicks()-660)*(-0.0805)/Globals.EXTENDO_TICKS_PER_INCH;
-//                            }
+                            double targetExtendoPos = robot.intake.getExtendoPosInches() + robot.sampleDetectionPipeline.getLatestValidCameraYOffset() - Globals.CAMERA_OFFSET_FROM_CENTER_Y_IN;
+
                             robot.intake.setExtendoTargetInches(targetExtendoPos);
 
                         }),
@@ -42,10 +41,10 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                                 // Step 2: Adjust drivetrain in the x direction based on camera X offset
                                 new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
                                         new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
-                                        MathFunctions.rotatePose(new Pose(robot.sampleDetectionPipeline.getCameraXOffset(),
+                                        MathFunctions.rotatePose(new Pose(robot.sampleDetectionPipeline.getLatestValidCameraXOffset(),
                                                 0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
                                 ),
-                                new SetIntake(robot, IntakeSubsystem.PivotState.INTAKE, () -> robot.intake.getClawRotationDegrees()+robot.sampleDetectionPipeline.getCameraHeadingOffsetDegrees()),
+                                new SetIntake(robot, IntakeSubsystem.PivotState.INTAKE, () -> robot.intake.getClawRotationDegrees()+robot.sampleDetectionPipeline.getLatestValidCameraHeadingOffsetDegrees()),
                                 new InstantCommand(() -> robot.follower.startTeleopDrive())
                         )
 
@@ -53,17 +52,29 @@ public class CVIntakeCommand extends SequentialCommandGroup {
 
                 // Step 5: Close the claw
 //                new WaitCommand(30),
+                new SequentialCommandGroup(
+                new InstantCommand(()-> {
+                    robot.telemetryA.addData("about to close claw (cv intake)", 0);
+                    robot.telemetryA.update();}),
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.CLOSED)),
 
+                new InstantCommand(()->{
+                    robot.telemetryA.addData("claw closed (cv intake)", 0);
+                    robot.telemetryA.update();
+                }),
                 // Step 6: Wait and transition to HOVERING_WITH_SAMPLE
                 new WaitCommand(230),
 
-                new InstantCommand(()-> robot.telemetryA.addLine("about to pivot up (cv intake)")),
+                new InstantCommand(()-> {
+                    robot.telemetryA.addData("about to pivot up (cv intake)", 0);
+                    robot.telemetryA.update();}),
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)),
                 new InstantCommand(()->{
-                    robot.telemetryA.addLine("sent pivot command (cv intake)");
+                    robot.telemetryA.addData("sent pivot command (cv intake)", 0);
                     robot.telemetryA.update();
                 })
+        )
+            //    new InstantCommand(()->robot.visionPortal.setProcessorEnabled(robot.sampleDetectionPipeline, true))
         );
     }
 }

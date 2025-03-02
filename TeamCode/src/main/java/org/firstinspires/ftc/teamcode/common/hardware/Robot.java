@@ -41,6 +41,7 @@ import static java.lang.Thread.sleep;
 
 import android.util.Size;
 
+import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
@@ -122,8 +123,9 @@ public class Robot extends SubsystemWrapper{
     public Telemetry telemetryA;
 
     // vision
-    private VisionPortal visionPortal;
+    public VisionPortal visionPortal;
     public SampleDetectionPipeline sampleDetectionPipeline;
+
     public ExposureControl exposureControl = null;
     public GainControl gainControl = null;
     public WhiteBalanceControl whiteBalanceControl = null;
@@ -285,6 +287,9 @@ public class Robot extends SubsystemWrapper{
 
         this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftTopMotor").encoder);
         liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.FORWARD);
+        if(IS_AUTONOMOUS) {
+            liftTopEncoder.reset();
+        }
 
         double lkP = 0.005;
         double lkI = 0.05;
@@ -327,12 +332,12 @@ public class Robot extends SubsystemWrapper{
             visionPortal.resumeStreaming();
             setAutoCameraControls();
 
-//            try {
-//                sleep(750);
-//            } catch (Exception e){
-//
-//            }
-//            setManualCameraControls();
+            try {
+                sleep(1000);
+            } catch (Exception e){
+
+            }
+            setManualCameraControls();
         }
         catch (Exception e){
 

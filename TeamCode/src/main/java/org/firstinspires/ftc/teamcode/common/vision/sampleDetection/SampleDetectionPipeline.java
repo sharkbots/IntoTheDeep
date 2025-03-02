@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Config
 public class SampleDetectionPipeline implements VisionProcessor {
@@ -80,6 +81,7 @@ public class SampleDetectionPipeline implements VisionProcessor {
     Mat tvec = new Mat();
     MatOfPoint2f contour2f = new MatOfPoint2f();
     private volatile Double[] closestCenter = {0.0, 0.0, 0.0, 0.0};
+    private volatile Double[] latestValidCenter = {0.0, 0.0, 0.0, 0.0};
 
     public static int color = 0;
 
@@ -204,31 +206,27 @@ public class SampleDetectionPipeline implements VisionProcessor {
             edges.copyTo(hsv);
         else
             closedEdges.copyTo(hsv);
-//
-//        closedEdges.release();
-//        edges.release();
-//        colorMask.release();
-//       // hsv.release();
-//        mask.release();
-//        mask2.release();
-//        maskedImage.release();
-//        hierarchy.release();
-//        hierarchy.release();
-//        boundingImage.release();
-
-//        Core.rotate(maskedImage, maskedImage, Core.ROTATE_180);
-//        Bitmap maskedBmp = Bitmap.createBitmap(maskedImage.cols(), maskedImage.rows(), Bitmap.Config.ARGB_8888);
-//        Utils.matToBitmap(maskedImage, maskedBmp);
-//        FtcDashboard.getInstance().sendImage(maskedBmp);
 
         Core.rotate(hsv, hsv, Core.ROTATE_180);
         Bitmap inputBmp = Bitmap.createBitmap(hsv.cols(), hsv.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(hsv, inputBmp);
         FtcDashboard.getInstance().sendImage(inputBmp);
 
+        if(closestCenter[0]!=0.0 ||  closestCenter[1]!=0.0 ||closestCenter[2]!=0.0 ||closestCenter[3]!=0.0 ) {
+            latestValidCenter = closestCenter;
+        }
+
         return input;
 
     }
+//
+//    public void setLatestValidCenter(Double[] center) {
+//        latestValidCenter = center;
+//    }
+//
+//    public Double[] getLatestValidCenter() {
+//        return latestValidCenter;
+//    }
 
     public synchronized void setCenter(Double[] newCenter) {
         closestCenter = newCenter;
@@ -356,7 +354,6 @@ public class SampleDetectionPipeline implements VisionProcessor {
         return Math.abs(getCameraHeadingOffsetDegrees()) < (20.0);
     }
 
-    // TODO: FIX SIGN (RIGHT -> POSITIVE & LEFT -> NEGATIVE)
     public double getCameraXOffset(){
         if (this.closestCenter[0] == 0){
             return 0;
@@ -365,7 +362,6 @@ public class SampleDetectionPipeline implements VisionProcessor {
             return -(Robot.getParallaxXCm(this.closestCenter[0].intValue(), this.closestCenter[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, this.closestCenter[1].intValue()))/2.54;
         }
     }
-
     public double getCameraYOffset(){
         if (this.closestCenter[1] == 0){
             return 0;
@@ -374,6 +370,31 @@ public class SampleDetectionPipeline implements VisionProcessor {
             return (Robot.getParallaxYCm(this.closestCenter[1].intValue()) - Robot.getParallaxYCm(CAMERA_STREAM_HEIGHT/2))/2.54;
         }
     }
+    public double getCameraHeadingOffsetDegrees(){
+        return ((this.closestCenter[3]-(90+0))%180); // +0 is current angle claw
+    }
+
+
+    public double getLatestValidCameraXOffset(){
+        if (this.latestValidCenter[0] == 0){
+            return 0;
+        }
+        else {
+            return -(Robot.getParallaxXCm(this.latestValidCenter[0].intValue(), this.latestValidCenter[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, this.latestValidCenter[1].intValue()))/2.54;
+        }
+    }
+    public double getLatestValidCameraYOffset(){
+        if (this.latestValidCenter[1] == 0){
+            return 0;
+        }
+        else {
+            return (Robot.getParallaxYCm(this.latestValidCenter[1].intValue()) - Robot.getParallaxYCm(CAMERA_STREAM_HEIGHT/2))/2.54;
+        }
+    }
+    public double getLatestValidCameraHeadingOffsetDegrees(){
+        return ((this.latestValidCenter[3]-(90+0))%180); // +0 is current angle claw
+    }
+
 
     public double getCameraOffsetMagnitude(){
         if(getCameraXOffset() == 0 && getCameraYOffset() == 0){
@@ -389,14 +410,6 @@ public class SampleDetectionPipeline implements VisionProcessor {
         return this.closestCenter[2]/2.54;
     }
 
-    public double getCameraHeadingOffsetDegrees(){
-        if (this.closestCenter[3] == 0) {
-            return 0;
-        }
-        else{
-            return ((this.closestCenter[3]-(90+0))%180); // +0 is current angle claw
-        }
-    }
 
     private static double distance(Point p1, Point p2) {
         return sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));

@@ -57,6 +57,8 @@ public class EncoderWrapper implements HardwareDevice {
 
     }
 
+    public void reset() {encoder.reset();}
+
     public double getPosition() {
         return this.encoder.getPosition()*direction.getMultiplier();
     }
