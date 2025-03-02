@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class HoverCommand extends SequentialCommandGroup {
     public HoverCommand(Robot robot, double extension) {
         super(
-                new InstantCommand(() -> robot.extendoActuator.setTargetPosition(extension)),
+                new InstantCommand(() -> robot.intake.setExtendoTargetTicks((int)extension)),
                 new SetIntake(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE),
                 new WaitUntilCommand(()-> robot.intake.extendoReached()),
                 //new InstantCommand(()-> robot.intakeClawLED.setPwmEnable()),

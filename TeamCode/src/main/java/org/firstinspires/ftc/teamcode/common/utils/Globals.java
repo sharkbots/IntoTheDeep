@@ -8,10 +8,10 @@ import com.pedropathing.pathgen.Point;
 public class Globals {
     public static class SampleAutonomousConfig{
         public static int numSubCycles = 1;
-        public static double samp1X = 60;
-        public static double samp1Y = 71.5;
-        public static double samp2X = 48;
-        public static double samp2Y = 48;
+        public static double samp1X = 0;
+        public static double samp1Y = 0;
+        public static double samp2X = 0;
+        public static double samp2Y = 0;
     }
 
     public enum AllianceColor{

@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
+import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.PreloadSampleCycleGenerator;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SubSampleCycleGenerator;
 
@@ -167,11 +168,18 @@ public class FiveSampleAuto extends CommandOpMode {
         robot.lift.updateState(LiftSubsystem.ClawState.CLOSED);
         while(opModeInInit()){
             menu.periodic();
+            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1X, -11, 2);
+            MathUtils.clamp(Globals.SampleAutonomousConfig.samp2X, -11, 2);
+
+            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1Y, -8, 8);
+            MathUtils.clamp(Globals.SampleAutonomousConfig.samp2Y, -8, 8);
+
 
             if (menu.isLocked() && !alreadyCompiled){
                 alreadyCompiled = true;
-                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X, Globals.SampleAutonomousConfig.samp1Y, Point.CARTESIAN), 1);
-                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X, Globals.SampleAutonomousConfig.samp2Y, Point.CARTESIAN), 2);
+
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X+72, Globals.SampleAutonomousConfig.samp1Y+72, Point.CARTESIAN), 1);
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X+72, Globals.SampleAutonomousConfig.samp2Y+72, Point.CARTESIAN), 2);
 
                 generatePaths();
                 generateSchedule();
@@ -315,8 +323,7 @@ public class FiveSampleAuto extends CommandOpMode {
                                         new WaitCommand(500),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
                                                 new WaitCommand(600),
-                                                new HoverCommand(robot, (91.5 - Globals.SampleAutonomousConfig.samp1Y - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH),new SequentialCommandGroup(
-                                        )
+                                                new HoverCommand(robot, (91.5 - (Globals.SampleAutonomousConfig.samp1Y + 72) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH)
                                 )
                         ),
                         new SequentialCommandGroup(
@@ -343,8 +350,7 @@ public class FiveSampleAuto extends CommandOpMode {
                                         new WaitCommand(500),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
                                                 new WaitCommand(600),
-                                                new HoverCommand(robot, (91.5 - Globals.SampleAutonomousConfig.samp1Y - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH),new SequentialCommandGroup(
-                                                )
+                                                new HoverCommand(robot, (91.5 - (Globals.SampleAutonomousConfig.samp1Y + 72) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH)
                                         )
                                 ),
                                 new SequentialCommandGroup(
