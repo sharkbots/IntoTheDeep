@@ -319,32 +319,30 @@ public class Robot extends SubsystemWrapper{
 
         }
 
-        this.sampleDetectionPipeline = new SampleDetectionPipeline();
-
         subsystems = new ArrayList<>();
         intake = new IntakeSubsystem();
         lift = new LiftSubsystem();
         addSubsystem(intake, lift);
 
 
-        // TODO: CATCH EXCEPTION TO NOT INIT CAMERA IF ITS NOT FOUND
-        try {
-            startCamera();
-            visionPortal.resumeStreaming();
-            setAutoCameraControls();
-
+        if (IS_AUTONOMOUS) {
+            this.sampleDetectionPipeline = new SampleDetectionPipeline();
+            // TODO: CATCH EXCEPTION TO NOT INIT CAMERA IF ITS NOT FOUND
             try {
-                sleep(1000);
-            } catch (Exception e){
+                startCamera();
+                visionPortal.resumeStreaming();
+                setAutoCameraControls();
+
+                try {
+                    sleep(1000);
+                } catch (Exception e) {
+
+                }
+                setManualCameraControls();
+            } catch (Exception e) {
 
             }
-            setManualCameraControls();
         }
-        catch (Exception e){
-
-        }
-
-
 
 
 //        if (!Globals.IS_AUTO) {
