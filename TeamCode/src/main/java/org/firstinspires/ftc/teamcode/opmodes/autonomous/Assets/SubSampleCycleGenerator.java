@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
+import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 
 import java.util.ArrayList;
 
@@ -32,9 +34,11 @@ public class SubSampleCycleGenerator {
         return this;
     }
 
-    public SubSampleCycleGenerator addSubSampleLocation(Pose subSampleLocation){
-        subSampleLocations.add(subSampleLocation);
-        return this;
+    public void addSubSampleLocation(Pose subSampleLocation, int cycleNum){
+        if (subSampleLocations.size()<cycleNum){
+            subSampleLocations.add(subSampleLocation);
+        }
+        else subSampleLocations.set(cycleNum-1, subSampleLocation);
     }
     
     public PathChain getSubPickupPath(int cycleNum) throws IllegalStateException{
@@ -42,21 +46,30 @@ public class SubSampleCycleGenerator {
             throw new IllegalStateException("The generator's follower wasn't set");
 
         PathBuilder builder = follower.pathBuilder();
-        builder.addPath(new BezierLine(
+
+        builder.addPath(new BezierCurve(
                 allianceColor.convert(bucketLocation, Point.class),
-                new Point(60, 103)
-        )).setTangentHeadingInterpolation();
+                new Point(subSampleLocations.get(cycleNum).getX(), 117.5),
+                new Point(subSampleLocations.get(cycleNum).getX(), 91.5)
+        ))
+                .setTangentHeadingInterpolation()
+                .setPathEndTimeoutConstraint(0.95);
+        return builder.build();
+    }
 
-        builder.addPath(new BezierLine(
-                new Point(60, 103),
-                new Point(60, 104)
-        )).setConstantHeadingInterpolation(Math.toRadians(270));
+    public PathChain getSubDepositPath(int cycleNum) throws IllegalStateException{
+        if (follower == null)
+            throw new IllegalStateException("The generator's follower wasn't set");
 
-        builder.addPath(new BezierLine(
-                new Point(60, 104),
-                new Point(subSampleLocations.get(cycleNum).getX(),90.5)
-        )).setConstantHeadingInterpolation(Math.toRadians(270));
+        PathBuilder builder = follower.pathBuilder();
+
+        builder.addPath(new BezierCurve(
+                new Point(subSampleLocations.get(cycleNum).getX(), 91.5),
+                new Point(subSampleLocations.get(cycleNum).getX(), 117.5),
+                allianceColor.convert(bucketLocation, Point.class)
+        )).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315));
 
         return builder.build();
+
     }
 }

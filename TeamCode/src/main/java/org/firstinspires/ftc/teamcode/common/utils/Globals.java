@@ -7,8 +7,9 @@ import com.pedropathing.pathgen.Point;
 @Config
 public class Globals {
     public static class SampleAutonomousConfig{
-        public static double samp1X = 48;
-        public static double samp1Y = 60;
+        public static int numSubCycles = 1;
+        public static double samp1X = 60;
+        public static double samp1Y = 71.5;
         public static double samp2X = 48;
         public static double samp2Y = 48;
     }
@@ -59,7 +60,6 @@ public class Globals {
 
     public final static double CAMERA_OFFSET_FROM_CENTER_Y_IN = 3.0/8.0;
 
-
     public static double DEFAULT_LIFT_FEEDFORWARD = 0.08;
     public static double LIFT_RESET_FEEDFORWARD = -0.0;
     public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.0;
@@ -82,6 +82,8 @@ public class Globals {
     // Size of robot (in inches)
     public static double ROBOT_LENGTH = 13.1;
     public static double ROBOT_WIDTH = 12.8;
+
+    public static double CV_INTAKE_MAX_VELOCITY = 1.0;
 
     // Pivot time (axon max no SPM)
     // 0.84 sec/360° -> 0.828 sec/355° -> 828 milliseconds/355°

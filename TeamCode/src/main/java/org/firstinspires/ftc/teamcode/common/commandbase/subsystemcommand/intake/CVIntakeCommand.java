@@ -57,10 +57,13 @@ public class CVIntakeCommand extends SequentialCommandGroup {
 
                 // Step 6: Wait and transition to HOVERING_WITH_SAMPLE
                 new WaitCommand(230),
-                // REMOVE ASAP
-                //new InstantCommand(()-> robot.intake.pivotState = IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE),
-                //new SetIntake(robot, IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)
-                new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE))
+
+                new InstantCommand(()-> robot.telemetryA.addLine("about to pivot up (cv intake)")),
+                new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)),
+                new InstantCommand(()->{
+                    robot.telemetryA.addLine("sent pivot command (cv intake)");
+                    robot.telemetryA.update();
+                })
         );
     }
 }

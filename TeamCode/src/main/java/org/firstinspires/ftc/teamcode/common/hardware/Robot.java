@@ -327,12 +327,12 @@ public class Robot extends SubsystemWrapper{
             visionPortal.resumeStreaming();
             setAutoCameraControls();
 
-            try {
-                sleep(300);
-            } catch (Exception e){
-
-            }
-            setManualCameraControls();
+//            try {
+//                sleep(750);
+//            } catch (Exception e){
+//
+//            }
+//            setManualCameraControls();
         }
         catch (Exception e){
 

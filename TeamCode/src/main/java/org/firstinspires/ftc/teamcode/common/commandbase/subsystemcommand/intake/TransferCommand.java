@@ -13,11 +13,11 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class TransferCommand extends SequentialCommandGroup {
     public TransferCommand(Robot robot){
         super(
-                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.MICRO_OPEN)),
                 new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
                 //new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
                 new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0)),
                 new SetIntake(robot, IntakeSubsystem.PivotState.TRANSFER),
+                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.MICRO_OPEN)), // tentative
                 new WaitUntilCommand(() -> robot.intake.extendoReached()),
 //                new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0)),
 //                new WaitUntilCommand(() -> robot.intake.extendoReached()), /*prev wait 350*/

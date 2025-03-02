@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -31,6 +32,8 @@ import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.PreloadSampleCycleGenerator;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SubSampleCycleGenerator;
 
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
+
 
 import java.util.ArrayList;
 
@@ -57,9 +60,9 @@ public class FourSampAuto extends CommandOpMode {
     SubSampleCycleGenerator subSampleCyclePathGen;
 
     public void generatePaths(){
+        paths.clear();
         //robot.follower.setStartingPose(allianceColor.convert(Globals.sampleAutoStartPose, Pose.class));
         robot.follower.setPose(allianceColor.convert(Globals.sampleAutoStartPose, Pose.class));
-
 
         // sample preload
         paths.add(
@@ -78,6 +81,7 @@ public class FourSampAuto extends CommandOpMode {
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(315))
+                        .setPathEndTimeoutConstraint(0.92)
 //                        .addPath(new BezierCurve(
 //                                allianceColor.convert(new Point(6.595, 101.105, Point.CARTESIAN)),
 //                                allianceColor.convert(new Point(22.486, 117.189, Point.CARTESIAN)),
@@ -103,6 +107,8 @@ public class FourSampAuto extends CommandOpMode {
         paths.add(preloadSampleCyclePathGen.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
 
         paths.add(subSampleCyclePathGen.getSubPickupPath(0));
+        paths.add(subSampleCyclePathGen.getSubDepositPath(0));
+
 
 //        // park
 //        paths.add(
@@ -170,13 +176,14 @@ public class FourSampAuto extends CommandOpMode {
         while(opModeInInit()){
             menu.periodic();
 
-
             if (menu.isLocked() && !alreadyCompiled){
                 alreadyCompiled = true;
-                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X, Globals.SampleAutonomousConfig.samp1Y, Point.CARTESIAN));
-                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X, Globals.SampleAutonomousConfig.samp2Y, Point.CARTESIAN));
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X, Globals.SampleAutonomousConfig.samp1Y, Point.CARTESIAN), 1);
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X, Globals.SampleAutonomousConfig.samp2Y, Point.CARTESIAN), 2);
+
                 generatePaths();
                 generateSchedule();
+                robot.telemetryA.addLine("recompiled");
             }
             else if (!menu.isLocked()){
                 alreadyCompiled = false;
@@ -202,7 +209,7 @@ public class FourSampAuto extends CommandOpMode {
 //                                ),
                                 .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200), // see if we can put this to 0
+                                        new WaitCommand(100), // see if we can put this to 0
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
                                 )
                                 ),
@@ -213,30 +220,21 @@ public class FourSampAuto extends CommandOpMode {
 
                         // Pickup inside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new FollowPathChainCommand(robot.follower, paths.get(1)).setHoldEnd(true).alongWith(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(300),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 900)
-                                        )
-                                )
+                        new ParallelCommandGroup(
+                            new FollowPathChainCommand(robot.follower, paths.get(1)).setHoldEnd(true),
+                            new SequentialCommandGroup(
+                                    new WaitCommand(300),
+                                    new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
+                                            new HoverCommand(robot, 1000)
+                                    )
+                            ),
+                            new SequentialCommandGroup(
+                                    new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0).alongWith(
+                                            new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY)
+                                    ),
+                                    new CVIntakeCommand(robot)
+                            )
                         ),
-                        new SequentialCommandGroup(
-                                new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
-                                new CVIntakeCommand(robot)
-                        ),
-//                        new ParallelRaceGroup(
-//
-////                                new SequentialCommandGroup(
-////                                        new WaitCommand(1500),
-////                                        new WaitCommand(500)
-////
-////                                        // backup (manual) intake goes here
-                        //                        new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.59)),
-//                                                new IntakeSampleCommand(robot),
-////                                )
-//                        ),
-
                         new TransferCommand(robot),
 
 
@@ -249,26 +247,29 @@ public class FourSampAuto extends CommandOpMode {
                                 )
 
                         ),
-                        new WaitCommand(200),
+                        new WaitCommand(150),
                         new DepositSampleCommand(robot),
 
 
                         // Pickup middle sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new FollowPathChainCommand(robot.follower, paths.get(3)).setHoldEnd(true).alongWith(
+
+                        new ParallelCommandGroup(
+                                new FollowPathChainCommand(robot.follower, paths.get(3)).setHoldEnd(true),
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 800)
+                                                new HoverCommand(robot, 900)
                                         )
+                                ),
+                                new SequentialCommandGroup(
+                                        new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0).alongWith(
+                                                new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY)
+                                        ),
+                                        new CVIntakeCommand(robot)
                                 )
                         ),
-                        //new IntakeSampleCommand(robot),
 
-                        new SequentialCommandGroup(
-                                new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
-                                new CVIntakeCommand(robot)
-                        ),
 
                         new TransferCommand(robot),
 
@@ -281,23 +282,28 @@ public class FourSampAuto extends CommandOpMode {
                                 )
 
                         ),
-                        new WaitCommand(200),
+                        new WaitCommand(150),
                         new DepositSampleCommand(robot),
 
                         // Pickup outside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new FollowPathChainCommand(robot.follower, paths.get(5)).setHoldEnd(true).alongWith(
+
+                        new ParallelCommandGroup(
+                                new FollowPathChainCommand(robot.follower, paths.get(5)).setHoldEnd(true),
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 900)
+                                                new HoverCommand(robot, 1000)
                                         )
+                                ),
+                                new SequentialCommandGroup(
+                                        new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0).alongWith(
+                                                new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY)
+                                        ),
+                                        new CVIntakeCommand(robot)
                                 )
                         ),
-                        new SequentialCommandGroup(
-                                new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
-                                new CVIntakeCommand(robot)
-                        ),
+
 //                        new InstantCommand(()->robot.intakeClawRotationServo.setPosition(0.45)),
 //                        new IntakeSampleCommand(robot),
                         new TransferCommand(robot),
@@ -311,17 +317,36 @@ public class FourSampAuto extends CommandOpMode {
                                 )
 
                         ),
-                        new WaitCommand(200),
+                        new WaitCommand(150),
                         new DepositSampleCommand(robot),
 
-                        // sub cycle #1 (5th samp)
+                        // sub cycle #1 pickup (5th samp)
                         new FollowPathChainCommand(robot.follower, paths.get(7)).alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(300),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
+                                        new WaitCommand(500),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
+                                                new WaitCommand(600),
+                                                new HoverCommand(robot, (91.5 - Globals.SampleAutonomousConfig.samp1Y - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH),new SequentialCommandGroup(
+                                        )
                                 )
                         ),
-                        new HoverCommand(robot, (90.5 - Globals.SampleAutonomousConfig.samp1Y - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH)
+                        new SequentialCommandGroup(
+                                new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0).alongWith(
+                                        new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY)
+                                ),
+                                new CVIntakeCommand(robot))
+                        ),
+
+                        // sub cycle #1 deposit (5th samp)
+                        new FollowPathChainCommand(robot.follower, paths.get(8)).alongWith(
+                                new SequentialCommandGroup(
+                                        new TransferCommand(robot),
+                                        //new WaitCommand(0),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
+                                )
+                        ),
+                        new WaitCommand(200),
+                        new DepositSampleCommand(robot)
 
 //                        // Park
 //                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
