@@ -248,13 +248,22 @@ public class TwoDriverTeleop extends CommandOpMode {
                         () -> robot.lift.getLiftState() == LiftSubsystem.LiftState.HOLDING_SPECIMEN)
                 );
 
-        // Deposit specimen
+        // Deposit specimen: 1. Hang it
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(
+                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN)
+                                        .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
+                                new InstantCommand(),
+                                ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP
+                        )
+                );
+
+        // Deposit specimen: 2. Open the claw
+        operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenReleased(
+                        new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN)
-                                                .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
                                         new DepositSpecimenCommand(robot),
                                         new WaitCommand(300)
                                 ),
