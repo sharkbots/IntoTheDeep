@@ -221,9 +221,8 @@ public class FiveSampleAuto extends CommandOpMode {
                                     )
                             ),
                             new SequentialCommandGroup(
-                                    new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0).alongWith(
-                                            new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY)
-                                    ),
+                                    new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY),
+                                    new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
                                     new CVIntakeCommand(robot)
                             )
                         ),
@@ -255,9 +254,8 @@ public class FiveSampleAuto extends CommandOpMode {
                                         )
                                 ),
                                 new SequentialCommandGroup(
-                                        new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0).alongWith(
-                                                new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY)
-                                        ),
+                                        new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY),
+                                        new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
                                         new CVIntakeCommand(robot)
                                 )
                         ),
@@ -289,9 +287,8 @@ public class FiveSampleAuto extends CommandOpMode {
                                         )
                                 ),
                                 new SequentialCommandGroup(
-                                        new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0).alongWith(
-                                                new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY)
-                                        ),
+                                        new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY),
+                                        new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
                                         new CVIntakeCommand(robot)
                                 )
                         ),
@@ -323,9 +320,8 @@ public class FiveSampleAuto extends CommandOpMode {
                                 )
                         ),
                         new SequentialCommandGroup(
-                                new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0).alongWith(
-                                        new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY)
-                                ),
+                                new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY),
+                                new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
                                 new CVIntakeCommand(robot))
                         ),
 
@@ -352,9 +348,8 @@ public class FiveSampleAuto extends CommandOpMode {
                                         )
                                 ),
                                 new SequentialCommandGroup(
-                                        new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0).alongWith(
-                                                new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY)
-                                        ),
+                                        new WaitUntilCommand(()->robot.follower.getVelocityMagnitude() < CV_INTAKE_MAX_VELOCITY),
+                                        new WaitUntilCommand(()->robot.sampleDetectionPipeline.getCameraOffsetMagnitude()!= 0.0),
                                         new CVIntakeCommand(robot))
                         ),
 

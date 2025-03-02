@@ -18,6 +18,8 @@ public class CVIntakeCommand extends SequentialCommandGroup {
         // Build the command sequence
         super(
                 //new InstantCommand(()->robot.visionPortal.setProcessorEnabled(robot.sampleDetectionPipeline, false)),
+                //new InstantCommand(()->robot.sampleDetectionPipeline.freeze(true)),
+                new InstantCommand(()->robot.sampleDetectionPipeline.setLatestValidCenter()),
                 new SequentialCommandGroup(
                         // Step 1: Adjust the extendo position based on camera Y offset
                         new InstantCommand(() -> {
@@ -75,6 +77,8 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                 })
         )
             //    new InstantCommand(()->robot.visionPortal.setProcessorEnabled(robot.sampleDetectionPipeline, true))
+//        new InstantCommand(()->robot.sampleDetectionPipeline.freeze(false))
+
         );
     }
 }

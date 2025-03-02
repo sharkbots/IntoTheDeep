@@ -6,22 +6,13 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierLine;
-import com.pedropathing.pathgen.MathFunctions;
-import com.pedropathing.pathgen.PathChain;
-import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.DashboardPoseTracker;
-import com.pedropathing.util.Drawing;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.HoldPointCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
@@ -37,7 +28,6 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
-import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 
 @Config
 @TeleOp(name = "Two Driver Teleop", group = "Teleop")
@@ -117,38 +107,40 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(
-                        new SequentialCommandGroup(
-                            new InstantCommand(() -> {
-                                double targetExtendoPos = robot.intake.getExtendoPosInches() + robot.sampleDetectionPipeline.getCameraYOffset() - CAMERA_OFFSET_FROM_CENTER_Y_IN;
-                                if (robot.intake.getExtendoPosTicks() > 660){
-                                    targetExtendoPos += (robot.intake.getExtendoPosTicks()-660)*(-0.0805)/EXTENDO_TICKS_PER_INCH;
-                                }
-                                robot.intake.setExtendoTargetInches(targetExtendoPos);
-                            }),
-                                new WaitUntilCommand(() -> robot.intake.extendoReached())
-                        )
-                );
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//                .whenPressed(
+//                        new SequentialCommandGroup(
+//                            new InstantCommand(() -> {
+//                                double targetExtendoPos = robot.intake.getExtendoPosInches() + robot.sampleDetectionPipeline.getCameraYOffset() - CAMERA_OFFSET_FROM_CENTER_Y_IN;
+//                                if (robot.intake.getExtendoPosTicks() > 660){
+//                                    targetExtendoPos += (robot.intake.getExtendoPosTicks()-660)*(-0.0805)/EXTENDO_TICKS_PER_INCH;
+//                                }
+//                                robot.intake.setExtendoTargetInches(targetExtendoPos);
+//                            }),
+//                                new WaitUntilCommand(() -> robot.intake.extendoReached())
+//                        )
+//                );
 
 
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(
-                        new SequentialCommandGroup(
-                                // TODO: Use HoldPointCommand() instead
-                                new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
-                                        new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
-                                        MathFunctions.rotatePose(new Pose(robot.sampleDetectionPipeline.getCameraXOffset() ,
-                                                0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
-                                ).alongWith(
-                                        new WaitCommand(750)
-                                ),
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(
+//                        new SequentialCommandGroup(
+//                                // TODO: Use HoldPointCommand() instead
+//                                new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
+//                                        new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
+//                                        MathFunctions.rotatePose(new Pose(robot.sampleDetectionPipeline.getCameraXOffset() ,
+//                                                0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
+//                                ).alongWith(
+//                                        new WaitCommand(750)
+//                                ),
+//
+//                                // TODO: Use .beforeStarting() to run getPose and getCameraXOffset()
+//                                // TODO: CameraXOffset needs the sign to be flipped. Right now towards the right is negative / left is positive.
+//                                new InstantCommand(() -> robot.follower.startTeleopDrive())
+//                        )
+//                );
 
-                                // TODO: Use .beforeStarting() to run getPose and getCameraXOffset()
-                                // TODO: CameraXOffset needs the sign to be flipped. Right now towards the right is negative / left is positive.
-                                new InstantCommand(() -> robot.follower.startTeleopDrive())
-                        )
-                );
+
 
 
 
@@ -186,7 +178,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         // Auto grab
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whileHeld(
+                .whenPressed(
                         new ConditionalCommand(new CVIntakeCommand(robot)
                                 .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
                                 new InstantCommand(),
@@ -333,6 +325,7 @@ public class TwoDriverTeleop extends CommandOpMode {
             gamepad2.rumble(500);
             notifiedEndgame = true;
         }
+
 
         // manual extendo control
         //robot.extendoActuator.disableManualPower();

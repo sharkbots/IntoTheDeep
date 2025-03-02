@@ -91,6 +91,7 @@ public class SampleDetectionPipeline implements VisionProcessor {
     //Mat cameraMatrix = new Mat(3, 3, CvType.CV_64FC1);
    // MatOfDouble distCoeffs = new MatOfDouble();
     RotatedRect minAreaRect;
+    private boolean freeze = false;
 
     public SampleDetectionPipeline(){
 //        double fx = 396.39 * FCL; // Replace with your camera's focal length in pixels
@@ -212,18 +213,21 @@ public class SampleDetectionPipeline implements VisionProcessor {
         Utils.matToBitmap(hsv, inputBmp);
         FtcDashboard.getInstance().sendImage(inputBmp);
 
-        if(closestCenter[0]!=0.0 ||  closestCenter[1]!=0.0 ||closestCenter[2]!=0.0 ||closestCenter[3]!=0.0 ) {
+        if(!freeze &&
+                (closestCenter[0]!=0.0 ||  closestCenter[1]!=0.0 ||closestCenter[2]!=0.0 ||closestCenter[3]!=0.0 )) {
             latestValidCenter = closestCenter;
         }
 
         return input;
 
     }
-//
-//    public void setLatestValidCenter(Double[] center) {
-//        latestValidCenter = center;
-//    }
-//
+
+    public void setLatestValidCenter() {
+        //if((closestCenter[0]!=0.0 ||  closestCenter[1]!=0.0 ||closestCenter[2]!=0.0 ||closestCenter[3]!=0.0 )) {
+            latestValidCenter = closestCenter;
+      //  }
+    }
+
 //    public Double[] getLatestValidCenter() {
 //        return latestValidCenter;
 //    }
@@ -577,5 +581,9 @@ public class SampleDetectionPipeline implements VisionProcessor {
 
     public int getColor() {
         return color;
+    }
+
+    public void freeze(boolean b) {
+        freeze = b;
     }
 }

@@ -49,6 +49,22 @@ public class Globals {
         }
     }
 
+    public enum GRABBING_MODE{
+        SAMPLE,
+        SPECIMEN,
+        MANUAL;
+       public GRABBING_MODE next(){
+           switch (this) {
+               case SAMPLE : return SPECIMEN;
+               case SPECIMEN : return MANUAL;
+               case MANUAL : return SAMPLE;
+           };
+           return null;
+       }
+    }
+
+    public static GRABBING_MODE grabbingMode = GRABBING_MODE.SAMPLE;
+
     // Camera configurations
     public static long CAMERA_EXPOSURE_MILLIS = 25; //33
     public static int CAMERA_WHITE_BALANCE_TEMPERATURE = 5500; //5500
