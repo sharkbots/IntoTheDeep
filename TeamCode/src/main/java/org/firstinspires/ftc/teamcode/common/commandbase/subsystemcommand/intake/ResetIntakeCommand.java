@@ -13,7 +13,7 @@ public class ResetIntakeCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN)),
                 new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0)),
-                new SetIntake(robot, IntakeSubsystem.PivotState.TRANSFER),
+                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.TRANSFER),
                 //new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.TRANSFER)),
                 //new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
                 new WaitUntilCommand(() -> robot.intake.extendoReached()),

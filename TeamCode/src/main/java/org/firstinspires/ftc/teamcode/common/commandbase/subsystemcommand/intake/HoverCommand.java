@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake;
 
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -12,7 +13,11 @@ public class HoverCommand extends SequentialCommandGroup {
     public HoverCommand(Robot robot, double extension) {
         super(
                 new InstantCommand(() -> robot.intake.setExtendoTargetTicks((int)extension)),
-                new SetIntake(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE),
+                new ConditionalCommand(
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE),
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL),
+                        ()-> Globals.GRABBING_MODE != Globals.GRABBING_MODES.MANUAL
+                ),
                 new WaitUntilCommand(()-> robot.intake.extendoReached()),
                 //new InstantCommand(()-> robot.intakeClawLED.setPwmEnable()),
 

@@ -10,7 +10,7 @@ public class AutomaticIntakeCommand extends SequentialCommandGroup {
         super(
                 new HoverCommand(robot, 0),
                 new WaitUntilCommand(()->robot.sampleDetectionPipeline.cameraXInRange()),
-                new IntakeCommand(robot),
+                new ManualSampleIntakeCommand(robot),
                 new TransferCommand(robot)
         );
     }

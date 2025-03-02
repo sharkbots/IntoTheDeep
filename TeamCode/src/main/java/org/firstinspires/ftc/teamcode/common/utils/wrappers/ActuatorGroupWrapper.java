@@ -168,15 +168,13 @@ public class ActuatorGroupWrapper {
      */
     public void write() {
         if (manualMode){
-            if (position - minPos >= tolerance || maxPos - position >= tolerance){
-                for (HardwareDevice device : devices.values()){
-                    if (device instanceof DcMotor) {
-                        ((DcMotor) device).setPower(power);
-                    }
+            for (HardwareDevice device : devices.values()){
+                if (device instanceof DcMotor) {
+                    ((DcMotor) device).setPower(power);
                 }
             }
         }
-        if (Math.abs(targetPosition - pTargetPosition) > 0.005 ||
+        else if (Math.abs(targetPosition - pTargetPosition) > 0.005 ||
                 Math.abs(power - pPower) > 0.005) {
             for (HardwareDevice device : devices.values()) {
                 if (device instanceof DcMotor) {

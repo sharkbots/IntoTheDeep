@@ -4,9 +4,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.Point;
 
+import org.firstinspires.ftc.teamcode.opmodes.testing.ConfigMenuTest;
+
 @Config
 public class Globals {
     public static class SampleAutonomousConfig{
+        public static AllianceColor allianceColor = AllianceColor.BLUE;
         public static int numSubCycles = 1;
         public static double samp1X = 0;
         public static double samp1Y = 0;
@@ -49,11 +52,11 @@ public class Globals {
         }
     }
 
-    public enum GRABBING_MODE{
+    public enum GRABBING_MODES {
         SAMPLE,
         SPECIMEN,
         MANUAL;
-       public GRABBING_MODE next(){
+       public GRABBING_MODES next(){
            switch (this) {
                case SAMPLE : return SPECIMEN;
                case SPECIMEN : return MANUAL;
@@ -63,7 +66,7 @@ public class Globals {
        }
     }
 
-    public static GRABBING_MODE grabbingMode = GRABBING_MODE.SAMPLE;
+    public static GRABBING_MODES GRABBING_MODE = GRABBING_MODES.MANUAL;
 
     // Camera configurations
     public static long CAMERA_EXPOSURE_MILLIS = 25; //33
@@ -79,10 +82,11 @@ public class Globals {
     public static double DEFAULT_LIFT_FEEDFORWARD = 0.08;
     public static double LIFT_RESET_FEEDFORWARD = -0.0;
     public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.0;
-    public static double EXTENDO_FEEDFORWARD_EXTENDING = 0.2;
-    public static double EXTENDO_FEEDFORWARD_RETRACTING = -0.2;
+    public static double EXTENDO_FEEDFORWARD_EXTENDING = 0.0;
+    public static double EXTENDO_FEEDFORWARD_RETRACTING = -0.0;
 
-    public static AllianceColor ALLIANCE = AllianceColor.RED;
+    public final static AllianceColor ALLIANCE_FIXED_VAL = AllianceColor.BLUE;
+    public static AllianceColor ALLIANCE_COLOR;
     public static boolean IS_AUTONOMOUS = false;
     public static boolean COMING_FROM_AUTONOMOUS = false;
     public static boolean IS_FIELD_CENTRIC = true;
@@ -116,11 +120,14 @@ public class Globals {
     public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.47;
     public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.7;
     public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
+    public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_MANUAL_POS = 0.75;
     public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.79; // 0.79
+
 
     // Intake Claw Pivot
     public static double INTAKE_CLAW_PIVOT_TRANSFER_POS = 0.015;
     public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS = 0.735; //0.79
+    public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_MANUAL_POS = 0.725;
     public static double INTAKE_CLAW_PIVOT_INTAKE_POS = 0.675;
     public static double INTAKE_CLAW_PIVOT_HOLDING_POS = 0.775;
 

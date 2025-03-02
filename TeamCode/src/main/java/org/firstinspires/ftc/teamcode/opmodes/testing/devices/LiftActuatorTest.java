@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
 
 @Config
-@Disabled
 @TeleOp(name = "LiftActuatorTest")
 public class LiftActuatorTest extends OpMode {
     private DcMotorEx liftBottomMotor, liftCenterMotor, liftTopMotor;
@@ -56,7 +55,7 @@ public class LiftActuatorTest extends OpMode {
         liftTopMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         liftTopMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftTopMotor").encoder);
+        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
         liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.FORWARD);
 
 

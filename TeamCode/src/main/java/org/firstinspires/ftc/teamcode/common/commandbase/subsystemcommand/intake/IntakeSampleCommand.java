@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 public class IntakeSampleCommand extends SequentialCommandGroup {
     public IntakeSampleCommand(Robot robot) {
         super(
-                new IntakeCommand(robot),
+                new ManualSampleIntakeCommand(robot),
                 new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE))
         );
     }

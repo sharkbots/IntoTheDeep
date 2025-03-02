@@ -207,8 +207,8 @@ public class Robot extends SubsystemWrapper{
         extendoMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         extendoMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
-        extendoEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
+        this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "extendoMotor").encoder);
+        extendoEncoder.setDirection(EncoderWrapper.EncoderDirection.FORWARD);
 
         double ekP = 0.005;
         double ekI = 0.0;
@@ -272,24 +272,25 @@ public class Robot extends SubsystemWrapper{
         // LIFT
         liftBottomMotor = hardwareMap.get(DcMotorEx.class, "liftBottomMotor");
         liftBottomMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftBottomMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
+        liftBottomMotor.setCurrentAlert(1.5, CurrentUnit.AMPS);
+        liftBottomMotor.isOverCurrent();
         liftBottomMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         liftCenterMotor = hardwareMap.get(DcMotorEx.class, "liftCenterMotor");
         liftCenterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftCenterMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
+        liftCenterMotor.setCurrentAlert(1.5, CurrentUnit.AMPS);
 
         liftTopMotor = hardwareMap.get(DcMotorEx.class, "liftTopMotor");
         liftTopMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftTopMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
+        liftTopMotor.setCurrentAlert(1.5, CurrentUnit.AMPS);
         liftTopMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftTopMotor").encoder);
+        this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
         liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.FORWARD);
-        if(IS_AUTONOMOUS) {
-            liftTopEncoder.reset();
-        }
+//        if(IS_AUTONOMOUS) {
+//            liftTopEncoder.reset();
+//        }
 
         double lkP = 0.005;
         double lkI = 0.05;

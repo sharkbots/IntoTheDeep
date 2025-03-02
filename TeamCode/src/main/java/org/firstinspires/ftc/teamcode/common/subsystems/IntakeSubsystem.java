@@ -19,6 +19,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     public enum PivotState{
         HOVERING_NO_SAMPLE,
+        HOVERING_NO_SAMPLE_MANUAL,
         HOVERING_WITH_SAMPLE,
         INTAKE,
         TRANSFER
@@ -133,6 +134,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
             case HOVERING_NO_SAMPLE:
+            case HOVERING_NO_SAMPLE_MANUAL:
             case HOVERING_WITH_SAMPLE:
             case INTAKE:
                 return INTAKE_CLAW_ROTATION_TRANSFER_POS;
@@ -150,6 +152,8 @@ public class IntakeSubsystem extends SubsystemWrapper {
                 return INTAKE_CLAW_PIVOT_TRANSFER_POS;
             case HOVERING_NO_SAMPLE:
                 return INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS;
+            case HOVERING_NO_SAMPLE_MANUAL:
+                return INTAKE_CLAW_PIVOT_HOVER_INTAKE_MANUAL_POS;
             case HOVERING_WITH_SAMPLE:
                 return INTAKE_CLAW_PIVOT_HOLDING_POS;
             case INTAKE:
@@ -167,6 +171,8 @@ public class IntakeSubsystem extends SubsystemWrapper {
                 return INTAKE_ARM_PIVOT_TRANSFER_POS;
             case HOVERING_NO_SAMPLE:
                 return INTAKE_ARM_PIVOT_HOVER_INTAKE_POS;
+            case HOVERING_NO_SAMPLE_MANUAL:
+                return INTAKE_ARM_PIVOT_HOVER_INTAKE_MANUAL_POS;
             case HOVERING_WITH_SAMPLE:
                 return INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS;
             case INTAKE:

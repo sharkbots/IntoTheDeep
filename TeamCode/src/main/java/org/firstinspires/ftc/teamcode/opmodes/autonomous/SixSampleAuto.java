@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous(name = "A🔵 FIVE Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
-public class FiveSampleAuto extends CommandOpMode {
+public class SixSampleAuto extends CommandOpMode {
     private Telemetry telemetryA;
 
     private final Robot robot = Robot.getInstance();
@@ -133,7 +133,7 @@ public class FiveSampleAuto extends CommandOpMode {
     public void initialize() {
         super.reset();
         Globals.IS_AUTONOMOUS = true;
-        Globals.ALLIANCE = Globals.AllianceColor.BLUE;
+        //Globals.ALLIANCE_FIXED_VAL = Globals.AllianceColor.BLUE;
         operator = new GamepadEx(gamepad2);
 
         timer.reset();
@@ -177,6 +177,8 @@ public class FiveSampleAuto extends CommandOpMode {
 
             if (menu.isLocked() && !alreadyCompiled){
                 alreadyCompiled = true;
+
+                ALLIANCE_COLOR = SampleAutonomousConfig.allianceColor;
 
                 subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X+72, Globals.SampleAutonomousConfig.samp1Y+72, Point.CARTESIAN), 1);
                 subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X+72, Globals.SampleAutonomousConfig.samp2Y+72, Point.CARTESIAN), 2);

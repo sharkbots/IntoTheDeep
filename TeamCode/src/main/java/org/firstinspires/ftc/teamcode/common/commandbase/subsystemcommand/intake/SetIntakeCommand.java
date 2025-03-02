@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
-public class SetIntake extends CommandBase {
+public class SetIntakeCommand extends CommandBase {
     private final Robot robot;
     private final IntakeSubsystem.PivotState pivotState;
     private Double clawTargetRotationDegrees; // Optional rotation target
@@ -24,19 +24,19 @@ public class SetIntake extends CommandBase {
     }
 
     // Constructor without target rotation (uses pivot state for claw rotation)
-    public SetIntake(Robot robot, IntakeSubsystem.PivotState pivotState) {
+    public SetIntakeCommand(Robot robot, IntakeSubsystem.PivotState pivotState) {
         this(robot, pivotState, (Double) null);
     }
 
     // Constructor with target rotation (overloaded)
-    public SetIntake(Robot robot, IntakeSubsystem.PivotState pivotState, Double clawTargetRotationDegrees) {
+    public SetIntakeCommand(Robot robot, IntakeSubsystem.PivotState pivotState, Double clawTargetRotationDegrees) {
         this.robot = robot;
         this.pivotState = pivotState;
         this.clawTargetRotationDegrees = clawTargetRotationDegrees; // Can be null
         this.timer = new ElapsedTime();
     }
 
-    public SetIntake(Robot robot, IntakeSubsystem.PivotState pivotState, DynBuilder dynDoubleBuilder) {
+    public SetIntakeCommand(Robot robot, IntakeSubsystem.PivotState pivotState, DynBuilder dynDoubleBuilder) {
         this(robot, pivotState, (Double) null);
         dynMode = true;
         this.dynDoubleBuilder = dynDoubleBuilder;

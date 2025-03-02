@@ -20,7 +20,6 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
@@ -214,7 +213,7 @@ public class FiveSpecAuto extends CommandOpMode {
     public void initialize() {
         super.reset();
         Globals.IS_AUTONOMOUS = true;
-        Globals.ALLIANCE = Globals.AllianceColor.BLUE;
+        //Globals.ALLIANCE_FIXED_VAL = Globals.AllianceColor.BLUE;
 
         operator = new GamepadEx(gamepad2);
 

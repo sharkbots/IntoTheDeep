@@ -47,7 +47,8 @@ public class ExtendoActuatorTest extends OpMode {
         extendoMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         extendoMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
+        extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "extendoMotor").encoder);
+        extendoEncoder.setDirection(EncoderWrapper.EncoderDirection.FORWARD);
 
         this.extendoActuator = new ActuatorGroupWrapper(extendoEncoder, extendoMotor)
                 .setPIDController(new PIDController(ekP, ekI, ekD))

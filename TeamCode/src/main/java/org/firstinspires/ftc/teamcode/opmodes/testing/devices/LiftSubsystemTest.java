@@ -31,7 +31,7 @@ public class LiftSubsystemTest extends CommandOpMode {
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
         Globals.IS_AUTONOMOUS = false;
-        Globals.ALLIANCE = Globals.ALLIANCE.BLUE;
+        //Globals.ALLIANCE_FIXED_VAL = Globals.ALLIANCE_FIXED_VAL.BLUE;
 
         gamepadEx2 = new GamepadEx(gamepad2);
 

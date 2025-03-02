@@ -46,7 +46,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                                         MathFunctions.rotatePose(new Pose(robot.sampleDetectionPipeline.getLatestValidCameraXOffset(),
                                                 0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
                                 ),
-                                new SetIntake(robot, IntakeSubsystem.PivotState.INTAKE, () -> robot.intake.getClawRotationDegrees()+robot.sampleDetectionPipeline.getLatestValidCameraHeadingOffsetDegrees()),
+                                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.INTAKE, () -> robot.intake.getClawRotationDegrees()+robot.sampleDetectionPipeline.getLatestValidCameraHeadingOffsetDegrees()),
                                 new InstantCommand(() -> robot.follower.startTeleopDrive())
                         )
 
@@ -70,7 +70,8 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                 new InstantCommand(()-> {
                     robot.telemetryA.addData("about to pivot up (cv intake)", 0);
                     robot.telemetryA.update();}),
-                new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)),
+                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE),
+               // new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)),
                 new InstantCommand(()->{
                     robot.telemetryA.addData("sent pivot command (cv intake)", 0);
                     robot.telemetryA.update();

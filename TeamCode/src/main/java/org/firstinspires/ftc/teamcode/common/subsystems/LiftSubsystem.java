@@ -14,6 +14,8 @@ public class LiftSubsystem extends SubsystemWrapper {
     public LiftState liftState = LiftState.RETRACTED;
     public ClawState clawState = ClawState.OPEN;
 
+    public boolean isResetting = false;
+
     public enum ClawState {
         OPEN(DEPOSIT_CLAW_OPEN_POS),
         CLOSED(DEPOSIT_CLAW_CLOSED_POS);
