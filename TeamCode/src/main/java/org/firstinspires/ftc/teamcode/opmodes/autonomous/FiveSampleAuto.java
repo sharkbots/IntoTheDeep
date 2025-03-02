@@ -39,7 +39,7 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous(name = "A🔵 Blue sample (0+4) Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
-public class FourSampAuto extends CommandOpMode {
+public class FiveSampleAuto extends CommandOpMode {
     private Telemetry telemetryA;
 
     private final Robot robot = Robot.getInstance();
