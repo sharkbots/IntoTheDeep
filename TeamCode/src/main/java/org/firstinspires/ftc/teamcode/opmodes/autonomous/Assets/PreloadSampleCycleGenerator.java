@@ -12,9 +12,9 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class PreloadSampleCycleGenerator {
     public Pose bucketLocation = Globals.bucketPose;
     private Pose cycleBucketLocation = new Pose(bucketLocation.getX()+2, bucketLocation.getY()+2, Math.toRadians(315));
-    private Pose outsideSampleLocation = new Pose(25, 130, Math.toRadians(20.6));
-    private Pose middleSampleLocation = new Pose(25, 130, Math.toRadians(0));
-    private Pose insideSampleLocation = new Pose(25, 130, Math.toRadians(333.8));
+    private Pose outsideSampleLocation = new Pose(24, 129, Math.toRadians(25.6));
+    private Pose middleSampleLocation = new Pose(24, 129, Math.toRadians(3));
+    private Pose insideSampleLocation = new Pose(24, 129, Math.toRadians(336.8));
 
 
     private Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
@@ -66,6 +66,7 @@ public class PreloadSampleCycleGenerator {
                     allianceColor.convert(middleSampleLocation, Point.class)))
                     .setLinearHeadingInterpolation(bucketLocation.getHeading(), outsideSampleLocation.getHeading());
 
+        builder.addParametricCallback(0.6, () -> follower.setMaxPower(0.6));
         return builder.setZeroPowerAccelerationMultiplier(1).build();
     }
 
@@ -97,7 +98,8 @@ public class PreloadSampleCycleGenerator {
         }
 
         return builder
-                .addParametricCallback(0.5, () -> follower.setMaxPower(1))
+                .addParametricCallback(0.1, () -> follower.setMaxPower(1.0))
+                .addParametricCallback(0.5, () -> follower.setMaxPower(0.6))
                 .setPathEndTValueConstraint(0.9)
                 .build();
     }

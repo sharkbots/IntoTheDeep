@@ -11,11 +11,13 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.pedropathing.localization.Pose;
 import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.common.commandbase.HoldPointCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
@@ -121,6 +123,12 @@ public class TwoDriverTeleop extends CommandOpMode {
                             SetOperatorGamepadColor();
                         })
                 );
+
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(
+                        new HoldPointCommand(robot.follower, ()->new Pose(robot.follower.getPose().getX()+robot.sampleDetectionPipeline.getCameraXOffset(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()))
+                );
+
 
         // Shoot out intake or transfer
         operator.getGamepadButton(GamepadKeys.Button.A)

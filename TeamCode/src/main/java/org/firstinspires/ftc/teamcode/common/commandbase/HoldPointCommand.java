@@ -44,9 +44,11 @@ public class HoldPointCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        follower.breakFollowing();
         if (dynMode) point = dynPoseBuilder.run();
         Globals.IS_DT_AUTO_ALIGNING = true;
         robot.telemetryA.addData("target pose:", point.toString());
+        robot.telemetryA.update();
 
         Pose robotPose = robot.follower.getPose();
         Vector targetVector = MathFunctions.subtractVectors(point.getVector(), robotPose.getVector());

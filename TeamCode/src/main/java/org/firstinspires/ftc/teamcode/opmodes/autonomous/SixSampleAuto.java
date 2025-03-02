@@ -39,7 +39,7 @@ import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "A🔵 FIVE Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
+@Autonomous(name = "A🔵 SIX Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
 public class SixSampleAuto extends CommandOpMode {
     private Telemetry telemetryA;
 
@@ -229,7 +229,7 @@ public class SixSampleAuto extends CommandOpMode {
                             new SequentialCommandGroup(
                                     new WaitCommand(300),
                                     new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                            new HoverCommand(robot, 1000)
+                                            new HoverCommand(robot, 900)
                                     )
                             ),
                             new SequentialCommandGroup(
@@ -262,7 +262,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 900)
+                                                new HoverCommand(robot, 800)
                                         )
                                 ),
                                 new SequentialCommandGroup(
@@ -295,7 +295,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 1000)
+                                                new HoverCommand(robot, 900)
                                         )
                                 ),
                                 new SequentialCommandGroup(
@@ -320,6 +320,8 @@ public class SixSampleAuto extends CommandOpMode {
                         ),
                         new WaitCommand(150),
                         new DepositSampleCommand(robot),
+
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
 
                         // sub cycle #1 pickup (5th samp)
                         new FollowPathChainCommand(robot.follower, paths.get(7)).alongWith(

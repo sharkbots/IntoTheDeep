@@ -187,7 +187,7 @@ public class Globals {
     // Sample autonomous poses
     public static final Pose sampleAutoStartPose = new Pose(6.595, 111.355, Math.toRadians(270));
     public static final Pose preloadSampleStartPoseCorrected = new Pose(sampleAutoStartPose.getX() - 6.595, sampleAutoStartPose.getY() + 0.6, Math.toRadians(270));
-    public static final Pose bucketPose = new Pose(12.386+1.4, 128.573+1.4, Math.toRadians(315));
+    public static final Pose bucketPose = new Pose(12.386+1.4, 128.573, Math.toRadians(315));
     // Specimen auto pose
     public static final Pose specAutoStartPose = new Pose(6.465, 63.715, Math.toRadians(180));
 
