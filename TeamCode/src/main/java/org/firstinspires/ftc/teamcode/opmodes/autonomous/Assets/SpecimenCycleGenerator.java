@@ -85,7 +85,7 @@ public class SpecimenCycleGenerator {
                                 allianceColor.convert(pickupLocation, Point.class)))
                 .setPathEndVelocityConstraint(3)
                 .setConstantHeadingInterpolation(Math.toRadians(0))
-                .addParametricCallback(0.1, ()-> follower.setMaxPower(1))
+                .addParametricCallback(0.1, ()-> follower.setMaxPower(0.7))
                 .setPathEndTValueConstraint(0.99)
                 .setPathEndTimeoutConstraint(200);
 

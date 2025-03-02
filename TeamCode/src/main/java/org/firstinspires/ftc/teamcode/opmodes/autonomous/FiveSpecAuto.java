@@ -163,7 +163,7 @@ public class FiveSpecAuto extends CommandOpMode {
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .addParametricCallback(0.0, ()-> robot.follower.setMaxPower(1))
+                        .addParametricCallback(0.0, ()-> robot.follower.setMaxPower(0.7))
                         .build()
         );
 
@@ -370,13 +370,13 @@ public class FiveSpecAuto extends CommandOpMode {
 
 //        robot.telemetryA.addData("Robot Pose", robot.follower.getPose());
         double loop = System.nanoTime();
-//        robot.telemetryA.addData("feedforward", robot.liftActuator.getCurrentFeedforward());
+        robot.telemetryA.addData("feedforward", robot.liftActuator.getCurrentFeedforward());
 //        robot.telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
 //        robot.telemetryA.addLine(robot.follower.getPose().toString());
 //        robot.telemetryA.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
-//        robot.telemetryA.addData("Lift pos", robot.liftActuator.getPosition());
-//        robot.telemetryA.addData("Lift target", robot.liftActuator.getTargetPosition());
-//        robot.telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
+        robot.telemetryA.addData("Lift pos", robot.liftActuator.getPosition());
+        robot.telemetryA.addData("Lift target", robot.liftActuator.getTargetPosition());
+        robot.telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
 //        robot.telemetryA.addData("t value (general loop)", robot.follower.getCurrentTValue());
 
         robot.telemetryA.update();

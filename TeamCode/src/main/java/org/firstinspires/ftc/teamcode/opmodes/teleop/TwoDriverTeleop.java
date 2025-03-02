@@ -409,7 +409,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.telemetryA.addData("Pose (during loop, from pose updater)",String.format(" (%.2f,%.2f,%.2f)", robot.poseUpdater.getPose().getX(), robot.poseUpdater.getPose().getY(), Math.toDegrees(robot.poseUpdater.getPose().getHeading())));
         robot.telemetryA.addData("is busy", robot.follower.isBusy());
         robot.telemetryA.addData("intake pivot state", robot.intake.pivotState);
-        robot.telemetryA.addData("robot voltage", robot.follower.getVoltage());
+        //robot.telemetryA.addData("robot voltage", robot.follower.getVoltage());
         robot.telemetryA.addData("lift bottom motor current", robot.liftBottomMotor.getCurrent(CurrentUnit.AMPS));
         robot.telemetryA.addData("lift center motor current", robot.liftCenterMotor.getCurrent(CurrentUnit.AMPS));
         robot.telemetryA.addData("lift top motor current", robot.liftTopMotor.getCurrent(CurrentUnit.AMPS));

@@ -133,6 +133,8 @@ public class SixSampleAuto extends CommandOpMode {
     public void initialize() {
         super.reset();
         Globals.IS_AUTONOMOUS = true;
+        Globals.GRABBING_MODE = GRABBING_MODES.SAMPLE;
+
         //Globals.ALLIANCE_FIXED_VAL = Globals.AllianceColor.BLUE;
         operator = new GamepadEx(gamepad2);
 
