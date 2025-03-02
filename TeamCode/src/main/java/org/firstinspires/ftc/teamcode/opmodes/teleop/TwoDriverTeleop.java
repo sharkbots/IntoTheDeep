@@ -124,11 +124,10 @@ public class TwoDriverTeleop extends CommandOpMode {
                         })
                 );
 
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(
-                        new HoldPointCommand(robot.follower, ()->new Pose(robot.follower.getPose().getX()+robot.sampleDetectionPipeline.getCameraXOffset(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()))
-                );
-
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(
+//                        new HoldPointCommand(robot.follower, ()->new Pose(robot.follower.getPose().getX()+robot.sampleDetectionPipeline.getCameraXOffset(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()))
+//                );
 
         // Shoot out intake or transfer
         operator.getGamepadButton(GamepadKeys.Button.A)
@@ -315,7 +314,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         }
 
         if (Math.abs(gamepad2.left_stick_x)>= 0.2 && robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL){
-            robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees() + gamepad2.left_stick_x*3.5);
+            robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees() + gamepad2.left_stick_x*4.5);
         }
 
         // manual extendo control
