@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -259,6 +260,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 .whenReleased(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
+                                        new WaitUntilCommand(()->robot.lift.liftReached()),
                                         new DepositSpecimenCommand(robot),
                                         new WaitCommand(300)
                                 ),
