@@ -157,6 +157,7 @@ public class Globals {
     public static double DEPOSIT_CLAW_PIVOT_BUCKET_POS = 0.81;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS = 0.96;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS = 0.88;
+    public static double DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS = 0.69;
 
     // Deposit Claw
     public static double DEPOSIT_CLAW_OPEN_POS = 0.71;
@@ -176,6 +177,7 @@ public class Globals {
     public static int LOW_SPECIMEN_HEIGHT = 85;
     public static int HIGH_SPECIMEN_SETUP_HEIGHT = 925;
     public static int HIGH_SPECIMEN_HEIGHT = 600;
+    public static int PUSHING_SPECIMEN_HEIGHT = 550;
     public static int LVL1_ASCENT_HEIGHT = 825;
     public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2000;
     public static int ENDGAME_ASCENT_HEIGHT = 1100;

@@ -39,6 +39,7 @@ public class LiftSubsystem extends SubsystemWrapper {
         DEPOSIT_LOW_SPECIMEN,
         DEPOSIT_HIGH_RUNG_SETUP,
         DEPOSIT_HIGH_SPECIMEN,
+        PUSHING_SPECIMEN,
         DEPOSIT_LOW_BUCKET,
         DEPOSIT_HIGH_BUCKET,
         LVL1_ASCENT,
@@ -102,6 +103,7 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_LOW_SPECIMEN: return LOW_SPECIMEN_HEIGHT;
             case DEPOSIT_HIGH_RUNG_SETUP: return HIGH_SPECIMEN_SETUP_HEIGHT;
             case DEPOSIT_HIGH_SPECIMEN: return HIGH_SPECIMEN_HEIGHT;
+            case PUSHING_SPECIMEN: return PUSHING_SPECIMEN_HEIGHT;
             case DEPOSIT_LOW_BUCKET: return LOW_BUCKET_HEIGHT;
             case DEPOSIT_HIGH_BUCKET: return HIGH_BUCKET_HEIGHT;
             case LVL1_ASCENT: return LVL1_ASCENT_HEIGHT;
@@ -128,6 +130,7 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_HIGH_RUNG_SETUP:
             case HOLDING_SPECIMEN:
                 return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS;
+            case PUSHING_SPECIMEN: return DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
                 return DEPOSIT_CLAW_PIVOT_BUCKET_POS;
@@ -147,6 +150,7 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
             case DEPOSIT_HIGH_SPECIMEN:
+            case PUSHING_SPECIMEN:
             case HOLDING_SPECIMEN:
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:

@@ -239,7 +239,8 @@ public class TwoDriverTeleop extends CommandOpMode {
                 .whenPressed(new ConditionalCommand(
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP),
                         new InstantCommand(),
-                        () -> robot.lift.getLiftState() == LiftSubsystem.LiftState.HOLDING_SPECIMEN)
+                        () -> robot.lift.getLiftState() == LiftSubsystem.LiftState.HOLDING_SPECIMEN ||
+                        robot.lift.getLiftState() == LiftSubsystem.LiftState.PUSHING_SPECIMEN)
                 );
 
         // Deposit specimen: 1. Hang it
@@ -266,6 +267,20 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP
                         )
                 );
+
+
+        // Deposit specimen: 3. Driver sweeper mode
+        driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new LiftCommand(robot, LiftSubsystem.LiftState.PUSHING_SPECIMEN)
+                                        .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
+                                new InstantCommand(),
+                                ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP ||
+                                        robot.lift.liftState == LiftSubsystem.LiftState.HOLDING_SPECIMEN
+                        )
+                );
+
 
 
         robot.read();
