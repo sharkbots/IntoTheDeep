@@ -177,7 +177,7 @@ public class Globals {
     public static int LOW_SPECIMEN_HEIGHT = 85;
     public static int HIGH_SPECIMEN_SETUP_HEIGHT = 925;
     public static int HIGH_SPECIMEN_HEIGHT = 600;
-    public static int PUSHING_SPECIMEN_HEIGHT = 550;
+    public static int PUSHING_SPECIMEN_HEIGHT = 650;
     public static int LVL1_ASCENT_HEIGHT = 825;
     public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2000;
     public static int ENDGAME_ASCENT_HEIGHT = 1100;
