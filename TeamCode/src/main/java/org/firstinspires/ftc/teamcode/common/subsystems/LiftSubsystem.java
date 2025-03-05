@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.common.subsystems;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
-import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +17,7 @@ public class LiftSubsystem extends SubsystemWrapper {
 
     public enum ClawState {
         OPEN(DEPOSIT_CLAW_OPEN_POS),
-        CLOSED(DEPOSIT_CLAW_CLOSED_POS);
+        CLOSED(DEPOSIT_CLAW_MICRO_OPEN_POS);
 
         private final double position;
 

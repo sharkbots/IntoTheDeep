@@ -4,8 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.Point;
 
-import org.firstinspires.ftc.teamcode.opmodes.testing.ConfigMenuTest;
-
 @Config
 public class Globals {
     public static class SampleAutonomousConfig{
@@ -161,8 +159,8 @@ public class Globals {
 
     // Deposit Claw
     public static double DEPOSIT_CLAW_OPEN_POS = 0.71;
-    public static double DEPOSIT_CLAW_MICRO_OPEN_POS = 0.0;
-    public static double DEPOSIT_CLAW_CLOSED_POS = 0.96;
+    public static double DEPOSIT_CLAW_CLOSED_POS = 1.0;
+    public static double DEPOSIT_CLAW_MICRO_OPEN_POS = 0.96;
 
     // Deposit Claw Rotation
     public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.35;

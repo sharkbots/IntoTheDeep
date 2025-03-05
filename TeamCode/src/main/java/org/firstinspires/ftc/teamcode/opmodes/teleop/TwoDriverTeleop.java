@@ -12,14 +12,10 @@ import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.pedropathing.localization.Pose;
 import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.common.commandbase.HoldPointCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
@@ -250,7 +246,10 @@ public class TwoDriverTeleop extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN)
-                                        .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
+                                        .alongWith(new InstantCommand(()-> {
+                                            gamepad1.rumble(200);
+                                            robot.depositClawServo.setPosition(DEPOSIT_CLAW_MICRO_OPEN_POS);
+                                        })),
                                 new InstantCommand(),
                                 ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP
                         )
@@ -276,7 +275,10 @@ public class TwoDriverTeleop extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new LiftCommand(robot, LiftSubsystem.LiftState.PUSHING_SPECIMEN)
-                                        .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
+                                        .alongWith(new InstantCommand(()-> {
+                                            gamepad1.rumble(200);
+                                            robot.depositClawServo.setPosition(DEPOSIT_CLAW_CLOSED_POS);
+                                        })),
                                 new InstantCommand(),
                                 ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP ||
                                         robot.lift.liftState == LiftSubsystem.LiftState.HOLDING_SPECIMEN
