@@ -1,6 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static com.qualcomm.robotcore.hardware.Gamepad.LED_DURATION_CONTINUOUS;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.ALLIANCE_COLOR;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.AllianceColor;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.DEPOSIT_CLAW_CLOSED_POS;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.DEPOSIT_CLAW_MICRO_OPEN_POS;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.END_OF_AUTO_POSE;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.GRABBING_MODE;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.GRABBING_MODES;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.HOLDING_SAMPLE;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.HOLDING_SPECIMEN;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.INTAKING_SAMPLES;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.INTAKING_SPECIMENS;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.IS_AUTONOMOUS;
+import static org.firstinspires.ftc.teamcode.common.utils.Globals.POST_BUZZER_HANG_RELEASE_HEIGHT;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -16,6 +29,7 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
@@ -31,11 +45,9 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 
-import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
-
 @Config
-@TeleOp(name = "Two Driver Teleop", group = "1 Teleop")
-public class TwoDriverTeleop extends CommandOpMode {
+@TeleOp(name = "Ze 👨‍⚖️ Judging Demo", group = "1 Teleop")
+public class JudgingDemo extends CommandOpMode {
 
     private DashboardPoseTracker dashboardPoseTracker;
 
@@ -81,8 +93,8 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.follower.setStartingPose(END_OF_AUTO_POSE);
         robot.follower.setPose(END_OF_AUTO_POSE);
 
-//        robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
-//        robot.swapYellow();
+        robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
+        robot.swapYellow();
 
         SetOperatorGamepadColor();
 
@@ -112,14 +124,14 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
-//        // Switch grabbing mode
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-//                .whenPressed(
-//                        new InstantCommand(()->{
-//                            GRABBING_MODE = GRABBING_MODE.next();
-//                            SetOperatorGamepadColor();
-//                        })
-//                );
+        // Switch grabbing mode
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new InstantCommand(()->{
+                            GRABBING_MODE = GRABBING_MODE.next();
+                            SetOperatorGamepadColor();
+                        })
+                );
 
         // Shoot out intake or transfer
         operator.getGamepadButton(GamepadKeys.Button.A)
@@ -137,14 +149,14 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
 
 
-//        // Auto grab
-//        operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-//                .whenPressed(
-//                        new ConditionalCommand(new CVIntakeCommand(robot)
-//                                .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
-//                                new InstantCommand(),
-//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE && robot.sampleDetectionPipeline.getCameraOffsetMagnitude() != 0
-//                        ));
+        // Auto grab
+        operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(
+                        new ConditionalCommand(new CVIntakeCommand(robot)
+                                .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
+                                new InstantCommand(),
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE && robot.sampleDetectionPipeline.getCameraOffsetMagnitude() != 0
+                        ));
 
         // manual grab
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)

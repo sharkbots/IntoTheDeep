@@ -10,12 +10,12 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 public class HoverCommand extends SequentialCommandGroup {
-    public HoverCommand(Robot robot, double extension) {
+    public HoverCommand(Robot robot, double extension, Double clawRotationDegrees) {
         super(
                 new InstantCommand(() -> robot.intake.setExtendoTargetTicks((int)extension)),
                 new ConditionalCommand(
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE),
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL),
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE, clawRotationDegrees),
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL, clawRotationDegrees),
                         ()-> Globals.GRABBING_MODE != Globals.GRABBING_MODES.MANUAL
                 ),
                 new WaitUntilCommand(()-> robot.intake.extendoReached()),
@@ -25,5 +25,9 @@ public class HoverCommand extends SequentialCommandGroup {
                 new WaitCommand(600),*/
                 new InstantCommand(() -> Globals.INTAKING_SAMPLES = true)
         );
+    }
+
+    public HoverCommand(Robot robot, double extension) {
+        this(robot, extension, (Double) null);
     }
 }

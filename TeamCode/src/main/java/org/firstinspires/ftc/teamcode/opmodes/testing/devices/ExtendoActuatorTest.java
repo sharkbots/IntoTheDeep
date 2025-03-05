@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
 
 @Config
-@TeleOp(name = "ExtendoActuatorTest")
+@TeleOp(name = "ExtendoActuatorTest", group="2 tests")
 public class ExtendoActuatorTest extends OpMode {
     private DcMotorEx extendoMotor;
     private EncoderWrapper extendoEncoder;

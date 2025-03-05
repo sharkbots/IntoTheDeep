@@ -34,7 +34,7 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGen
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "A🔵 Blue spec (5+0) Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
+@Autonomous(name = "🔵/🔴 5-Spec Auto", group = "1 blue auto", preselectTeleOp = "Two Driver Teleop")
 public class FiveSpecAuto extends CommandOpMode {
     //private Telemetry telemetryA;
 

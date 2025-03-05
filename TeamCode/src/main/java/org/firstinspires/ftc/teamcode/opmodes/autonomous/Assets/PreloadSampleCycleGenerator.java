@@ -12,9 +12,9 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class PreloadSampleCycleGenerator {
     public Pose bucketLocation = Globals.bucketPose;
     private Pose cycleBucketLocation = new Pose(bucketLocation.getX()+2, bucketLocation.getY()+2, Math.toRadians(315));
-    private Pose outsideSampleLocation = new Pose(24, 129, Math.toRadians(25.6));
-    private Pose middleSampleLocation = new Pose(24, 129, Math.toRadians(3));
-    private Pose insideSampleLocation = new Pose(24, 129, Math.toRadians(336.8));
+    private Pose insideSampleLocation = new Pose(24, 120, Math.toRadians(0));
+    private Pose middleSampleLocation = new Pose(24, 130, Math.toRadians(0));
+    private Pose outsideSampleLocation = new Pose(24, 130, Math.toRadians(30));
 
 
     private Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;

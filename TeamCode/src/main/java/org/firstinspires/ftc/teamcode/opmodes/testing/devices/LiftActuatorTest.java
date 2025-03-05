@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
 
 @Config
-@TeleOp(name = "LiftActuatorTest")
+@TeleOp(name = "LiftActuatorTest", group="2 tests")
 public class LiftActuatorTest extends OpMode {
     private DcMotorEx liftBottomMotor, liftCenterMotor, liftTopMotor;
     private EncoderWrapper liftBottomEncoder, liftCenterEncoder, liftTopEncoder;
