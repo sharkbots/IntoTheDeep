@@ -136,6 +136,8 @@ public class ConfigMenu extends SubsystemWrapper {
         try {
             if (type.equals(Integer.class) || type.equals(int.class)) {
                 field.setInt(object, field.getInt(object) + intValue);
+            } else if (type.equals(Long.class) || type.equals(long.class)) {
+                field.setLong(object, field.getLong(object) + intValue);
             } else if (type.equals(Double.class) || type.equals(double.class)) {
                 field.setDouble(object, field.getDouble(object) + value);
             } else if (type.equals(Float.class) || type.equals(float.class)) {

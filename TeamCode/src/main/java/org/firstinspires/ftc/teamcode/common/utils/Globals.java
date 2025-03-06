@@ -6,14 +6,27 @@ import com.pedropathing.pathgen.Point;
 
 @Config
 public class Globals {
+
+    // ** Autonomous poses **
+
+    // Sample autonomous poses
+    public static final Pose sampleAutoStartPose = new Pose(6.595, 111.355, Math.toRadians(270));
+    public static final Pose bucketPose = new Pose(12.386+1.4, 128.573, Math.toRadians(315));
+    // Specimen auto pose
+    public static final Pose specAutoStartPose = new Pose(6.465, 63.715, Math.toRadians(180));
+
+    public static Pose END_OF_AUTO_POSE = new Pose(36, 36, Math.toRadians(90));
+
     public static class SampleAutonomousConfig{
         public static AllianceColor allianceColor = AllianceColor.BLUE;
-        public static int numSubCycles = 1;
-        public static double samp1X = 0;
-        public static double samp1Y = 0;
-        public static double samp2X = 0;
-        public static double samp2Y = 0;
+//        public static int numSubCycles = 1;
+        public static double samp1X = 8.0;
+        public static double samp1Y = 40.0;
+        public static long waitOZinSeconds = 0;
+//        public static double samp2X = 0;
+//        public static double samp2Y = 0;
     }
+
 
     public enum AllianceColor{
         BLUE,
@@ -83,7 +96,6 @@ public class Globals {
     public static double EXTENDO_FEEDFORWARD_EXTENDING = 0.0;
     public static double EXTENDO_FEEDFORWARD_RETRACTING = -0.0;
 
-    public final static AllianceColor ALLIANCE_FIXED_VAL = AllianceColor.BLUE;
     public static AllianceColor ALLIANCE_COLOR;
     public static boolean IS_AUTONOMOUS = false;
     public static boolean COMING_FROM_AUTONOMOUS = false;
@@ -181,17 +193,5 @@ public class Globals {
     public static int ENDGAME_ASCENT_HEIGHT = 1100;
     public static int POST_BUZZER_HANG_RELEASE_HEIGHT = 1550; // 1600 before, which tilted the robot
 
-
-    // Autonomous poses
-
-    // Sample autonomous poses
-    public static final Pose sampleAutoStartPose = new Pose(6.595, 111.355, Math.toRadians(270));
-    public static final Pose preloadSampleStartPoseCorrected = new Pose(sampleAutoStartPose.getX() - 6.595, sampleAutoStartPose.getY() + 0.6, Math.toRadians(270));
-    public static final Pose bucketPose = new Pose(12.386+1.4, 128.573, Math.toRadians(315));
-    // Specimen auto pose
-    public static final Pose specAutoStartPose = new Pose(6.465, 63.715, Math.toRadians(180));
-
-    public static Pose END_OF_AUTO_POSE = new Pose(36, 36, Math.toRadians(90));
-    //public static Pose END_OF_AUTO_POSE = new Pose(0, 0, Math.toRadians(0));
 
 }
