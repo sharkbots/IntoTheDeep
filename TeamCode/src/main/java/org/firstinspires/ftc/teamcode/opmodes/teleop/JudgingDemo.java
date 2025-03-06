@@ -44,6 +44,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.R
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 @Config
 @TeleOp(name = "Ze 👨‍⚖️ Judging Demo", group = "1 Teleop")
@@ -82,6 +83,7 @@ public class JudgingDemo extends CommandOpMode {
         super.reset();
 
         IS_AUTONOMOUS = false;
+        Globals.GRABBING_MODE = GRABBING_MODES.SAMPLE;
 
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
@@ -349,7 +351,7 @@ public class JudgingDemo extends CommandOpMode {
         }
 
         if (Math.abs(gamepad2.left_stick_x)>= 0.2 && robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL){
-            robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees() + gamepad2.left_stick_x*4.5);
+            robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees() + gamepad2.left_stick_x*4.0);
         }
 
         // manual extendo control
