@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
@@ -112,20 +113,19 @@ public class FourSampleAuto extends CommandOpMode {
                                 // Line 6
                                 new BezierCurve(
                                         allianceColor.convert(new Point(12.386, 128.573, Point.CARTESIAN)),
-                                        allianceColor.convert(new Point(41.514, 117.189, Point.CARTESIAN)),
-                                        allianceColor.convert(new Point(59.027, 122.162, Point.CARTESIAN))
+                                        allianceColor.convert(new Point(56.348, 114.207, Point.CARTESIAN))
                                 )
                         )
-                        .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(90))
+                        .setTangentHeadingInterpolation()
                         .addPath(
                                 // Line 7
                                 new BezierLine(
-                                        allianceColor.convert(new Point(59.027, 122.162, Point.CARTESIAN)),
+                                        allianceColor.convert(new Point(56.348, 114.207, Point.CARTESIAN)),
                                         allianceColor.convert(new Point(62.054, 91.527, Point.CARTESIAN))
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(90))
-                        .addParametricCallback(0.9, ()-> robot.follower.setMaxPower(1))
+                        .addParametricCallback(0.7, ()-> robot.follower.setMaxPower(0.3))
                         .setPathEndTValueConstraint(0.99)
                         .setPathEndTimeoutConstraint(250)
                         .build()
@@ -236,9 +236,8 @@ public class FourSampleAuto extends CommandOpMode {
                                     new SequentialCommandGroup(
                                             new WaitCommand(300),
                                             new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                    new SetIntakeCommand(robot, IntakeSubsystem.PivotState.TRANSFER)
-                                            ),
-                                    new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0))
+                                                    new HoverCommand(robot, 100)
+                                            )
                                     )
                             ),
                             new WaitCommand(SampleAutonomousConfig.waitOZinSeconds*1000),
@@ -258,12 +257,8 @@ public class FourSampleAuto extends CommandOpMode {
                             new DepositSampleCommand(robot)
                             ),
                             new InstantCommand(),
-                            ()->SampleAutonomousConfig.waitOZinSeconds!=0
+                            ()->SampleAutonomousConfig.grabSecondPreload
                         ),
-
-
-
-
 
                         // Pickup inside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
@@ -308,7 +303,7 @@ public class FourSampleAuto extends CommandOpMode {
                         new TransferCommand(robot),
 
 
-                        // Deposit inside sample
+                        // Deposit middle sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(600),
@@ -336,7 +331,7 @@ public class FourSampleAuto extends CommandOpMode {
                         new IntakeSampleCommand(robot),
                         new TransferCommand(robot),
 
-                        // Deposit inside sample
+                        // Deposit outside sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(600),

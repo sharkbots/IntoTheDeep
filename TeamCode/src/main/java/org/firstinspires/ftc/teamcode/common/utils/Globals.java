@@ -19,6 +19,7 @@ public class Globals {
 
     public static class SampleAutonomousConfig{
         public static AllianceColor allianceColor = AllianceColor.BLUE;
+        public static boolean grabSecondPreload = false;
 //        public static int numSubCycles = 1;
         public static double samp1X = 8.0;
         public static double samp1Y = 40.0;

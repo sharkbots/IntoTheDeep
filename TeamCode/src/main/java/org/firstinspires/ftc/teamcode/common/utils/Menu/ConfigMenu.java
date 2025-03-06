@@ -34,7 +34,7 @@ public class ConfigMenu extends SubsystemWrapper {
         navigateMenu = new StateMachine.State("navigateMenu");
         editMenuItem = new StateMachine.State("editMenuItem");
         lockMenu = new StateMachine.State("lockMenu");
-        sm.setInitialState(navigateMenu);
+        sm.setInitialState(lockMenu);
 
         navigateMenu.addTransitionTo(
                 editMenuItem,
