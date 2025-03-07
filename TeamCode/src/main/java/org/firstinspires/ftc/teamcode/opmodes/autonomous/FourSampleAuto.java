@@ -267,7 +267,7 @@ public class FourSampleAuto extends CommandOpMode {
                             new SequentialCommandGroup(
                                     new WaitCommand(300),
                                     new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                            new HoverCommand(robot, 900)
+                                            new HoverCommand(robot, 1000)
                                     )
                             )
                         ),
@@ -295,7 +295,7 @@ public class FourSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 900)
+                                                new HoverCommand(robot, 1000)
                                         )
                                 )
                         ),
@@ -323,7 +323,7 @@ public class FourSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 1100, 30.0)
+                                                new HoverCommand(robot, 1200, 30.0)
                                         )
                                 )
                         ),
