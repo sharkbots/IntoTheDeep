@@ -359,6 +359,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         if (gamepad2.left_trigger > 0.75 && gamepad2.right_trigger > 0.75){
             robot.liftActuator.enableManualPower();
             robot.liftActuator.setOverridePower(-gamepad2.left_stick_y);
+            robot.liftTopEncoder.reset();
         }
 
         //robot.telemetryA.addData("left trigger", gamepad2.left_trigger);
