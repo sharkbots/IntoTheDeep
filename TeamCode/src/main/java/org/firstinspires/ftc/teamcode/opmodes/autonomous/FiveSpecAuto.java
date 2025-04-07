@@ -3,17 +3,14 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.specAutoStartPose;
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.depositLocation;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
@@ -23,9 +20,7 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.IntakeSpecimenCommand;
@@ -33,12 +28,13 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.L
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
+import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator;
 
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "A🔵 Blue spec (5+0) Auto", group = "blue auto", preselectTeleOp = "Two Driver Teleop")
+@Autonomous(name = "🔵/🔴 5-Spec Auto", group = "1 blue auto", preselectTeleOp = "Two Driver Teleop")
 public class FiveSpecAuto extends CommandOpMode {
     //private Telemetry telemetryA;
 
@@ -48,6 +44,9 @@ public class FiveSpecAuto extends CommandOpMode {
     private double loopTime = 0.0;
     private final ElapsedTime timer = new ElapsedTime();
     private double endTime = 0;
+
+    public GamepadEx operator;
+    ConfigMenu menu;
 
     private final ArrayList<PathChain> paths = new ArrayList<>();
 
@@ -213,8 +212,10 @@ public class FiveSpecAuto extends CommandOpMode {
     @Override
     public void initialize() {
         super.reset();
-        Globals.IS_AUTO = true;
-        Globals.ALLIANCE = Globals.AllianceColor.BLUE;
+        Globals.IS_AUTONOMOUS = true;
+        //Globals.ALLIANCE_FIXED_VAL = Globals.AllianceColor.BLUE;
+
+        operator = new GamepadEx(gamepad2);
 
         robot.setTelemetry(telemetry);
 
@@ -256,7 +257,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(1)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.99)
                                 .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(400),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true)
                                 )
@@ -281,7 +282,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(3)).setHoldEnd(false).disableUseIsBusy()
                                 .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(400),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
                         ),
@@ -304,7 +305,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(5)).setHoldEnd(false).disableUseIsBusy()
                                 .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(400),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
                         ),
@@ -326,7 +327,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).disableUseIsBusy().setCompletionThreshold(0.99)
                                 .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(400),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
                         ),
@@ -359,7 +360,8 @@ public class FiveSpecAuto extends CommandOpMode {
         );
         robot.reset();
         robot.lift.updateState(LiftSubsystem.LiftState.HOLDING_SPECIMEN);
-        robot.lift.updateState(LiftSubsystem.ClawState.CLOSED);
+        robot.lift.updateState(LiftSubsystem.ClawState.MICRO_OPEN);
+
     }
 
     @Override
@@ -368,13 +370,13 @@ public class FiveSpecAuto extends CommandOpMode {
 
 //        robot.telemetryA.addData("Robot Pose", robot.follower.getPose());
         double loop = System.nanoTime();
-//        robot.telemetryA.addData("feedforward", robot.liftActuator.getCurrentFeedforward());
+        robot.telemetryA.addData("feedforward", robot.liftActuator.getCurrentFeedforward());
 //        robot.telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
 //        robot.telemetryA.addLine(robot.follower.getPose().toString());
 //        robot.telemetryA.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
-//        robot.telemetryA.addData("Lift pos", robot.liftActuator.getPosition());
-//        robot.telemetryA.addData("Lift target", robot.liftActuator.getTargetPosition());
-//        robot.telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
+        robot.telemetryA.addData("Lift pos", robot.liftActuator.getPosition());
+        robot.telemetryA.addData("Lift target", robot.liftActuator.getTargetPosition());
+        robot.telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
 //        robot.telemetryA.addData("t value (general loop)", robot.follower.getCurrentTValue());
 
         robot.telemetryA.update();

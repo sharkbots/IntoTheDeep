@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing.devices;
 
+import static android.os.SystemClock.sleep;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -17,10 +20,11 @@ import org.firstinspires.ftc.teamcode.common.utils.wrappers.ServoWrapper;
 import java.util.ArrayList;
 
 @Config
+@Disabled
 @TeleOp(name = "ServoTest")
 public class ServoTest extends OpMode {
     private ServoWrapper intakeArmPivotLeftServo, intakeArmPivotRightServo, intakeClawPivotServo,
-            intakeClawServo, intakeClawRotationServo;
+            intakeClawServo, intakeClawRotationServo, intakeClawLED;
     private ServoWrapper depositPivotServo, depositClawServo, depositClawRotationServo;
 
     private ArrayList<ServoWrapper> servos = new ArrayList<>();
@@ -36,12 +40,16 @@ public class ServoTest extends OpMode {
 
     private static boolean holdPosition = false;
 
+    private boolean clawLEDPWMDisabled = false;
+
     GamepadEx gamepadEx;
 
     @Override
     public void init() {
         gamepadEx = new GamepadEx(gamepad1);
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
+
+        intakeClawLED = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeClawLED"));
 
         intakeArmPivotLeftServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotLeftServo"));
         servos.add(intakeArmPivotLeftServo);
@@ -121,6 +129,18 @@ public class ServoTest extends OpMode {
             servoID = (servoID - 1 + servos.size()) % servos.size(); // Decrement and loop around
             servos.get(servoID).setPwmEnable(); // Enable PWM for the new servo
             //targetPos = 0.0;
+        }
+
+        if(gamepadEx.wasJustPressed(GamepadKeys.Button.B)){
+            clawLEDPWMDisabled = !clawLEDPWMDisabled;
+            if (clawLEDPWMDisabled){
+                intakeClawLED.setPwmDisable();
+                sleep(250);
+            }
+            else{
+                intakeClawLED.setPwmEnable();
+                sleep(250);
+            }
         }
 
         // Adjust servo position with Left/Right bumpers

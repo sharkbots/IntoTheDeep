@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.common.subsystems;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
-import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,8 +13,11 @@ public class LiftSubsystem extends SubsystemWrapper {
     public LiftState liftState = LiftState.RETRACTED;
     public ClawState clawState = ClawState.OPEN;
 
+    public boolean isResetting = false;
+
     public enum ClawState {
         OPEN(DEPOSIT_CLAW_OPEN_POS),
+        MICRO_OPEN(DEPOSIT_CLAW_MICRO_OPEN_POS),
         CLOSED(DEPOSIT_CLAW_CLOSED_POS);
 
         private final double position;
@@ -37,6 +39,7 @@ public class LiftSubsystem extends SubsystemWrapper {
         DEPOSIT_LOW_SPECIMEN,
         DEPOSIT_HIGH_RUNG_SETUP,
         DEPOSIT_HIGH_SPECIMEN,
+        PUSHING_SPECIMEN,
         DEPOSIT_LOW_BUCKET,
         DEPOSIT_HIGH_BUCKET,
         LVL1_ASCENT,
@@ -100,6 +103,7 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_LOW_SPECIMEN: return LOW_SPECIMEN_HEIGHT;
             case DEPOSIT_HIGH_RUNG_SETUP: return HIGH_SPECIMEN_SETUP_HEIGHT;
             case DEPOSIT_HIGH_SPECIMEN: return HIGH_SPECIMEN_HEIGHT;
+            case PUSHING_SPECIMEN: return PUSHING_SPECIMEN_HEIGHT;
             case DEPOSIT_LOW_BUCKET: return LOW_BUCKET_HEIGHT;
             case DEPOSIT_HIGH_BUCKET: return HIGH_BUCKET_HEIGHT;
             case LVL1_ASCENT: return LVL1_ASCENT_HEIGHT;
@@ -126,6 +130,7 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_HIGH_RUNG_SETUP:
             case HOLDING_SPECIMEN:
                 return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS;
+            case PUSHING_SPECIMEN: return DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
                 return DEPOSIT_CLAW_PIVOT_BUCKET_POS;
@@ -145,14 +150,14 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
             case DEPOSIT_HIGH_SPECIMEN:
+            case PUSHING_SPECIMEN:
             case HOLDING_SPECIMEN:
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
                 return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
-                return Globals.ALLIANCE == Globals.AllianceColor.RED ?
-                        DEPOSIT_CLAW_ROTATION_BUCKET_SCORING_RED_POS : DEPOSIT_CLAW_ROTATION_BUCKET_SCORING_BLUE_POS;
+                return IS_AUTONOMOUS ? DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS : DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS;
 
             default:
                 throw new IllegalArgumentException("Unknown LiftState: " + state);

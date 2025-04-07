@@ -14,8 +14,8 @@ public class DepositSampleCommand extends SequentialCommandGroup {
     public DepositSampleCommand(Robot robot) {
         super(
                 new InstantCommand(()-> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
-                new WaitCommand(200),
-                new InstantCommand(()-> robot.depositPivotServo.setPosition(0.5025)),
+//                new WaitCommand(200),
+//                new InstantCommand(()-> robot.depositPivotServo.setPosition(0.5025)),
                 new InstantCommand(()-> Globals.HOLDING_SAMPLE = false)
 
         );

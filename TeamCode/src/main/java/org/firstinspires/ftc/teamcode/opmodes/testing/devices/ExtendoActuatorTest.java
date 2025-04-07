@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
 
 @Config
-@TeleOp(name = "ExtendoActuatorTest")
+@TeleOp(name = "ExtendoActuatorTest", group="2 tests")
 public class ExtendoActuatorTest extends OpMode {
     private DcMotorEx extendoMotor;
     private EncoderWrapper extendoEncoder;
@@ -46,7 +47,8 @@ public class ExtendoActuatorTest extends OpMode {
         extendoMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         extendoMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
+        extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "extendoMotor").encoder);
+        extendoEncoder.setDirection(EncoderWrapper.EncoderDirection.FORWARD);
 
         this.extendoActuator = new ActuatorGroupWrapper(extendoEncoder, extendoMotor)
                 .setPIDController(new PIDController(ekP, ekI, ekD))

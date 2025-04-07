@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
+@Disabled
 @TeleOp(name = "LiftSubsystemTest")
 public class LiftSubsystemTest extends CommandOpMode {
 
@@ -28,8 +30,8 @@ public class LiftSubsystemTest extends CommandOpMode {
         CommandScheduler.getInstance().reset();
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
-        Globals.IS_AUTO = false;
-        Globals.ALLIANCE = Globals.ALLIANCE.BLUE;
+        Globals.IS_AUTONOMOUS = false;
+        //Globals.ALLIANCE_FIXED_VAL = Globals.ALLIANCE_FIXED_VAL.BLUE;
 
         gamepadEx2 = new GamepadEx(gamepad2);
 

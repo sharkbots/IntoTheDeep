@@ -7,11 +7,13 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+
 import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.pathgen.MathFunctions;
 import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -81,6 +83,7 @@ public class Robot extends SubsystemWrapper{
 
 
     // intake
+    public ServoImplEx intakeClawLED;
     public ServoWrapper intakeArmPivotLeftServo, intakeArmPivotRightServo, intakeClawPivotServo, intakeClawServo, intakeClawRotationServo;
 
     public AnalogInput intakeArmPivotLeftEnc, intakeArmPivotRightEnc, intakeClawPivotEnc;
@@ -103,6 +106,7 @@ public class Robot extends SubsystemWrapper{
 
     // Pedro Pathing
     public Follower follower;
+    public Pose previousPose = new Pose(0, 0, 0);
 
     // IMU
     private final Object imuLock = new Object();
@@ -119,8 +123,9 @@ public class Robot extends SubsystemWrapper{
     public Telemetry telemetryA;
 
     // vision
-    private VisionPortal visionPortal;
+    public VisionPortal visionPortal;
     public SampleDetectionPipeline sampleDetectionPipeline;
+
     public ExposureControl exposureControl = null;
     public GainControl gainControl = null;
     public WhiteBalanceControl whiteBalanceControl = null;
@@ -128,8 +133,6 @@ public class Robot extends SubsystemWrapper{
     private final long CAMERA_DEFAULT_EXPOSURE_LENGTH_MILLIS = 15;
     private final int CAMERA_DEFAULT_GAIN = 0;
     private final int CAMERA_DEFAULT_WHITE_BALANCE_TEMPERATURE = 4600;
-
-    //private boolean has
 
 
     private final double voltageReadTimeIntervalMS = 5000;
@@ -204,8 +207,8 @@ public class Robot extends SubsystemWrapper{
         extendoMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
         extendoMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftBottomMotor").encoder);
-        extendoEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
+        this.extendoEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "extendoMotor").encoder);
+        extendoEncoder.setDirection(EncoderWrapper.EncoderDirection.FORWARD);
 
         double ekP = 0.005;
         double ekI = 0.0;
@@ -221,6 +224,11 @@ public class Robot extends SubsystemWrapper{
                 .setMaxPos(MAX_EXTENDO_EXTENSION);
 
         // INTAKE
+        intakeClawLED = hardwareMap.get(ServoImplEx.class, "intakeClawLED");
+//        intakeClawLED.setPwmEnable();
+//        intakeClawLED.setPosition(0.42);
+//        intakeClawLED.setPwmDisable();
+
         intakeArmPivotLeftServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotLeftServo"));
 
         intakeArmPivotRightServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotRightServo"));
@@ -264,21 +272,25 @@ public class Robot extends SubsystemWrapper{
         // LIFT
         liftBottomMotor = hardwareMap.get(DcMotorEx.class, "liftBottomMotor");
         liftBottomMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftBottomMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
+        liftBottomMotor.setCurrentAlert(1.5, CurrentUnit.AMPS);
+        liftBottomMotor.isOverCurrent();
         liftBottomMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         liftCenterMotor = hardwareMap.get(DcMotorEx.class, "liftCenterMotor");
         liftCenterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftCenterMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
+        liftCenterMotor.setCurrentAlert(1.5, CurrentUnit.AMPS);
 
         liftTopMotor = hardwareMap.get(DcMotorEx.class, "liftTopMotor");
         liftTopMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftTopMotor.setCurrentAlert(9.2, CurrentUnit.AMPS);
+        liftTopMotor.setCurrentAlert(1.5, CurrentUnit.AMPS);
         liftTopMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
-        liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
+        liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.FORWARD);
+//        if(IS_AUTONOMOUS) {
+//            liftTopEncoder.reset();
+//        }
 
         double lkP = 0.005;
         double lkI = 0.05;
@@ -307,50 +319,53 @@ public class Robot extends SubsystemWrapper{
 
         }
 
-        this.sampleDetectionPipeline = new SampleDetectionPipeline();
-
         subsystems = new ArrayList<>();
         intake = new IntakeSubsystem();
         lift = new LiftSubsystem();
         addSubsystem(intake, lift);
 
-        startCamera();
 
-        visionPortal.resumeStreaming();
+        if (IS_AUTONOMOUS) {
+            this.sampleDetectionPipeline = new SampleDetectionPipeline();
+            // TODO: CATCH EXCEPTION TO NOT INIT CAMERA IF ITS NOT FOUND
+            try {
+                startCamera();
+                visionPortal.resumeStreaming();
+                setAutoCameraControls();
 
-        setAutoCameraControls();
+                try {
+                    sleep(1000);
+                } catch (Exception e) {
 
-        try {
-            sleep(500);
-        } catch (Exception e){
+                }
+                setManualCameraControls();
+            } catch (Exception e) {
 
+            }
         }
 
-        setManualCameraControls();
 
-        if (!Globals.IS_AUTO) {
-            drivetrain = new MecanumDrivetrain();
-            addSubsystem(drivetrain);
-        }
+//        if (!Globals.IS_AUTO) {
+//            drivetrain = new MecanumDrivetrain();
+//            addSubsystem(drivetrain);
+//        }
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
 
-
-
-        if(Globals.IS_AUTO){
-            //ConfigMenu configMenu = new ConfigMenu();
+        if(!IS_AUTONOMOUS){
+            //follower.setStartingPose(END_OF_AUTO_POSE);
+            follower.setPose(END_OF_AUTO_POSE);
+            this.previousPose = END_OF_AUTO_POSE;
         }
 
-        synchronized (imuLock){
-            imu = hardwareMap.get(IMU.class, "imu");
-            imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-        }
-        imuYawOffset = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+//        synchronized (imuLock){
+//            imu = hardwareMap.get(IMU.class, "imu");
+//            imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+//        }
+//        imuYawOffset = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         sensorValues.put(Sensors.SensorType.VOLTAGE, hardwareMap.voltageSensor.iterator().next().getVoltage());
-
-
     }
 
     public void addSubsystem(SubsystemWrapper... subsystems){
@@ -377,16 +392,12 @@ public class Robot extends SubsystemWrapper{
     }
 
     public void write(){
-        // Write all hardware devices here
         for (SubsystemWrapper subsystem : subsystems){
             subsystem.write();
         }
     }
 
     public void periodic(){
-        if(Globals.IS_AUTO){
-            //configMenu.periodic();
-        }
         for (SubsystemWrapper subsystem : subsystems){
             subsystem.periodic();
         }
@@ -397,7 +408,7 @@ public class Robot extends SubsystemWrapper{
             subsystem.reset();
         }
 
-        imuYawOffset = imuYaw;
+        //imuYawOffset = imuYaw;
     }
 
     public void setTelemetry(Telemetry telemetry){

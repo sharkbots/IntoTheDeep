@@ -19,29 +19,11 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     public enum PivotState{
         HOVERING_NO_SAMPLE,
+        HOVERING_NO_SAMPLE_MANUAL,
         HOVERING_WITH_SAMPLE,
         INTAKE,
         TRANSFER
     }
-
-//    public enum ClawRotationState{
-//        TRANSFER(INTAKE_CLAW_ROTATION_TRANSFER_POS),
-//        FULLY_LEFT(INTAKE_CLAW_ROTATION_FULLY_LEFT_POS),
-////        LEFT_30_DEGREES(TRANSFER.getPosition()+1*(FULLY_LEFT.getPosition()-TRANSFER.getPosition())/3),
-////        LEFT_60_DEGREES(TRANSFER.getPosition()+2*(FULLY_LEFT.getPosition()-TRANSFER.getPosition())/3),
-//        FULLY_RIGHT(INTAKE_CLAW_ROTATION_FULLY_RIGHT_POS);
-////        RIGHT_30_DEGREES(TRANSFER.getPosition()+1*(FULLY_RIGHT.getPosition()-TRANSFER.getPosition())/3),
-////        RIGHT_60_DEGREES(TRANSFER.getPosition()+2*(FULLY_RIGHT.getPosition()-TRANSFER.getPosition())/3);
-//
-//        private final double position;
-//        ClawRotationState(double position) {
-//            this.position = position;
-//        }
-//
-//        public double getPosition() {
-//            return position;
-//        }
-//    }
 
     public enum ClawState{
         OPEN(INTAKE_CLAW_OPEN_POS),
@@ -62,77 +44,13 @@ public class IntakeSubsystem extends SubsystemWrapper {
         this.robot = Robot.getInstance();
     }
 
-//    public void moveLeft() {
-//        switch (clawRotationState) {
-//            case FULLY_RIGHT:
-//                clawRotationState = ClawRotationState.RIGHT_60_DEGREES;
-//                setClawRotation(ClawRotationState.RIGHT_60_DEGREES);
-//                break;
-//            case RIGHT_60_DEGREES:
-//                clawRotationState = ClawRotationState.RIGHT_30_DEGREES;
-//                setClawRotation(ClawRotationState.RIGHT_30_DEGREES);
-//                break;
-//            case RIGHT_30_DEGREES:
-//                clawRotationState = ClawRotationState.TRANSFER;
-//                setClawRotation(ClawRotationState.TRANSFER);
-//                break;
-//            case TRANSFER:
-//                clawRotationState = ClawRotationState.LEFT_30_DEGREES;
-//                setClawRotation(ClawRotationState.LEFT_30_DEGREES);
-//                break;
-//            case LEFT_30_DEGREES:
-//                clawRotationState = ClawRotationState.LEFT_60_DEGREES;
-//                setClawRotation(ClawRotationState.LEFT_60_DEGREES);
-//                break;
-//            case LEFT_60_DEGREES:
-//                clawRotationState = ClawRotationState.FULLY_LEFT;
-//                setClawRotation(ClawRotationState.FULLY_LEFT);
-//                break;
-//            case FULLY_LEFT:
-//                // Do nothing if already at the extreme
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-//
-//    public void moveRight() {
-//        switch (clawRotationState) {
-//            case FULLY_LEFT:
-//                clawRotationState = ClawRotationState.LEFT_60_DEGREES;
-//                setClawRotation(ClawRotationState.LEFT_60_DEGREES);
-//                break;
-//            case LEFT_60_DEGREES:
-//                clawRotationState = ClawRotationState.LEFT_30_DEGREES;
-//                setClawRotation(ClawRotationState.LEFT_30_DEGREES);
-//                break;
-//            case LEFT_30_DEGREES:
-//                clawRotationState = ClawRotationState.TRANSFER;
-//                setClawRotation(ClawRotationState.TRANSFER);
-//                break;
-//            case TRANSFER:
-//                clawRotationState = ClawRotationState.RIGHT_30_DEGREES;
-//                setClawRotation(ClawRotationState.RIGHT_30_DEGREES);
-//                break;
-//            case RIGHT_30_DEGREES:
-//                clawRotationState = ClawRotationState.RIGHT_60_DEGREES;
-//                setClawRotation(ClawRotationState.RIGHT_60_DEGREES);
-//                break;
-//            case RIGHT_60_DEGREES:
-//                clawRotationState = ClawRotationState.FULLY_RIGHT;
-//                setClawRotation(ClawRotationState.FULLY_RIGHT);
-//                break;
-//            case FULLY_RIGHT:
-//                // Do nothing if already at the extreme
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-
-
     public void setExtendoTargetTicks(int pos){
         this.extendoTargetPos = Math.max(Math.min(pos, MAX_EXTENDO_EXTENSION), 0);
+        if (extendoTargetPos > EXTENDO_FEEDFORWARD_TRIGGER_THRESHOLD){
+            if (getExtendoPosTicks() < extendoTargetPos) robot.extendoActuator.updateFeedforward(EXTENDO_FEEDFORWARD_EXTENDING);
+            else robot.extendoActuator.updateFeedforward(EXTENDO_FEEDFORWARD_RETRACTING);
+        }
+        else robot.extendoActuator.updateFeedforward(0);
         robot.extendoActuator.setTargetPosition(this.extendoTargetPos);
     }
 
@@ -149,7 +67,6 @@ public class IntakeSubsystem extends SubsystemWrapper {
         robot.intakeArmPivotLeftServo.setPosition(getArmPivotPosition(state));
         robot.intakeArmPivotRightServo.setPosition(getArmPivotPosition(state));
         robot.intakeClawPivotServo.setPosition(getClawPivotPosition(state));
-        //robot.intakeClawRotationServo.setPosition(getClawRotationPosition(state));
     }
 
     /**
@@ -178,14 +95,36 @@ public class IntakeSubsystem extends SubsystemWrapper {
         robot.intakeClawRotationServo.setPosition(servoPosition);
     }
 
+    public void setClawRotation(@NotNull PivotState state) {
+        double servoPosition = getClawRotationPosition(state);
+        robot.intakeClawRotationServo.setPosition(getClawRotationPosition(state));
+
+        // Update clawRotationAngleDegrees based on the servo position
+        this.clawRotationAngleDegrees = getClawRotationAngleFromPosition(servoPosition);
+    }
+
+    /**
+     * Converts a servo position to an angle in degrees.
+     */
+    private double getClawRotationAngleFromPosition(double servoPosition) {
+        // Normalize the servo position to a 0.0-1.0 range relative to the left and right positions
+        double normalized = (servoPosition - INTAKE_CLAW_ROTATION_FULLY_LEFT_POS)
+                / (INTAKE_CLAW_ROTATION_FULLY_RIGHT_POS - INTAKE_CLAW_ROTATION_FULLY_LEFT_POS);
+
+        // Convert the normalized value to an angle in degrees (-90 to +90)
+        return normalized * 180.0 - 90;
+    }
+
     public double getClawRotationDegrees(){
         return this.clawRotationAngleDegrees;
     }
 
+    public double getExtendoPosTicks(){
+        return robot.extendoActuator.getPosition();
+    }
 
-
-    public void setClawRotation(@NotNull PivotState state) {
-        robot.intakeClawRotationServo.setPosition(getClawRotationPosition(state));
+    public double getExtendoPosInches(){
+        return getExtendoPosTicks()/EXTENDO_TICKS_PER_INCH;
     }
 
     /**
@@ -195,6 +134,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
         switch (state) {
             case TRANSFER:
             case HOVERING_NO_SAMPLE:
+            case HOVERING_NO_SAMPLE_MANUAL:
             case HOVERING_WITH_SAMPLE:
             case INTAKE:
                 return INTAKE_CLAW_ROTATION_TRANSFER_POS;
@@ -212,6 +152,8 @@ public class IntakeSubsystem extends SubsystemWrapper {
                 return INTAKE_CLAW_PIVOT_TRANSFER_POS;
             case HOVERING_NO_SAMPLE:
                 return INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS;
+            case HOVERING_NO_SAMPLE_MANUAL:
+                return INTAKE_CLAW_PIVOT_HOVER_INTAKE_MANUAL_POS;
             case HOVERING_WITH_SAMPLE:
                 return INTAKE_CLAW_PIVOT_HOLDING_POS;
             case INTAKE:
@@ -229,6 +171,8 @@ public class IntakeSubsystem extends SubsystemWrapper {
                 return INTAKE_ARM_PIVOT_TRANSFER_POS;
             case HOVERING_NO_SAMPLE:
                 return INTAKE_ARM_PIVOT_HOVER_INTAKE_POS;
+            case HOVERING_NO_SAMPLE_MANUAL:
+                return INTAKE_ARM_PIVOT_HOVER_INTAKE_MANUAL_POS;
             case HOVERING_WITH_SAMPLE:
                 return INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS;
             case INTAKE:
@@ -269,6 +213,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
     public void reset() {
         robot.extendoActuator.setTargetPosition(0);
         setPivotState(PivotState.TRANSFER);
+        setClawRotation(PivotState.TRANSFER);
         setClawState(ClawState.OPEN);
         //robot.intakeClawRotationServo.setPosition(INTAKE_CLAW_ROTATION_TRANSFER_POS);
     }

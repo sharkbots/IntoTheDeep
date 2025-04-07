@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants.LConst
  * @version 1.0, 5/6/2024
  */
 @Config
-@Autonomous(name = "Lateral Localizer Tuner", group = ".Localization")
+@Autonomous(name = "Lateral Localizer Tuner", group = "2 .Localization")
 public class LateralTuner extends OpMode {
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;

@@ -15,7 +15,6 @@ import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 public class LiftCommand extends SequentialCommandGroup {
     public LiftCommand(Robot robot, LiftSubsystem.LiftState state) {
         super(
-                new InstantCommand(() -> robot.lift.updateState(state)),
                 new ConditionalCommand(
                         new InstantCommand(() -> robot.liftActuator.updateFeedforward(LIFT_RESET_FEEDFORWARD)),
                         new InstantCommand(() -> robot.liftActuator.updateFeedforward(DEFAULT_LIFT_FEEDFORWARD)),
@@ -24,7 +23,37 @@ public class LiftCommand extends SequentialCommandGroup {
                         new InstantCommand(() -> robot.liftActuator.updateFeedforward(LIFT_NEAR_RESET_FEEDFORWARD)),
                         new InstantCommand(),
                         () -> (state == LiftSubsystem.LiftState.HOLDING_SPECIMEN)),
-                new WaitUntilCommand(()->robot.lift.liftReached())
+
+                new InstantCommand(() -> robot.lift.updateState(state)),
+
+                new ConditionalCommand(
+                        new SequentialCommandGroup(
+                            new WaitUntilCommand(()-> robot.liftActuator.getPosition() < 200),
+                            new WaitCommand(400),
+                            new InstantCommand(()-> {
+                                robot.liftTopEncoder.reset();
+                        })),
+
+//                new WaitUntilCommand(()-> robot.liftActuator.getPosition() < 200),
+//                new InstantCommand(()-> {
+//                    robot.lift.isResetting = true;
+//                    robot.liftActuator.enableManualPower();
+//                    robot.liftActuator.setOverridePower(-1);
+//                }),
+//                new WaitUntilCommand(()-> robot.liftBottomMotor.isOverCurrent()),
+//                new InstantCommand(()->{
+//                    robot.liftActuator.setOverridePower(0);
+//                }),
+//                new WaitCommand(300),
+//                new InstantCommand(()-> {
+//                    robot.liftTopEncoder.reset();
+//                    robot.lift.isResetting = false;
+//                })
+
+                        new WaitUntilCommand(()->robot.lift.liftReached()),
+                        () -> state == LiftSubsystem.LiftState.RETRACTED || state == LiftSubsystem.LiftState.INTAKE_SPECIMEN
+                )
+
                 );
     }
 }

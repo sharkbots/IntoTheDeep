@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
 
 @Config
-@TeleOp(name = "LiftActuatorTest")
+@TeleOp(name = "LiftActuatorTest", group="2 tests")
 public class LiftActuatorTest extends OpMode {
     private DcMotorEx liftBottomMotor, liftCenterMotor, liftTopMotor;
     private EncoderWrapper liftBottomEncoder, liftCenterEncoder, liftTopEncoder;
@@ -55,7 +56,7 @@ public class LiftActuatorTest extends OpMode {
         liftTopMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.liftTopEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "liftCenterMotor").encoder);
-        liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.REVERSE);
+        liftTopEncoder.setDirection(EncoderWrapper.EncoderDirection.FORWARD);
 
 
         this.liftActuator = new ActuatorGroupWrapper(liftTopEncoder, liftTopMotor, liftCenterMotor, liftBottomMotor)

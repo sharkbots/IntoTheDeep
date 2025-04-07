@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
+@Disabled
 @TeleOp(name = "IntakeSubsystemTest")
 public class IntakeSubsystemTest extends CommandOpMode {
 
@@ -35,8 +37,8 @@ public class IntakeSubsystemTest extends CommandOpMode {
         CommandScheduler.getInstance().reset();
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
-        Globals.IS_AUTO = false;
-        Globals.ALLIANCE = Globals.ALLIANCE.BLUE;
+        Globals.IS_AUTONOMOUS = false;
+        //Globals.ALLIANCE_FIXED_VAL = Globals.ALLIANCE_FIXED_VAL.BLUE;
 
         gamepadEx2 = new GamepadEx(gamepad2);
 
@@ -59,6 +61,16 @@ public class IntakeSubsystemTest extends CommandOpMode {
         gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new ConditionalCommand(new IntakeSampleCommand(robot), new InstantCommand(),
                         () ->robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE));
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new InstantCommand(() -> robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees()-10))
+                );
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(
+                        new InstantCommand(() -> robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees()+10))
+                );
 
 //        // rotate claw left
 //        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)

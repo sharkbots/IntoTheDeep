@@ -9,18 +9,30 @@ import com.pedropathing.pathgen.PathChain;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 
 public class FollowPathChainCommand extends CommandBase {
-
     private final Follower follower;
-    private final PathChain path;
+    private PathChain path;
     private boolean holdEnd = true;
     private double completionThreshold = FollowerConstants.pathEndTValueConstraint;
     private boolean useIsBusy = true;
     private final Robot robot;
+    private DynBuilder dynPathBuilder;
+    boolean dynMode = false;
+    public interface DynBuilder {
+        PathChain run();
+    }
+
 
     public FollowPathChainCommand(Follower follower, PathChain path) {
         this.follower = follower;
         this.path = path;
         robot = Robot.getInstance();
+    }
+
+
+    public FollowPathChainCommand(Follower follower, DynBuilder dynamicPathRunnable) {
+        this(follower, (PathChain) null);
+        dynMode = true;
+        this.dynPathBuilder = dynamicPathRunnable;
     }
 
     public FollowPathChainCommand(Follower follower, Path path) {
@@ -55,13 +67,31 @@ public class FollowPathChainCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        if (dynMode) path = dynPathBuilder.run();
         follower.followPath(path, holdEnd);
+
+        robot.telemetryA.addData("End Pose (follow path command)",String.format(" (%.2f,%.2f)", path.getPath(0).getLastControlPoint().getX(), path.getPath(0).getLastControlPoint().getY()));
+        if (dynMode) path = null;
+        robot.telemetryA.update();
     }
+
+    // Not breaking following at the end breaks it for teleop
+    // maybe not i had constant camera offsets
+//    @Override
+//    public void end(boolean interrupted){
+//        follower.breakFollowing();
+//        robot.telemetryA.addData("FollowPathChainCommand - Ended", true);
+//        robot.telemetryA.update();
+//    }
 
     @Override
     public boolean isFinished() {
         if (useIsBusy) {
-            return !follower.isBusy();
+            boolean isFinished = !follower.isBusy(); // or custom logic
+//            robot.telemetryA.addData("FollowPathChainCommand - Is Finished", isFinished);
+            robot.telemetryA.addData("Follower - Is Busy", follower.isBusy());
+            robot.telemetryA.update();
+            return isFinished;
 
         } else {
             robot.telemetryA.addData("Current Path Number (not done)", follower.getCurrentPathNumber());

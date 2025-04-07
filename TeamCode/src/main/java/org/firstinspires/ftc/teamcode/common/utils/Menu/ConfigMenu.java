@@ -25,20 +25,16 @@ public class ConfigMenu extends SubsystemWrapper {
     StateMachine sm;
     StateMachine.State navigateMenu, editMenuItem, lockMenu;
 
-    Telemetry telemetry;
 
-
-    public ConfigMenu(GamepadEx operator_, Telemetry telemetry_) {
+    public ConfigMenu(GamepadEx operator_, Robot robot_) {
         operator = operator_;
-        telemetry = telemetry_;
-
-        robot = Robot.getInstance();
+        robot = robot_;
 
         sm = new StateMachine();
         navigateMenu = new StateMachine.State("navigateMenu");
         editMenuItem = new StateMachine.State("editMenuItem");
         lockMenu = new StateMachine.State("lockMenu");
-        sm.setInitialState(navigateMenu);
+        sm.setInitialState(lockMenu);
 
         navigateMenu.addTransitionTo(
                 editMenuItem,
@@ -68,22 +64,22 @@ public class ConfigMenu extends SubsystemWrapper {
         editMenuItem.addTransitionTo(
                 editMenuItem,
                 () -> operator.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT),
-                new Actions(new Action("incrementField", () -> changeFieldBy(1.0))));
+                new Actions(new Action("incrementField", () -> changeFieldBy(5.0))));
 
         editMenuItem.addTransitionTo(
                 editMenuItem,
                 () -> operator.wasJustPressed(GamepadKeys.Button.DPAD_LEFT),
-                new Actions(new Action("decrementField", () -> changeFieldBy(-1.0))));
+                new Actions(new Action("decrementField", () -> changeFieldBy(-5.0))));
 
         editMenuItem.addTransitionTo(
                 editMenuItem,
                 () -> operator.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER),
-                new Actions(new Action("incrementField", () -> changeFieldBy(0.1))));
+                new Actions(new Action("incrementField", () -> changeFieldBy(0.5))));
 
         editMenuItem.addTransitionTo(
                 editMenuItem,
                 () -> operator.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER),
-                new Actions(new Action("decrementField", () -> changeFieldBy(-0.1))));
+                new Actions(new Action("decrementField", () -> changeFieldBy(-0.5))));
 
         navigateMenu.addTransitionTo(
                 lockMenu,
@@ -131,7 +127,7 @@ public class ConfigMenu extends SubsystemWrapper {
         Field field = fields[currentField];
         field.setAccessible(true);
         Class<?> type = field.getType();
-        telemetry.addLine(type.getName());
+        robot.telemetryA.addLine(type.getName());
         int intValue = (int)Math.round(value); // used of integer like values below after unboxing field
         if(intValue==0) { // case where double input is within ]-0.5;+0.5[
             intValue = value>=0? 1:-1;
@@ -140,6 +136,8 @@ public class ConfigMenu extends SubsystemWrapper {
         try {
             if (type.equals(Integer.class) || type.equals(int.class)) {
                 field.setInt(object, field.getInt(object) + intValue);
+            } else if (type.equals(Long.class) || type.equals(long.class)) {
+                field.setLong(object, field.getLong(object) + intValue);
             } else if (type.equals(Double.class) || type.equals(double.class)) {
                 field.setDouble(object, field.getDouble(object) + value);
             } else if (type.equals(Float.class) || type.equals(float.class)) {
@@ -189,7 +187,7 @@ public class ConfigMenu extends SubsystemWrapper {
         // Assuming Global.telemetry is accessible and correct.
         try {
             if(sm.currentState==lockMenu){
-                telemetry.addLine(bold(color("Menu values are locked.", "red")));
+                robot.telemetryA.addLine(bold(color("Menu values are locked.", "red")));
                 currentField = 0;
             }
             // Display static fields
@@ -197,14 +195,14 @@ public class ConfigMenu extends SubsystemWrapper {
                 Field field = fields[i];
                 field.setAccessible(true);
                 Object value = field.get(Modifier.isStatic(field.getModifiers()) ? null : object); // Use null for static fields
-                telemetry.addData(sm.currentState==lockMenu? unformattedFieldName(i) : formattedFieldName(i),
+                robot.telemetryA.addData(sm.currentState==lockMenu? unformattedFieldName(i) : formattedFieldName(i),
                         value != null ? (sm.currentState==lockMenu? value.toString():formattedValue(i, value.toString())) : "null");
             }
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        telemetry.update();
+        robot.telemetryA.update();
     }
 
     private String formattedFieldName(int fieldIndex) {
