@@ -10,7 +10,6 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
-import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.pathgen.MathFunctions;
 import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -41,7 +40,6 @@ import static java.lang.Thread.sleep;
 
 import android.util.Size;
 
-import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
@@ -90,10 +88,10 @@ public class Robot extends SubsystemWrapper{
     public AbsoluteAnalogEncoder intakeArmPivotLeftEncoder, intakeArmPivotRightEncoder, intakeClawPivotEncoder;
 
 
-    public ActuatorGroupWrapper intakeArmPivotActuator, intakeClawPivotActuator;
+    public ActuatorGroupWrapper intakeArmPivotActuator, depositArmPivotActuator /*intakeClawPivotActuator*/;
 
     // deposit
-    public ServoWrapper depositPivotServo, depositClawServo, depositClawRotationServo;
+    public ServoWrapper depositArmPivotTopServo, depositArmPivotBottomServo, depositClawPivotServo, depositClawServo, depositClawRotationServo;
 
     public AnalogInput depositPivotEnc;
     public AbsoluteAnalogEncoder depositPivotEncoder;
@@ -224,10 +222,6 @@ public class Robot extends SubsystemWrapper{
                 .setMaxPos(MAX_EXTENDO_EXTENSION);
 
         // INTAKE
-        intakeClawLED = hardwareMap.get(ServoImplEx.class, "intakeClawLED");
-//        intakeClawLED.setPwmEnable();
-//        intakeClawLED.setPosition(0.42);
-//        intakeClawLED.setPwmDisable();
 
         intakeArmPivotLeftServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotLeftServo"));
 
@@ -241,33 +235,9 @@ public class Robot extends SubsystemWrapper{
         intakeClawRotationServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeClawRotationServo"));
 
 
-        intakeArmPivotLeftEnc = hardwareMap.analogInput.get("intakeArmPivotLeftEncoder");
-        intakeArmPivotLeftEncoder = new AbsoluteAnalogEncoder(intakeArmPivotLeftEnc)
-                .zero(0.0)
-                .setWraparound(false);
-
-        intakeArmPivotRightEnc = hardwareMap.analogInput.get("intakeArmPivotRightEncoder");
-        intakeArmPivotRightEncoder = new AbsoluteAnalogEncoder(intakeArmPivotRightEnc)
-                .zero(0.0)
-                .setInverted(true)
-                .setWraparound(false);
-
-        intakeClawPivotEnc = hardwareMap.analogInput.get("intakeClawPivotEncoder");
-        intakeClawPivotEncoder = new AbsoluteAnalogEncoder(intakeClawPivotEnc)
-                .zero(0.0)
-                .setWraparound(false);
-
-
-        double intakePivotTolerance = 0.0;
-        this.intakeArmPivotActuator = new ActuatorGroupWrapper(
-                () -> doubleSubscriber(Sensors.SensorType.INTAKE_PIVOT_LEFT_ENCODER), intakeArmPivotLeftServo, intakeArmPivotRightServo)
-                .setErrorTolerance(intakePivotTolerance);
-
-        double intakePivotRotationTolerance = 0.0;
-        this.intakeClawPivotActuator = new ActuatorGroupWrapper(
-                () -> doubleSubscriber(Sensors.SensorType.INTAKE_PIVOT_ROTATION_ENCODER), intakeClawPivotServo)
-                .setErrorTolerance(intakePivotRotationTolerance);
-
+        double intakeArmPivotTolerance = 0.0;
+        this.intakeArmPivotActuator = new ActuatorGroupWrapper(intakeArmPivotLeftServo, intakeArmPivotRightServo)
+                .setErrorTolerance(intakeArmPivotTolerance);
 
         // LIFT
         liftBottomMotor = hardwareMap.get(DcMotorEx.class, "liftBottomMotor");
@@ -305,11 +275,21 @@ public class Robot extends SubsystemWrapper{
                 .setMaxPos(MAX_SLIDES_EXTENSION);
 
         // DEPOSIT
-        depositPivotServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositPivotServo"));
+        depositArmPivotTopServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositArmPivotTopServo"));
+        depositArmPivotBottomServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositArmPivotBottomServo"));
+        depositArmPivotBottomServo.setOffset(0.1);
+
+        depositClawPivotServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositClawPivotServo"));
 
         depositClawServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositClawServo"));
 
         depositClawRotationServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositClawRotationServo"));
+
+        double depositPivotTolerance = 0.0;
+        this.depositArmPivotActuator = new ActuatorGroupWrapper(depositArmPivotTopServo, depositArmPivotBottomServo)
+                .setErrorTolerance(depositPivotTolerance);
+
+
 
         // Retrieve hubs and enable bulk caching
         modules = hardwareMap.getAll(LynxModule.class);

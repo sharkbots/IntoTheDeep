@@ -163,22 +163,32 @@ public class Globals {
     // xxx sec / xxx ticks --> xxx sec / xxx ticks
     public static double EXTENDO_MOVEMENT_TIME = 0;
 
+    // Deposit Arm Pivot
+    // Bottom servo is 0.01 less than top servo
+    // Range (with top servo): 0.75 (wall pickup) --> 0.2 (out the front)
+    public static double DEPOSIT_ARM_PIVOT_TRANSFER_POS = 0.045;
+    public static double DEPOSIT_ARM_PIVOT_BUCKET_POS = 0.81;
+    public static double DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS = 0.96;
+    public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_POS = 0.88;
+    public static double DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS = 0.69;
+
     // Deposit Claw Pivot
-    public static double DEPOSIT_CLAW_PIVOT_TRANSFER_POS = 0.045;
-    public static double DEPOSIT_CLAW_PIVOT_BUCKET_POS = 0.81;
-    public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS = 0.96;
-    public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS = 0.88;
-    public static double DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS = 0.69;
+    // Full range: 0.40 --> 1.0
+    public static double DEPOSIT_CLAW_PIVOT_TRANSFER_POS = 0;
+    public static double DEPOSIT_CLAW_PIVOT_BUCKET_POS = 0.5;
+    public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS = 0.5;
+    public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS = 0.5;
+    public static double DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS = 0.5;
 
     // Deposit Claw
-    public static double DEPOSIT_CLAW_OPEN_POS = 0.71;
-    public static double DEPOSIT_CLAW_CLOSED_POS = 1.0;
-    public static double DEPOSIT_CLAW_MICRO_OPEN_POS = 0.96;
+    public static double DEPOSIT_CLAW_OPEN_POS = 0.38;
+    public static double DEPOSIT_CLAW_CLOSED_POS = 0.67;
+    public static double DEPOSIT_CLAW_MICRO_OPEN_POS = 0.64;
 
     // Deposit Claw Rotation
-    public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.35;
-    public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.02;
-    public static double DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS = 0.685;
+    public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.345;
+    public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.10;
+    public static double DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS = 0.595;
 
     // Deposit Slides
     public static int MAX_SLIDES_EXTENSION = 2050;

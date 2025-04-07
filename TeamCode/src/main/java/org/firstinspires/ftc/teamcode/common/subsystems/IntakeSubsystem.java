@@ -182,7 +182,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
     }
 
     public boolean pivotReached(){
-        return robot.intakeArmPivotActuator.hasReached() && robot.intakeClawPivotActuator.hasReached();
+        return robot.intakeArmPivotActuator.hasReached();
     }
 
     public boolean extendoReached(){

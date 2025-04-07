@@ -59,7 +59,9 @@ public class LiftSubsystem extends SubsystemWrapper {
     public void updateState(@NotNull LiftState state) {
         this.liftState = state;
 
-        robot.depositPivotServo.setPosition(getClawPivotPosition(liftState));
+        robot.depositArmPivotActuator.setTargetPosition(getArmPivotPosition(liftState));
+        robot.depositClawPivotServo.setPosition(getClawPivotPosition(liftState));
+        //robot.depositArmPivotTopServo.setPosition(getArmPivotPosition(liftState));
         robot.depositClawRotationServo.setPosition(getClawRotationPosition(liftState));
         robot.liftActuator.setTargetPosition(getActuatorPosition(liftState));
     }
@@ -113,6 +115,8 @@ public class LiftSubsystem extends SubsystemWrapper {
         }
     }
 
+
+    // TODO: add in claw pivot positions
     /**
      * Retrieves the claw pivot servo position for the given lift state.
      */
@@ -123,17 +127,42 @@ public class LiftSubsystem extends SubsystemWrapper {
             case LVL1_ASCENT:
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
-                return DEPOSIT_CLAW_PIVOT_TRANSFER_POS;
-            case INTAKE_SPECIMEN: return DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS;
+                return DEPOSIT_ARM_PIVOT_TRANSFER_POS;
+            case INTAKE_SPECIMEN: return DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
             case HOLDING_SPECIMEN:
-                return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS;
-            case PUSHING_SPECIMEN: return DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS;
+                return DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_POS;
+            case PUSHING_SPECIMEN: return DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
-                return DEPOSIT_CLAW_PIVOT_BUCKET_POS;
+                return DEPOSIT_ARM_PIVOT_BUCKET_POS;
+            default: throw new IllegalArgumentException("Unknown LiftState: " + state);
+        }
+    }
+
+    /**
+     * Retrieves the arm pivot servo position for the given lift state.
+     */
+    private double getArmPivotPosition(LiftState state) {
+        switch (state) {
+            case TRANSFER:
+            case RETRACTED:
+            case LVL1_ASCENT:
+            case LVL2_ASCENT_SETUP:
+            case LVL2_ASCENT_DOWN:
+                return DEPOSIT_ARM_PIVOT_TRANSFER_POS;
+            case INTAKE_SPECIMEN: return DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS;
+            case DEPOSIT_LOW_SPECIMEN:
+            case DEPOSIT_HIGH_SPECIMEN:
+            case DEPOSIT_HIGH_RUNG_SETUP:
+            case HOLDING_SPECIMEN:
+                return DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_POS;
+            case PUSHING_SPECIMEN: return DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS;
+            case DEPOSIT_LOW_BUCKET:
+            case DEPOSIT_HIGH_BUCKET:
+                return DEPOSIT_ARM_PIVOT_BUCKET_POS;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
     }
