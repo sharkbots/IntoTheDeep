@@ -3,15 +3,15 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import static com.qualcomm.robotcore.hardware.Gamepad.LED_DURATION_CONTINUOUS;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.ConditionalCommand;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
-import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
+import com.seattlesolvers.solverslib.controller.PIDController;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -70,11 +70,13 @@ public class TwoDriverTeleop extends CommandOpMode {
     public void initialize() {
         super.reset();
 
-        IS_AUTONOMOUS = false;
-        Globals.GRABBING_MODE = Globals.GRABBING_MODES.MANUAL;
-
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
+
+        IS_AUTONOMOUS = false;
+
+        Globals.GRABBING_MODES.set(Globals.GRABBING_MODES.MANUAL);
+        UpdateOperatorGamepadColor();
 
         robot.setTelemetry(telemetry);
         robot.init(hardwareMap);
@@ -86,7 +88,6 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
 //        robot.swapYellow();
 
-        SetOperatorGamepadColor();
 
         // setup hang
         operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
@@ -298,20 +299,9 @@ public class TwoDriverTeleop extends CommandOpMode {
         }
     }
 
-    private void SetOperatorGamepadColor() {
-        if (GRABBING_MODE == GRABBING_MODES.SAMPLE){
-            gamepad2.setLedColor(255, 255, 0, LED_DURATION_CONTINUOUS);
-        }
-        else if (GRABBING_MODE == GRABBING_MODES.SPECIMEN){
-            if (ALLIANCE_COLOR == AllianceColor.BLUE) {
-                gamepad2.setLedColor(0, 0, 255, LED_DURATION_CONTINUOUS);
-            } else {
-                gamepad2.setLedColor(255, 0, 0, LED_DURATION_CONTINUOUS);
-            }
-        }
-        else {
-            gamepad2.setLedColor(0, 255, 0, LED_DURATION_CONTINUOUS);
-        }
+    private void UpdateOperatorGamepadColor() {
+        int[] rgb = GRABBING_MODES.getControllerColor();
+        gamepad2.setLedColor(rgb[0], rgb[1], rgb[2], LED_DURATION_CONTINUOUS);
     }
 
     @Override

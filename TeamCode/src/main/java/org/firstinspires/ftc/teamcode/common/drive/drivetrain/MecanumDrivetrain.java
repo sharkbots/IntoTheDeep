@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.common.drive.drivetrain;
 
 import androidx.annotation.NonNull;
 
-import com.arcrobotics.ftclib.drivebase.RobotDrive;
-import com.arcrobotics.ftclib.geometry.Vector2d;
+import com.seattlesolvers.solverslib.drivebase.RobotDrive;
+import com.seattlesolvers.solverslib.geometry.Vector2d;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;

@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake;
 
-import com.arcrobotics.ftclib.command.ConditionalCommand;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
@@ -16,7 +16,7 @@ public class HoverCommand extends SequentialCommandGroup {
                 new ConditionalCommand(
                         new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE, clawRotationDegrees),
                         new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL, clawRotationDegrees),
-                        ()-> Globals.GRABBING_MODE != Globals.GRABBING_MODES.MANUAL
+                        ()-> Globals.GRABBING_MODES.current() != Globals.GRABBING_MODES.MANUAL
                 ),
                 new WaitUntilCommand(()-> robot.intake.extendoReached()),
                 //new InstantCommand(()-> robot.intakeClawLED.setPwmEnable()),

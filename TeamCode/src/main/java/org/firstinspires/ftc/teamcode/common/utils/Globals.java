@@ -68,17 +68,46 @@ public class Globals {
         SAMPLE,
         SPECIMEN,
         MANUAL;
-       public GRABBING_MODES next(){
-           switch (this) {
-               case SAMPLE : return SPECIMEN;
-               case SPECIMEN : return MANUAL;
-               case MANUAL : return SAMPLE;
-           };
-           return null;
-       }
+
+        private static GRABBING_MODES current = MANUAL;
+
+        public static GRABBING_MODES current() {
+            return current;
+        }
+
+        public static void set(GRABBING_MODES mode) {
+            current = mode;
+        }
+
+        public static void next() {
+            switch (current) {
+                case SAMPLE:
+                    current = SPECIMEN;
+                    break;
+                case SPECIMEN:
+                    current = MANUAL;
+                    break;
+                case MANUAL:
+                    current = SAMPLE;
+                    break;
+            }
+        }
+
+        public static int[] getControllerColor() {
+            switch (current) {
+                case SAMPLE:
+                    return new int[]{255, 255, 0};
+                case SPECIMEN:
+                    return (Globals.ALLIANCE_COLOR == Globals.AllianceColor.BLUE)
+                            ? new int[]{0, 0, 255}
+                            : new int[]{255, 0, 0};
+                case MANUAL:
+                default:
+                    return new int[]{0, 255, 0};
+            }
+        }
     }
 
-    public static GRABBING_MODES GRABBING_MODE = GRABBING_MODES.MANUAL;
 
     // Camera configurations
     public static long CAMERA_EXPOSURE_MILLIS = 25; //33

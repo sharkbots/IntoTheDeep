@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake;
 
-import com.arcrobotics.ftclib.command.CommandBase;
+import com.seattlesolvers.solverslib.command.CommandBase;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
