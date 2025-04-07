@@ -184,7 +184,7 @@ public class Globals {
     public static int MAX_SLIDES_EXTENSION = 2050;
     public static int HOLDING_SPECIMEN_HEIGHT = 65;
     public static int LOW_BUCKET_HEIGHT = 1000;
-    public static int HIGH_BUCKET_HEIGHT = 1970;
+    public static int HIGH_BUCKET_HEIGHT = 2020;
     public static int LOW_SPECIMEN_HEIGHT = 85;
     public static int HIGH_SPECIMEN_SETUP_HEIGHT = 925;
     public static int HIGH_SPECIMEN_HEIGHT = 600;

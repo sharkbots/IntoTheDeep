@@ -17,7 +17,8 @@ public class LiftSubsystem extends SubsystemWrapper {
 
     public enum ClawState {
         OPEN(DEPOSIT_CLAW_OPEN_POS),
-        CLOSED(DEPOSIT_CLAW_MICRO_OPEN_POS);
+        MICRO_OPEN(DEPOSIT_CLAW_MICRO_OPEN_POS),
+        CLOSED(DEPOSIT_CLAW_CLOSED_POS);
 
         private final double position;
 

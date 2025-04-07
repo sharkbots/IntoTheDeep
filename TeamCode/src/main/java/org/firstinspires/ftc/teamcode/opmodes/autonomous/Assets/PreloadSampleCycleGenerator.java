@@ -100,7 +100,7 @@ public class PreloadSampleCycleGenerator {
         return builder
                 .addParametricCallback(0.1, () -> follower.setMaxPower(1.0))
                 .addParametricCallback(0.5, () -> follower.setMaxPower(0.6))
-                .setPathEndTValueConstraint(0.9)
+                .setPathEndTValueConstraint(0.98)
                 .build();
     }
 
