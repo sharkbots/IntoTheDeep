@@ -6,7 +6,6 @@ import static org.firstinspires.ftc.teamcode.common.utils.Globals.AllianceColor;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.DEPOSIT_CLAW_CLOSED_POS;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.DEPOSIT_CLAW_MICRO_OPEN_POS;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.END_OF_AUTO_POSE;
-import static org.firstinspires.ftc.teamcode.common.utils.Globals.GRABBING_MODE;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.GRABBING_MODES;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.HOLDING_SAMPLE;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.HOLDING_SPECIMEN;
@@ -16,15 +15,15 @@ import static org.firstinspires.ftc.teamcode.common.utils.Globals.IS_AUTONOMOUS;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.POST_BUZZER_HANG_RELEASE_HEIGHT;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.ConditionalCommand;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
-import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
+import com.seattlesolvers.solverslib.controller.PIDController;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -82,11 +81,13 @@ public class JudgingDemo extends CommandOpMode {
     public void initialize() {
         super.reset();
 
-        IS_AUTONOMOUS = false;
-        Globals.GRABBING_MODE = GRABBING_MODES.SAMPLE;
-
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
+
+        IS_AUTONOMOUS = false;
+
+        Globals.GRABBING_MODES.set(Globals.GRABBING_MODES.MANUAL);
+        UpdateOperatorGamepadColor();
 
         robot.setTelemetry(telemetry);
         robot.init(hardwareMap);
@@ -98,7 +99,6 @@ public class JudgingDemo extends CommandOpMode {
         robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
         robot.swapYellow();
 
-        SetOperatorGamepadColor();
 
         // setup hang
         operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
@@ -130,8 +130,8 @@ public class JudgingDemo extends CommandOpMode {
         operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(
                         new InstantCommand(()->{
-                            GRABBING_MODE = GRABBING_MODE.next();
-                            SetOperatorGamepadColor();
+                            GRABBING_MODES.next();
+                            UpdateOperatorGamepadColor();
                         })
                 );
 
@@ -310,20 +310,9 @@ public class JudgingDemo extends CommandOpMode {
         }
     }
 
-    private void SetOperatorGamepadColor() {
-        if (GRABBING_MODE == GRABBING_MODES.SAMPLE){
-            gamepad2.setLedColor(255, 255, 0, LED_DURATION_CONTINUOUS);
-        }
-        else if (GRABBING_MODE == GRABBING_MODES.SPECIMEN){
-            if (ALLIANCE_COLOR == AllianceColor.BLUE) {
-                gamepad2.setLedColor(0, 0, 255, LED_DURATION_CONTINUOUS);
-            } else {
-                gamepad2.setLedColor(255, 0, 0, LED_DURATION_CONTINUOUS);
-            }
-        }
-        else {
-            gamepad2.setLedColor(0, 255, 0, LED_DURATION_CONTINUOUS);
-        }
+    private void UpdateOperatorGamepadColor() {
+        int[] rgb = GRABBING_MODES.getControllerColor();
+        gamepad2.setLedColor(rgb[0], rgb[1], rgb[2], LED_DURATION_CONTINUOUS);
     }
 
     @Override

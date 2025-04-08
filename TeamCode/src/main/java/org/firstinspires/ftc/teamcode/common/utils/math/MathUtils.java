@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.utils.math;
 
-import com.arcrobotics.ftclib.geometry.Vector2d;
+import com.seattlesolvers.solverslib.geometry.Vector2d;
 
 public class MathUtils {
     public static double clamp(double num, double min, double max) {

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.utils.wrappers;
 
-import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 
 public class EncoderWrapper implements HardwareDevice {

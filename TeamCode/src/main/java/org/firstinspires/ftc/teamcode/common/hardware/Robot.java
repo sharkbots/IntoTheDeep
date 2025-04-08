@@ -5,8 +5,8 @@ import androidx.annotation.GuardedBy;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.seattlesolvers.solverslib.controller.PIDController;
+import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;

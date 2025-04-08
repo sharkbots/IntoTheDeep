@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.common.utils.commandBase;
 
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 

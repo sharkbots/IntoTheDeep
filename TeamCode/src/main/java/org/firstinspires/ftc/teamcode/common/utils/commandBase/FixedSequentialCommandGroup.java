@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.utils.commandBase;
 
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 public class FixedSequentialCommandGroup extends SequentialCommandGroup {
     private boolean finished;

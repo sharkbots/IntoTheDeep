@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift;
 
-import com.arcrobotics.ftclib.command.ConditionalCommand;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
