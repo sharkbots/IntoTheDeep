@@ -360,7 +360,7 @@ public class FiveSpecAuto extends CommandOpMode {
         );
         robot.reset();
         robot.lift.updateState(LiftSubsystem.LiftState.HOLDING_SPECIMEN);
-        robot.lift.updateState(LiftSubsystem.ClawState.MICRO_OPEN);
+        robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN);
 
     }
 

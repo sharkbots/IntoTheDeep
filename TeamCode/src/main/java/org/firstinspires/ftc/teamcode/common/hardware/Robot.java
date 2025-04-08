@@ -224,9 +224,11 @@ public class Robot extends SubsystemWrapper{
         // INTAKE
 
         intakeArmPivotLeftServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotLeftServo"));
+        intakeArmPivotLeftServo.setDirection(Servo.Direction.REVERSE);
+        intakeArmPivotLeftServo.setOffset(0.99);
+
 
         intakeArmPivotRightServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotRightServo"));
-        intakeArmPivotRightServo.setDirection(Servo.Direction.REVERSE);
 
         intakeClawPivotServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeClawPivotServo"));
 

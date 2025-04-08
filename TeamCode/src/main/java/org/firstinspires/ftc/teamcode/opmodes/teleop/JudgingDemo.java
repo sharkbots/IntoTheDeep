@@ -216,7 +216,7 @@ public class JudgingDemo extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
+                                        new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN)),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> INTAKING_SPECIMENS = true)),
                         new InstantCommand(), () -> !INTAKING_SAMPLES && !HOLDING_SAMPLE && !HOLDING_SPECIMEN)
@@ -238,7 +238,7 @@ public class JudgingDemo extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
+                                        new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN)),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> INTAKING_SPECIMENS = true)),
                                 new InstantCommand(),

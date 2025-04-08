@@ -11,9 +11,11 @@
             <goBILDA5202SeriesMotor name="dtBackLeftMotor" port="2" />
             <goBILDA5202SeriesMotor name="dtBackRightMotor" port="3" />
 
-            <Servo name="depositPivotServo" port="0" />
+            <Servo name="depositArmPivotTopServo" port="1" />
             <Servo name="depositClawRotationServo" port="2" />
-            <Servo name="depositClawServo" port="3" />
+            <Servo name="depositArmPivotBottomServo" port="3" />
+            <Servo name="depositClawServo" port="4" />
+            <Servo name="depositClawPivotServo" port="5" />
 <!--            <RevTouchSensor name="touchDown" port="1" />-->
 
         </LynxModule>
@@ -25,27 +27,17 @@
             <goBILDA5202SeriesMotor name="liftBottomMotor" port="2" />
             <goBILDA5202SeriesMotor name="extendoMotor" port="3" />
 
-<!--            <Servo name="intakeClawServo" port="0" />-->
-<!--            <Servo name="intakeArmPivotLeftServo" port="2" /> &lt;!&ndash;1&ndash;&gt;-->
-<!--            <Servo name="intakeClawLED" port="2" />-->
-<!--            <Servo name="intakeClawRotationServo" port="3" />-->
-<!--            <Servo name="intakeClawPivotServo" port="4" />-->
-<!--            <Servo name="intakeArmPivotRightServo" port="5" />-->
-
             <Servo name="intakeArmPivotLeftServo" port="0" />
-            <Servo name="intakeClawServo" port="1" />
+            <Servo name="intakeClawRotationServo" port="1" />
             <Servo name="intakeArmPivotRightServo" port="2" />
-            <Servo name="intakeClawPivotServo" port="3" />
-            <Servo name="intakeClawLED" port="4" />
-            <Servo name="intakeClawRotationServo" port="5" />
+            <Servo name="intakeClawServo" port="3" />
+            <Servo name="intakeClawPivotServo" port="4" />
 
 
 
-
-
-            <AnalogInput name="intakeArmPivotLeftEncoder" port="0" />
-            <AnalogInput name="intakeArmPivotRightEncoder" port="1" />
-            <AnalogInput name="intakeClawPivotEncoder" port="2" />
+<!--            <AnalogInput name="intakeArmPivotLeftEncoder" port="0" />-->
+<!--            <AnalogInput name="intakeArmPivotRightEncoder" port="1" />-->
+<!--            <AnalogInput name="intakeClawPivotEncoder" port="2" />-->
 
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <goBILDAPinpoint name="pinpoint_sensor" port="0" bus="1" />
@@ -55,6 +47,6 @@
 <!--            <Webcam name="Webcam T" serialNumber="6608ED60" />-->
         </LynxModule>
     </LynxUsbDevice>
-    <Webcam name="Webcam 1" serialNumber="2022050701" />
+<!--    <Webcam name="Webcam 1" serialNumber="2022050701" />-->
 <!--    <Webcam name="Webcam 2" serialNumber="2316:892" />-->
 </Robot>

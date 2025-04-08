@@ -39,6 +39,7 @@ public class LiftSubsystem extends SubsystemWrapper {
         DEPOSIT_LOW_SPECIMEN,
         DEPOSIT_HIGH_RUNG_SETUP,
         DEPOSIT_HIGH_SPECIMEN,
+        READY_FOR_OZ,
         PUSHING_SPECIMEN,
         DEPOSIT_LOW_BUCKET,
         DEPOSIT_HIGH_BUCKET,
@@ -71,7 +72,7 @@ public class LiftSubsystem extends SubsystemWrapper {
      *
      * @param state The desired claw state.
      */
-    public void updateState(@NotNull ClawState state) {
+    public void setClawState(@NotNull ClawState state) {
         this.clawState = state;
         robot.depositClawServo.setPosition(state.getPosition());
     }
@@ -99,6 +100,7 @@ public class LiftSubsystem extends SubsystemWrapper {
             case TRANSFER:
             case RETRACTED:
             case INTAKE_SPECIMEN:
+            case READY_FOR_OZ:
                 return 0;
             case HOLDING_SPECIMEN:
                 return HOLDING_SPECIMEN_HEIGHT;
@@ -128,7 +130,9 @@ public class LiftSubsystem extends SubsystemWrapper {
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
                 return DEPOSIT_ARM_PIVOT_TRANSFER_POS;
-            case INTAKE_SPECIMEN: return DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS;
+            case INTAKE_SPECIMEN:
+            case READY_FOR_OZ:
+                return DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
@@ -153,7 +157,9 @@ public class LiftSubsystem extends SubsystemWrapper {
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
                 return DEPOSIT_ARM_PIVOT_TRANSFER_POS;
-            case INTAKE_SPECIMEN: return DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS;
+            case INTAKE_SPECIMEN:
+            case READY_FOR_OZ:
+                return DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
@@ -176,6 +182,7 @@ public class LiftSubsystem extends SubsystemWrapper {
             case RETRACTED:
             case LVL1_ASCENT:
             case INTAKE_SPECIMEN:
+            case READY_FOR_OZ:
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
             case DEPOSIT_HIGH_SPECIMEN:
@@ -218,6 +225,6 @@ public class LiftSubsystem extends SubsystemWrapper {
         robot.liftActuator.setTargetPosition(0);
         this.liftState = LiftState.RETRACTED;
         updateState(LiftState.RETRACTED);
-        updateState(ClawState.OPEN);
+        setClawState(ClawState.OPEN);
     }
 }

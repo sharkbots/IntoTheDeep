@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class DepositSpecimenCommand extends SequentialCommandGroup {
     public DepositSpecimenCommand(Robot robot){
         super(
-                new InstantCommand(()-> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
+                new InstantCommand(()-> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN)),
                 new InstantCommand(() -> Globals.HOLDING_SPECIMEN = false)
         );
     }

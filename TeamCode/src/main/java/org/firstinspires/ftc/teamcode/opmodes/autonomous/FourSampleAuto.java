@@ -171,7 +171,7 @@ public class FourSampleAuto extends CommandOpMode {
 
 
         robot.reset();
-        robot.lift.updateState(LiftSubsystem.ClawState.CLOSED);
+        robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED);
         while(opModeInInit()){
             menu.periodic();
             MathUtils.clamp(Globals.SampleAutonomousConfig.samp1X, Globals.sampleAutoStartPose.getX(), 12.5);

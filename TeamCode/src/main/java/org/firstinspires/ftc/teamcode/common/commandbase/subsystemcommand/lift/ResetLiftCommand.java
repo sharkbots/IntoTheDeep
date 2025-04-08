@@ -13,7 +13,7 @@ public class ResetLiftCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> Globals.INTAKING_SPECIMENS = false),
                 new InstantCommand(() -> Globals.HOLDING_SAMPLE = false),
                 new InstantCommand(() -> Globals.HOLDING_SPECIMEN = false),
-                new InstantCommand(() -> robot.lift.updateState(LiftSubsystem.ClawState.OPEN)),
+                new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN)),
                 new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
         );
     }

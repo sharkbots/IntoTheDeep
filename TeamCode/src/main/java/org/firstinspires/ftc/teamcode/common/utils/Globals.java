@@ -203,6 +203,4 @@ public class Globals {
     public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2000;
     public static int ENDGAME_ASCENT_HEIGHT = 1100;
     public static int POST_BUZZER_HANG_RELEASE_HEIGHT = 1550; // 1600 before, which tilted the robot
-
-
 }

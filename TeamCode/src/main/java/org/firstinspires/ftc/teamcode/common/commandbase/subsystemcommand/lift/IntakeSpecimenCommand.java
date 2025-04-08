@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class IntakeSpecimenCommand extends SequentialCommandGroup {
     public IntakeSpecimenCommand(Robot robot){
         super(
-                new InstantCommand(()-> robot.lift.updateState(LiftSubsystem.ClawState.MICRO_OPEN)),
+                new InstantCommand(()-> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN)),
                 new WaitCommand(200),
                 new LiftCommand(robot, LiftSubsystem.LiftState.HOLDING_SPECIMEN),
                 new InstantCommand(() -> Globals.HOLDING_SPECIMEN = true)
