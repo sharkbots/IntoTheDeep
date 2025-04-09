@@ -23,7 +23,14 @@ public class LiftCommand extends SequentialCommandGroup {
                         new InstantCommand(),
                         () -> (state == LiftSubsystem.LiftState.HOLDING_SPECIMEN)),
 
-                new InstantCommand(() -> robot.lift.updateState(state)),
+                new InstantCommand(() -> robot.lift.updateState(state))
+                        .alongWith(
+                                new ConditionalCommand(
+                                        new WaitCommand(200).andThen(new InstantCommand(()-> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN))),
+                                        new InstantCommand(),
+                                        ()-> state == LiftSubsystem.LiftState.DEPOSIT_LOW_BUCKET || state == LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET
+                                )
+                        ),
 
                 new ConditionalCommand(
                         new SequentialCommandGroup(

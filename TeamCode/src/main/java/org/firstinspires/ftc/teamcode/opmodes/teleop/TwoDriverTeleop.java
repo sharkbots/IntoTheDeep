@@ -214,20 +214,14 @@ public class TwoDriverTeleop extends CommandOpMode {
         // Deposit high basket setup
         operator.getGamepadButton(GamepadKeys.Button.B)
                 .whenPressed(new ConditionalCommand(
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
-                                new WaitCommand(250),
-                                new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN))
-                        ),
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET),
                         new InstantCommand(), () -> HOLDING_SAMPLE && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE)
                 );
 
         // Deposit low basket setup
         operator.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new ConditionalCommand(
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_LOW_BUCKET).alongWith(
-                                new WaitCommand(250),
-                                new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN))
-                        ),
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_LOW_BUCKET),
                         new InstantCommand(), () -> HOLDING_SAMPLE && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE)
                 );
 

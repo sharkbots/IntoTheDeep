@@ -21,8 +21,11 @@ public class Globals {
         public static AllianceColor allianceColor = AllianceColor.BLUE;
         public static boolean grabSecondPreload = false;
 //        public static int numSubCycles = 1;
-        public static double samp1X = 60;
-        public static double samp1Y = 84;
+        public static double samp1X = -12;
+        public static double samp1Y = 12;
+        public static double samp2X = 0;
+        public static double samp2Y = 0;
+
         public static long waitOZinSeconds = 0;
 //        public static double samp2X = 0;
 //        public static double samp2Y = 0;

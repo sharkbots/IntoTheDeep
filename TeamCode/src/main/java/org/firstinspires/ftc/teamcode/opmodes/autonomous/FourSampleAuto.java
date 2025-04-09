@@ -173,8 +173,8 @@ public class FourSampleAuto extends CommandOpMode {
         robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED);
         while(opModeInInit()){
             menu.periodic();
-            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1X, Globals.sampleAutoStartPose.getX(), 12.5);
-            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1Y, 12, 42.0);
+//            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1X, Globals.sampleAutoStartPose.getX(), 12.5);
+//            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1Y, 12, 42.0);
 
             //MathUtils.clamp(Globals.SampleAutonomousConfig.samp2X, -11, 2);
             //MathUtils.clamp(Globals.SampleAutonomousConfig.samp2Y, -8, 8);
@@ -185,8 +185,8 @@ public class FourSampleAuto extends CommandOpMode {
 
                 ALLIANCE_COLOR = SampleAutonomousConfig.allianceColor;
 
-                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X, Globals.SampleAutonomousConfig.samp1Y, Point.CARTESIAN), 1);
-                //subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X+72, Globals.SampleAutonomousConfig.samp2Y+72, Point.CARTESIAN), 2);
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X+72, Globals.SampleAutonomousConfig.samp1Y+72, Point.CARTESIAN), 1);
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X+72, Globals.SampleAutonomousConfig.samp2Y+72, Point.CARTESIAN), 2);
 
                 generatePaths();
                 generateSchedule();
@@ -344,7 +344,7 @@ public class FourSampleAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                                 .alongWith(
                                                 new WaitCommand(600),
-                                                new HoverCommand(robot, (91.5 - Globals.SampleAutonomousConfig.samp1Y - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH))))
+                                                new HoverCommand(robot, (91.5 - (Globals.SampleAutonomousConfig.samp1Y+12) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH))))
 
 
 
