@@ -39,8 +39,12 @@ android {
 repositories {
     maven {
         url = 'https://maven.brott.dev/'
+    maven {
         url = 'https://www.matthewo.tech/maven/'
+    }
+    maven {
         url = 'https://repo.dairy.foundation/releases'
+        }
     }
     maven {
         url = 'https://repo.dairy.foundation/snapshots'
@@ -71,5 +75,5 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.21'
 
     // Fast load
-    //implementation 'org.team11260:fast-load:0.1.2'
+    implementation 'org.team11260:fast-load:0.1.2'
 }
