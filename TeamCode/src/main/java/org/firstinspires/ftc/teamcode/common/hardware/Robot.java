@@ -332,8 +332,7 @@ public class Robot extends SubsystemWrapper{
 //            addSubsystem(drivetrain);
 //        }
 
-        Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
 
         if(!IS_AUTONOMOUS){
             //follower.setStartingPose(END_OF_AUTO_POSE);
