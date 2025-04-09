@@ -100,8 +100,15 @@ public class FourSampleAuto extends CommandOpMode {
         paths.add(preloadSampleCyclePathGen.getSamplePath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
         paths.add(preloadSampleCyclePathGen.getBucketPath(PreloadSampleCycleGenerator.SampleLocation.OUTSIDE));
 
+        // PATH 7&8 - sample from sub
+        paths.add(subSampleCyclePathGen.getSubPickupPath(1));
+        paths.add(subSampleCyclePathGen.getSubDepositPath(1));
 
-        // PATH 7 - park
+        // PATH 7&8 - sample from sub
+//        paths.add(subSampleCyclePathGen.getSubPickupPath(2));
+//        paths.add(subSampleCyclePathGen.getSubDepositPath(2));
+
+        // PATH x - park
         paths.add(
                 robot.follower.pathBuilder()
                         .addPath(
@@ -126,14 +133,6 @@ public class FourSampleAuto extends CommandOpMode {
                         .build()
         );
 
-
-        // PATH 8&9 - sample from OZ
-        paths.add(subSampleCyclePathGen.getSubPickupPath(1));
-        paths.add(subSampleCyclePathGen.getSubDepositPath(1));
-
-//
-//        paths.add(subSampleCyclePathGen.getSubPickupPath(2));
-//        paths.add(subSampleCyclePathGen.getSubDepositPath(2));
 
 
     }
@@ -262,7 +261,7 @@ public class FourSampleAuto extends CommandOpMode {
                             new SequentialCommandGroup(
                                     new WaitCommand(300),
                                     new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                            new HoverCommand(robot, 900)
+                                            new HoverCommand(robot, 900+403.2)
                                     )
                             )
                         ),
@@ -290,7 +289,7 @@ public class FourSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 900)
+                                                new HoverCommand(robot, 900+403.2)
                                         )
                                 )
                         ),
@@ -318,7 +317,7 @@ public class FourSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 1050, 30.0)
+                                                new HoverCommand(robot, 1050+403.2, 30.0)
                                         )
                                 )
                         ),
@@ -338,18 +337,26 @@ public class FourSampleAuto extends CommandOpMode {
                         new WaitCommand(150),
                         new DepositSampleCommand(robot),
 
-
-
-                        // Park
-                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).alongWith(
+                        // Pickup 5th sample from sub
+                        new FollowPathChainCommand(robot.follower, paths.get(7)).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(500),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
-                                )
-                        )
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
+                                                .alongWith(
+                                                new WaitCommand(600),
+                                                new HoverCommand(robot, (91.5 - Globals.SampleAutonomousConfig.samp1Y - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH))))
 
 
+
+
+//                        // Park
+//                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
+//                        new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).alongWith(
+//                                new SequentialCommandGroup(
+//                                        new WaitCommand(500),
+//                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
+//                                )
+//                        )
 
                 )
             );

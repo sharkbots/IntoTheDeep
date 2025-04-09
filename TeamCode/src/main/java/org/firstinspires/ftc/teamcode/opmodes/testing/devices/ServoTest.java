@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.common.utils.wrappers.ServoWrapper;
 import java.util.ArrayList;
 
 @Config
-@Disabled
 @TeleOp(name = "ServoTest")
 public class ServoTest extends OpMode {
     private ServoWrapper intakeArmPivotLeftServo, intakeArmPivotRightServo, intakeClawPivotServo,

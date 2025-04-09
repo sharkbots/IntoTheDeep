@@ -21,8 +21,8 @@ public class Globals {
         public static AllianceColor allianceColor = AllianceColor.BLUE;
         public static boolean grabSecondPreload = false;
 //        public static int numSubCycles = 1;
-        public static double samp1X = 8.0;
-        public static double samp1Y = 40.0;
+        public static double samp1X = 60;
+        public static double samp1Y = 84;
         public static long waitOZinSeconds = 0;
 //        public static double samp2X = 0;
 //        public static double samp2Y = 0;
@@ -179,7 +179,7 @@ public class Globals {
     // Extendo
     public static int MAX_EXTENDO_EXTENSION = 1850;
     public static int EXTENDO_FEEDFORWARD_TRIGGER_THRESHOLD = 1300;
-    public static double INTAKE_MINIMUM_EXTENSION = 5.375;
+    public static double INTAKE_MINIMUM_EXTENSION = 5.3750-4;
 
     // 2143 ticks / 21.26 inch --> 100.7996 ticks / 1 inch
     public static double EXTENDO_TICKS_PER_INCH = 100.8;
@@ -189,16 +189,16 @@ public class Globals {
     // Deposit Arm Pivot
     // Bottom servo is 0.01 less than top servo
     // Range (with top servo): 0.75 (wall pickup) --> 0.2 (out the front)
-    public static double DEPOSIT_ARM_PIVOT_TRANSFER_POS = 0.315; //0.425
-    public static double DEPOSIT_ARM_PIVOT_BUCKET_POS = 0.65; //0.81
-    public static double DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS = 0.76; //0.87
-    public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_POS = 0.26; //0.37
-    public static double DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS = 0.34; //0.45
+    public static double DEPOSIT_ARM_PIVOT_TRANSFER_POS = 0.315;
+    public static double DEPOSIT_ARM_PIVOT_BUCKET_POS = 0.65;
+    public static double DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS = 0.76;
+    public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_POS = 0.26;
+    public static double DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS = 0.34;
 
     // Deposit Claw Pivot
     // Full range: 0.40 --> 1.0
     public static double DEPOSIT_CLAW_PIVOT_TRANSFER_POS = 0.37;
-    public static double DEPOSIT_CLAW_PIVOT_BUCKET_POS = 0.81;
+    public static double DEPOSIT_CLAW_PIVOT_BUCKET_POS = 0.66; //0.81
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS = 0.64;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS = 0.64;
     public static double DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS = 0.5;
@@ -210,8 +210,8 @@ public class Globals {
 
     // Deposit Claw Rotation
     public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.89; //0.3365
-    public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.0575;
-    public static double DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS = 0.615;
+    public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.89; //0.0575
+    public static double DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS = 0.89; //0.615
     public static double DEPOSIT_CLAW_ROTATION_SPECIMEN_SCORING_POS = 0.3365;
 
     // Deposit Slides
