@@ -71,5 +71,5 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.21'
 
     // Fast load
-    implementation 'org.team11260:fast-load:0.1.2'
+    //implementation 'org.team11260:fast-load:0.1.2'
 }

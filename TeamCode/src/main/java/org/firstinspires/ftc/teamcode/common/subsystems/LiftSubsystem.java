@@ -59,8 +59,9 @@ public class LiftSubsystem extends SubsystemWrapper {
      */
     public void updateState(@NotNull LiftState state) {
         this.liftState = state;
-
-        robot.depositArmPivotActuator.setTargetPosition(getArmPivotPosition(liftState));
+        robot.depositArmPivotBottomServo.setPosition(getArmPivotPosition(liftState));
+        robot.depositArmPivotTopServo.setPosition(getArmPivotPosition(liftState));
+        //robot.depositArmPivotActuator.setTargetPosition(getArmPivotPosition(liftState));
         robot.depositClawPivotServo.setPosition(getClawPivotPosition(liftState));
         //robot.depositArmPivotTopServo.setPosition(getArmPivotPosition(liftState));
         robot.depositClawRotationServo.setPosition(getClawRotationPosition(liftState));
@@ -129,19 +130,19 @@ public class LiftSubsystem extends SubsystemWrapper {
             case LVL1_ASCENT:
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
-                return DEPOSIT_ARM_PIVOT_TRANSFER_POS;
+                return DEPOSIT_CLAW_PIVOT_TRANSFER_POS;
             case INTAKE_SPECIMEN:
             case READY_FOR_OZ:
-                return DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS;
+                return DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
             case HOLDING_SPECIMEN:
-                return DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_POS;
-            case PUSHING_SPECIMEN: return DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS;
+                return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS;
+            case PUSHING_SPECIMEN: return DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
-                return DEPOSIT_ARM_PIVOT_BUCKET_POS;
+                return DEPOSIT_CLAW_PIVOT_BUCKET_POS;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
     }
@@ -159,11 +160,11 @@ public class LiftSubsystem extends SubsystemWrapper {
                 return DEPOSIT_ARM_PIVOT_TRANSFER_POS;
             case INTAKE_SPECIMEN:
             case READY_FOR_OZ:
+            case HOLDING_SPECIMEN:
                 return DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
-            case HOLDING_SPECIMEN:
                 return DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_POS;
             case PUSHING_SPECIMEN: return DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS;
             case DEPOSIT_LOW_BUCKET:
@@ -183,14 +184,15 @@ public class LiftSubsystem extends SubsystemWrapper {
             case LVL1_ASCENT:
             case INTAKE_SPECIMEN:
             case READY_FOR_OZ:
-            case DEPOSIT_LOW_SPECIMEN:
-            case DEPOSIT_HIGH_RUNG_SETUP:
-            case DEPOSIT_HIGH_SPECIMEN:
-            case PUSHING_SPECIMEN:
             case HOLDING_SPECIMEN:
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
                 return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
+            case DEPOSIT_LOW_SPECIMEN:
+            case DEPOSIT_HIGH_RUNG_SETUP:
+            case DEPOSIT_HIGH_SPECIMEN:
+            case PUSHING_SPECIMEN:
+                return DEPOSIT_CLAW_ROTATION_SPECIMEN_SCORING_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
                 return IS_AUTONOMOUS ? DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS : DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS;

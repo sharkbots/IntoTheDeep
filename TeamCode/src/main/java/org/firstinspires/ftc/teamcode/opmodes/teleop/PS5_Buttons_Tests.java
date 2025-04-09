@@ -57,7 +57,7 @@ public class PS5_Buttons_Tests extends CommandOpMode {
         operator = new GamepadEx(gamepad2);
 
         IS_AUTONOMOUS = false;
-        Globals.GRABBING_MODES.set(GRABBING_MODES.MANUAL);
+        Globals.GRABBING_MODES.set(GRABBING_MODES.SAMPLE);
         UpdateOperatorGamepadColor();
 
         operator.getGamepadButton(GamepadKeys.Button.TOUCHPAD)

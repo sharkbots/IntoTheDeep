@@ -66,10 +66,9 @@ public class Globals {
 
     public enum GRABBING_MODES {
         SAMPLE,
-        SPECIMEN,
-        MANUAL;
+        SPECIMEN;
 
-        private static GRABBING_MODES current = MANUAL;
+        private static GRABBING_MODES current = SAMPLE;
 
         public static GRABBING_MODES current() {
             return current;
@@ -85,9 +84,6 @@ public class Globals {
                     current = SPECIMEN;
                     break;
                 case SPECIMEN:
-                    current = MANUAL;
-                    break;
-                case MANUAL:
                     current = SAMPLE;
                     break;
             }
@@ -101,7 +97,6 @@ public class Globals {
                     return (Globals.ALLIANCE_COLOR == Globals.AllianceColor.BLUE)
                             ? new int[]{0, 0, 255}
                             : new int[]{255, 0, 0};
-                case MANUAL:
                 default:
                     return new int[]{0, 255, 0};
             }
@@ -157,30 +152,29 @@ public class Globals {
 
     public static double AA_claw_rotation_heading_degrees = 0;
     // Intake Arm Pivot
-    public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.47;
-    public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.7;
+    public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.29;
+    public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.3; // TODO: update
     public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
-    public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_MANUAL_POS = 0.75;
-    public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.79; // 0.79
+    public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_MANUAL_POS = 0.21;
+    public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.13; // 0.79
 
 
     // Intake Claw Pivot
-    public static double INTAKE_CLAW_PIVOT_TRANSFER_POS = 0.015;
+    public static double INTAKE_CLAW_PIVOT_TRANSFER_POS = 0.155;
     public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS = 0.735; //0.79
-    public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_MANUAL_POS = 0.725;
-    public static double INTAKE_CLAW_PIVOT_INTAKE_POS = 0.675;
-    public static double INTAKE_CLAW_PIVOT_HOLDING_POS = 0.775;
+    public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_MANUAL_POS = 0.615;
+    public static double INTAKE_CLAW_PIVOT_INTAKE_POS = 0.555;
+    public static double INTAKE_CLAW_PIVOT_HOLDING_POS = 0.42; // TODO: update
 
     // Intake Claw Rotation
-    public static double INTAKE_CLAW_ROTATION_TRANSFER_POS = 0.54;
-    public static double INTAKE_CLAW_ROTATION_FULLY_LEFT_POS = 0.88;
-    public static double INTAKE_CLAW_ROTATION_FULLY_RIGHT_POS = 0.20;
-
+    public static double INTAKE_CLAW_ROTATION_TRANSFER_POS = 0.53;
+    public static double INTAKE_CLAW_ROTATION_FULLY_LEFT_POS = 0.875;
+    public static double INTAKE_CLAW_ROTATION_FULLY_RIGHT_POS = 0.19;
 
     // Intake Claw
-    public static double INTAKE_CLAW_OPEN_POS = 0.48;
-    public static double INTAKE_CLAW_MICRO_OPEN_POS = 0.765;
-    public static double INTAKE_CLAW_CLOSED_POS = 0.785;
+    public static double INTAKE_CLAW_OPEN_POS = 0.49;
+    public static double INTAKE_CLAW_MICRO_OPEN_POS = 0.775;
+    public static double INTAKE_CLAW_CLOSED_POS = 0.8;
 
     // Extendo
     public static int MAX_EXTENDO_EXTENSION = 1850;
@@ -195,18 +189,18 @@ public class Globals {
     // Deposit Arm Pivot
     // Bottom servo is 0.01 less than top servo
     // Range (with top servo): 0.75 (wall pickup) --> 0.2 (out the front)
-    public static double DEPOSIT_ARM_PIVOT_TRANSFER_POS = 0.045;
-    public static double DEPOSIT_ARM_PIVOT_BUCKET_POS = 0.81;
-    public static double DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS = 0.96;
-    public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_POS = 0.88;
-    public static double DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS = 0.69;
+    public static double DEPOSIT_ARM_PIVOT_TRANSFER_POS = 0.315; //0.425
+    public static double DEPOSIT_ARM_PIVOT_BUCKET_POS = 0.65; //0.81
+    public static double DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS = 0.76; //0.87
+    public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_POS = 0.26; //0.37
+    public static double DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS = 0.34; //0.45
 
     // Deposit Claw Pivot
     // Full range: 0.40 --> 1.0
-    public static double DEPOSIT_CLAW_PIVOT_TRANSFER_POS = 0;
-    public static double DEPOSIT_CLAW_PIVOT_BUCKET_POS = 0.5;
-    public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS = 0.5;
-    public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS = 0.5;
+    public static double DEPOSIT_CLAW_PIVOT_TRANSFER_POS = 0.37;
+    public static double DEPOSIT_CLAW_PIVOT_BUCKET_POS = 0.81;
+    public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS = 0.64;
+    public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS = 0.64;
     public static double DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS = 0.5;
 
     // Deposit Claw
@@ -215,15 +209,16 @@ public class Globals {
     public static double DEPOSIT_CLAW_MICRO_OPEN_POS = 0.64;
 
     // Deposit Claw Rotation
-    public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.345;
-    public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.10;
-    public static double DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS = 0.595;
+    public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.89; //0.3365
+    public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.0575;
+    public static double DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS = 0.615;
+    public static double DEPOSIT_CLAW_ROTATION_SPECIMEN_SCORING_POS = 0.3365;
 
     // Deposit Slides
-    public static int MAX_SLIDES_EXTENSION = 2050;
+    public static int MAX_SLIDES_EXTENSION = 2070;
     public static int HOLDING_SPECIMEN_HEIGHT = 65;
-    public static int LOW_BUCKET_HEIGHT = 1000;
-    public static int HIGH_BUCKET_HEIGHT = 2020;
+    public static int LOW_BUCKET_HEIGHT = 1030;
+    public static int HIGH_BUCKET_HEIGHT = 2040;
     public static int LOW_SPECIMEN_HEIGHT = 85;
     public static int HIGH_SPECIMEN_SETUP_HEIGHT = 925;
     public static int HIGH_SPECIMEN_HEIGHT = 600;

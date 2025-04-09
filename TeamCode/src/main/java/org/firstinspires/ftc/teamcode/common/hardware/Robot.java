@@ -224,7 +224,7 @@ public class Robot extends SubsystemWrapper{
         // INTAKE
 
         intakeArmPivotLeftServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotLeftServo"));
-        intakeArmPivotLeftServo.setDirection(Servo.Direction.REVERSE);
+        intakeArmPivotLeftServo.setDirection(ServoWrapper.Direction.REVERSE);
         intakeArmPivotLeftServo.setOffset(0.99);
 
 
@@ -279,7 +279,7 @@ public class Robot extends SubsystemWrapper{
         // DEPOSIT
         depositArmPivotTopServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositArmPivotTopServo"));
         depositArmPivotBottomServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositArmPivotBottomServo"));
-        depositArmPivotBottomServo.setOffset(0.1);
+        //depositArmPivotBottomServo.setOffset(0.01);
 
         depositClawPivotServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositClawPivotServo"));
 
@@ -363,9 +363,9 @@ public class Robot extends SubsystemWrapper{
             lastVoltageReadTimestamp = currentTimeMS;
         }
         sensorValues.put(Sensors.SensorType.EXTENDO_ENCODER, extendoEncoder.getPosition());
-        sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_LEFT_ENCODER, intakeArmPivotLeftEncoder.getCurrentPosition());
-        sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_RIGHT_ENCODER, intakeArmPivotRightEncoder.getCurrentPosition());
-        sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_ROTATION_ENCODER, intakeClawPivotEncoder.getCurrentPosition());
+//        sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_LEFT_ENCODER, intakeArmPivotLeftEncoder.getCurrentPosition());
+//        sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_RIGHT_ENCODER, intakeArmPivotRightEncoder.getCurrentPosition());
+//        sensorValues.put(Sensors.SensorType.INTAKE_PIVOT_ROTATION_ENCODER, intakeClawPivotEncoder.getCurrentPosition());
         sensorValues.put(Sensors.SensorType.LIFT_TOP_ENCODER, liftTopEncoder.getPosition());
 
         for (SubsystemWrapper subsystem : subsystems){

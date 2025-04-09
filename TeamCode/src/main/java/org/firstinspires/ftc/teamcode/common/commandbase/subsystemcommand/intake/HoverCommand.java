@@ -13,11 +13,12 @@ public class HoverCommand extends SequentialCommandGroup {
     public HoverCommand(Robot robot, double extension, Double clawRotationDegrees) {
         super(
                 new InstantCommand(() -> robot.intake.setExtendoTargetTicks((int)extension)),
-                new ConditionalCommand(
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE, clawRotationDegrees),
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL, clawRotationDegrees),
-                        ()-> Globals.GRABBING_MODES.current() != Globals.GRABBING_MODES.MANUAL
-                ),
+                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL, clawRotationDegrees),
+//                new ConditionalCommand(
+//                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE, clawRotationDegrees),
+//                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL, clawRotationDegrees),
+//                        ()-> Globals.GRABBING_MODES.current() != Globals.GRABBING_MODES.MANUAL
+//                ),
                 new WaitUntilCommand(()-> robot.intake.extendoReached()),
                 //new InstantCommand(()-> robot.intakeClawLED.setPwmEnable()),
 

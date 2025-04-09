@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 
 <Robot type="FirstInspires-FTC">
-    <EthernetDevice name="Limelight3a" serialNumber="EthernetOverUsb:eth0:172.29.0.31" port="0" ipAddress="172.29.0.31" />
+    <EthernetDevice name="Limelight3a" serialNumber="EthernetOverUsb:eth0:172.29.0.28" port="0" ipAddress="172.29.0.28" />
     <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
 
         <LynxModule name="Expansion Hub 1" port="1">
@@ -30,10 +30,8 @@
             <Servo name="intakeArmPivotLeftServo" port="0" />
             <Servo name="intakeClawRotationServo" port="1" />
             <Servo name="intakeArmPivotRightServo" port="2" />
-            <Servo name="intakeClawServo" port="3" />
-            <Servo name="intakeClawPivotServo" port="4" />
-
-
+            <Servo name="intakeClawPivotServo" port="3" />
+            <Servo name="intakeClawServo" port="4" />
 
 <!--            <AnalogInput name="intakeArmPivotLeftEncoder" port="0" />-->
 <!--            <AnalogInput name="intakeArmPivotRightEncoder" port="1" />-->

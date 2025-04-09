@@ -86,7 +86,7 @@ public class JudgingDemo extends CommandOpMode {
 
         IS_AUTONOMOUS = false;
 
-        Globals.GRABBING_MODES.set(Globals.GRABBING_MODES.MANUAL);
+        Globals.GRABBING_MODES.set(Globals.GRABBING_MODES.SAMPLE);
         UpdateOperatorGamepadColor();
 
         robot.setTelemetry(telemetry);

@@ -75,7 +75,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         IS_AUTONOMOUS = false;
 
-        Globals.GRABBING_MODES.set(Globals.GRABBING_MODES.MANUAL);
+        Globals.GRABBING_MODES.set(Globals.GRABBING_MODES.SAMPLE);
         UpdateOperatorGamepadColor();
 
         robot.setTelemetry(telemetry);
@@ -149,7 +149,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 new TransferCommand(robot),
                                 new InstantCommand(),
                                 () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
-                                        && GRABBING_MODE == GRABBING_MODES.SAMPLE
+                                        && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE
                         )
                 );
 
@@ -162,7 +162,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 ),
                                 new InstantCommand(),
                                 () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
-                                        && GRABBING_MODE == GRABBING_MODES.SPECIMEN
+                                        && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN
                         )
                 );
 
@@ -195,9 +195,10 @@ public class TwoDriverTeleop extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new ManualSampleIntakeCommand(robot)
-                                .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
+                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
+                                        .andThen(new TransferCommand(robot)),
                                 new InstantCommand(),
-                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL && !HOLDING_SPECIMEN
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
                         ));
 
 
@@ -213,13 +214,13 @@ public class TwoDriverTeleop extends CommandOpMode {
         // Deposit high basket setup
         operator.getGamepadButton(GamepadKeys.Button.B)
                 .whenPressed(new ConditionalCommand(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET),
-                        new InstantCommand(), () -> HOLDING_SAMPLE && GRABBING_MODE == GRABBING_MODES.SAMPLE)
+                        new InstantCommand(), () -> HOLDING_SAMPLE && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE)
                 );
 
         // Deposit low basket setup
         operator.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new ConditionalCommand(new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_LOW_BUCKET),
-                        new InstantCommand(), () -> HOLDING_SAMPLE && GRABBING_MODE == GRABBING_MODES.SAMPLE)
+                        new InstantCommand(), () -> HOLDING_SAMPLE && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE)
                 );
 
         // Deposit sample

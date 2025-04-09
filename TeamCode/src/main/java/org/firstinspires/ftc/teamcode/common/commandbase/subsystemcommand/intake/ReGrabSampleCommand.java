@@ -13,11 +13,12 @@ public class ReGrabSampleCommand extends SequentialCommandGroup {
     public ReGrabSampleCommand(Robot robot){
         super(
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN)),
-                new ConditionalCommand(
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE),
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL),
-                        ()-> Globals.GRABBING_MODES.current() != Globals.GRABBING_MODES.MANUAL
-                ),
+                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL),
+//                new ConditionalCommand(
+//                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE),
+//                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL),
+//                        ()-> Globals.GRABBING_MODES.current() != Globals.GRABBING_MODES.MANUAL
+//                ),
                 //new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE)),
                 new WaitCommand(20)
         );
