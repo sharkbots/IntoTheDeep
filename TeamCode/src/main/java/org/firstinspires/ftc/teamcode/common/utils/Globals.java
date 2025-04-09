@@ -180,9 +180,9 @@ public class Globals {
     public static double INTAKE_CLAW_CLOSED_POS = 0.8;
 
     // Extendo
-    public static int MAX_EXTENDO_EXTENSION = 1850;
+    public static int MAX_EXTENDO_EXTENSION = 2120;
     public static int EXTENDO_FEEDFORWARD_TRIGGER_THRESHOLD = 1300;
-    public static double INTAKE_MINIMUM_EXTENSION = 5.3750-4;
+    public static double INTAKE_MINIMUM_EXTENSION = 2;
 
     // 2143 ticks / 21.26 inch --> 100.7996 ticks / 1 inch
     public static double EXTENDO_TICKS_PER_INCH = 100.8;

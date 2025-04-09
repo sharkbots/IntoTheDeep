@@ -478,6 +478,7 @@ public class Robot extends SubsystemWrapper{
         }
     }
 
+
     public int getCurrent(){
         return sampleDetectionPipeline.getColor();
     }

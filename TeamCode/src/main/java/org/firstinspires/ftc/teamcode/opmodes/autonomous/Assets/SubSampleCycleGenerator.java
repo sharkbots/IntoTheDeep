@@ -53,7 +53,7 @@ public class SubSampleCycleGenerator {
                         new Point(subSampleLocations.get(cycleNum-1).getX(), 91.5)
                 ))
                 .setTangentHeadingInterpolation()
-                .setPathEndTimeoutConstraint(0.95);
+                .setPathEndTimeoutConstraint(0.99);
         return builder.build();
     }
 

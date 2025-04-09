@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 @Disabled
-@TeleOp(name = "LiftSubsystemTest")
+@TeleOp(name = "LiftSubsystemTest", group="2 tests")
 public class LiftSubsystemTest extends CommandOpMode {
 
     private double loopTime = 0.0;

@@ -31,6 +31,8 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
+import org.opencv.calib3d.Calib3d;
+import org.opencv.core.Mat;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
@@ -90,13 +92,22 @@ public class TwoDriverTeleop extends CommandOpMode {
 
 
         // GENERAL RESET
-        operator.getGamepadButton(GamepadKeys.Button.X)
+        operator.getGamepadButton(GamepadKeys.Button.SQUARE)
                 .whenPressed(
                         new ResetLiftCommand(robot)
                                 .alongWith(new ResetIntakeCommand(robot))
                 );
 
-        // setup hang
+        // Switch between sample and specimen mode
+        operator.getGamepadButton(GamepadKeys.Button.TOUCHPAD)
+                .whenPressed(
+                        new InstantCommand(() -> {
+                            GRABBING_MODES.next();
+                            UpdateOperatorGamepadColor();
+                        })
+                );
+
+        // Setup hang
         operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(
                         new ConditionalCommand(
@@ -110,7 +121,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
-        // hang
+        // Hang
         operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenReleased(
                         new ConditionalCommand(
@@ -133,7 +144,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
 
         // Shoot out intake
-        operator.getGamepadButton(GamepadKeys.Button.A)
+        operator.getGamepadButton(GamepadKeys.Button.CROSS)
                 .whenPressed(
                         new ConditionalCommand(
                                 new HoverCommand(robot,50),
@@ -143,7 +154,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
 
         // Transfer (sample mode)
-        operator.getGamepadButton(GamepadKeys.Button.A)
+        operator.getGamepadButton(GamepadKeys.Button.CROSS)
                 .whenPressed(
                         new ConditionalCommand(
                                 new TransferCommand(robot),
@@ -154,7 +165,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
 
         // Transfer (specimen mode)
-        operator.getGamepadButton(GamepadKeys.Button.A)
+        operator.getGamepadButton(GamepadKeys.Button.CROSS)
                 .whenPressed(
                         new ConditionalCommand(
                                 new TransferCommand(robot).andThen(
@@ -199,8 +210,10 @@ public class TwoDriverTeleop extends CommandOpMode {
                                         .andThen(new TransferCommand(robot)),
                                 new InstantCommand(),
                                 () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
-                        ));
-
+                        )/*.interruptOn(
+                                operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).
+                        )*/
+                );
 
         // ReGrab sample in case of failed grab
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -212,7 +225,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
 
         // Deposit high basket setup
-        operator.getGamepadButton(GamepadKeys.Button.B)
+        operator.getGamepadButton(GamepadKeys.Button.CIRCLE)
                 .whenPressed(new ConditionalCommand(
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET),
                         new InstantCommand(), () -> HOLDING_SAMPLE && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE)
@@ -275,7 +288,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
 
         // Deposit high rung setup
-        operator.getGamepadButton(GamepadKeys.Button.Y)
+        operator.getGamepadButton(GamepadKeys.Button.TRIANGLE)
                 .whenPressed(new ConditionalCommand(
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP),
                         new InstantCommand(),

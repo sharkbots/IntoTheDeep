@@ -104,9 +104,9 @@ public class FourSampleAuto extends CommandOpMode {
         paths.add(subSampleCyclePathGen.getSubPickupPath(1));
         paths.add(subSampleCyclePathGen.getSubDepositPath(1));
 
-        // PATH 7&8 - sample from sub
-//        paths.add(subSampleCyclePathGen.getSubPickupPath(2));
-//        paths.add(subSampleCyclePathGen.getSubDepositPath(2));
+        // PATH 9&10 - sample from sub
+        paths.add(subSampleCyclePathGen.getSubPickupPath(2));
+        paths.add(subSampleCyclePathGen.getSubDepositPath(2));
 
         // PATH x - park
         paths.add(
@@ -338,16 +338,28 @@ public class FourSampleAuto extends CommandOpMode {
                         new DepositSampleCommand(robot),
 
                         // Pickup 5th sample from sub
-                        new FollowPathChainCommand(robot.follower, paths.get(7)).alongWith(
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
+                        new FollowPathChainCommand(robot.follower, paths.get(9)).alongWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(500),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
-                                                .alongWith(
-                                                new WaitCommand(600),
-                                                new HoverCommand(robot, (91.5 - (Globals.SampleAutonomousConfig.samp1Y+12) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH))))
+                                )
+                        ),
+                        new InstantCommand(()-> robot.telemetryA.addData("extendo target ticks", (91.5 - (Globals.SampleAutonomousConfig.samp2Y+72) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH)),
+                        new InstantCommand(()-> robot.telemetryA.update()),
+                        new HoverCommand(robot, (91.5 - (Globals.SampleAutonomousConfig.samp2Y+72) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH),
+                        new IntakeSampleCommand(robot),
 
-
-
+                        // Deposit 5th sample from sub
+                        new FollowPathChainCommand(robot.follower, paths.get(10)).alongWith(
+                                new SequentialCommandGroup(
+                                        new TransferCommand(robot)),
+                                        new WaitCommand(200)
+                                        //new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
+                                )
+                        ),
+                        new WaitCommand(150),
+                        new DepositSampleCommand(robot)
 
 //                        // Park
 //                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
@@ -357,8 +369,6 @@ public class FourSampleAuto extends CommandOpMode {
 //                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
 //                                )
 //                        )
-
-                )
             );
     }
 

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 @Disabled
-@TeleOp(name = "A CONFIG MENU")
+@TeleOp(name = "A CONFIG MENU", group="1 Teleop")
 public class ConfigMenuTest extends LinearOpMode {
 
     //AutoBase.Coordinates c;
