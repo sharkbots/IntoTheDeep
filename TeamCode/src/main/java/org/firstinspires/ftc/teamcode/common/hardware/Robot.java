@@ -5,13 +5,13 @@ import androidx.annotation.GuardedBy;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.seattlesolvers.solverslib.controller.PIDController;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.MathFunctions;
-import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -20,7 +20,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
@@ -38,23 +37,17 @@ import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
 import static java.lang.Thread.sleep;
 
-import android.util.Size;
-
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ServoWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
-import org.firstinspires.ftc.teamcode.common.vision.sampleDetection.SampleDetectionPipeline;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.VisionProcessor;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.*;
+import org.firstinspires.ftc.teamcode.common.vision.Vision;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 //TODO: ADD COMMENTS TO CLASS
 @Config
@@ -121,16 +114,7 @@ public class Robot extends SubsystemWrapper{
     public Telemetry telemetryA;
 
     // vision
-    public VisionPortal visionPortal;
-    public SampleDetectionPipeline sampleDetectionPipeline;
-
-    public ExposureControl exposureControl = null;
-    public GainControl gainControl = null;
-    public WhiteBalanceControl whiteBalanceControl = null;
-
-    private final long CAMERA_DEFAULT_EXPOSURE_LENGTH_MILLIS = 15;
-    private final int CAMERA_DEFAULT_GAIN = 0;
-    private final int CAMERA_DEFAULT_WHITE_BALANCE_TEMPERATURE = 4600;
+    public Vision vision;
 
 
     private final double voltageReadTimeIntervalMS = 5000;
@@ -181,6 +165,13 @@ public class Robot extends SubsystemWrapper{
         sensorValues.put(Sensors.SensorType.LIFT_CENTER_ENCODER, 0);
         sensorValues.put(Sensors.SensorType.LIFT_TOP_ENCODER, 0);
         sensorValues.put(Sensors.SensorType.DEPOSIT_PIVOT_ENCODER, 0.0);
+
+        // Vision
+        vision = new Vision();
+        //vision.cvCamera.setWebcamName(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        vision.limelight.setLimelight(hardwareMap.get(Limelight3A.class, "Limelight3A"));
+        vision.limelight.setPipeline(7);
+        vision.limelight.start();
 
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
@@ -306,25 +297,27 @@ public class Robot extends SubsystemWrapper{
         lift = new LiftSubsystem();
         addSubsystem(intake, lift);
 
-
-        if (IS_AUTONOMOUS) {
-            this.sampleDetectionPipeline = new SampleDetectionPipeline();
-            // TODO: CATCH EXCEPTION TO NOT INIT CAMERA IF ITS NOT FOUND
-            try {
-                startCamera();
-                visionPortal.resumeStreaming();
-                setAutoCameraControls();
-
-                try {
-                    sleep(1000);
-                } catch (Exception e) {
-
-                }
-                setManualCameraControls();
-            } catch (Exception e) {
-
-            }
+        if (IS_AUTONOMOUS){
+            vision.limelight.start();
         }
+
+//        if (IS_AUTONOMOUS) {
+//            // TODO: CATCH EXCEPTION TO NOT INIT CAMERA IF ITS NOT FOUND
+//            try {
+//                vision.cvCamera.startCamera();
+//                vision.cvCamera.resumeStreaming();
+//                vision.cvCamera.setAutoCameraControls();
+//
+//                try {
+//                    sleep(1000);
+//                } catch (Exception e) {
+//
+//                }
+//                vision.cvCamera.setAutoCameraControls();
+//            } catch (Exception e) {
+//
+//            }
+//        }
 
 
 //        if (!Globals.IS_AUTO) {
@@ -475,159 +468,6 @@ public class Robot extends SubsystemWrapper{
             return (Boolean) value;
         } else {
             throw new ClassCastException();
-        }
-    }
-
-
-    public int getCurrent(){
-        return sampleDetectionPipeline.getColor();
-    }
-    public void swapInt(int swap){
-        sampleDetectionPipeline.setColor(swap);
-    }
-    public void swapNext(){
-        int newy = sampleDetectionPipeline.getColor()+1;
-        if (newy > 2) newy = 0;
-        sampleDetectionPipeline.setColor(newy);
-    }
-    public double getLatency(){
-        return Math.min(1/ visionPortal.getFps(),.2/*,0.1+webcam.getTotalFrameTimeMs()*/);
-    }
-    public void swapRed(){
-        sampleDetectionPipeline.setColor(0);
-    }
-    public void swapBlue(){
-        sampleDetectionPipeline.setColor(1);
-    }
-    public void swapYellow(){
-        sampleDetectionPipeline.setColor(2);
-    }
-    public void resetCenter(){
-        sampleDetectionPipeline.resetCenter();
-    }
-
-    public static double getParallaxYCm(int yPixelVal){
-        return 4E-05*(yPixelVal*yPixelVal) + 0.011*yPixelVal + 0.5037;
-    }
-
-    public static double getParallaxXCm(int xPixelVal, int yPixelVal){
-        return xPixelVal/((-1.0/75.0)*yPixelVal+40.0);
-    }
-
-
-    public void startCamera() {
-//        AprilTagProcessor atag = new AprilTagProcessor.Builder()
-//                .setLensIntrinsics()
-//                .build();
-
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .setCameraResolution(new Size(CAMERA_STREAM_WIDTH, CAMERA_STREAM_HEIGHT)) // 1024 768
-                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .addProcessors(sampleDetectionPipeline)
-                .enableLiveView(true)
-                .build();
-
-        visionPortal.setProcessorEnabled(sampleDetectionPipeline, false);
-    }
-
-    public void setManualCameraControls() {
-        exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-        gainControl = visionPortal.getCameraControl(GainControl.class);
-        whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
-
-
-        if (exposureControl.getMode()!= ExposureControl.Mode.Manual){
-            setExposureMode(ExposureControl.Mode.Manual);
-            try{
-                sleep(50);
-            } catch (Exception e){
-
-            }
-        }
-
-        setExposureControl(CAMERA_EXPOSURE_MILLIS, TimeUnit.MILLISECONDS);
-
-        if (whiteBalanceControl.getMode()!= WhiteBalanceControl.Mode.MANUAL){
-            setWhiteBalanceMode(WhiteBalanceControl.Mode.MANUAL);
-            try{
-                sleep(50);
-            } catch (Exception e){
-
-            }
-        }
-        setWhiteBalanceControl(CAMERA_WHITE_BALANCE_TEMPERATURE);
-
-
-        setGainControl(CAMERA_GAIN);
-
-    }
-
-    public void setAutoCameraControls(){
-
-        exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-        gainControl = visionPortal.getCameraControl(GainControl.class);
-        whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
-
-
-        if (exposureControl.getMode()!= ExposureControl.Mode.AperturePriority){
-            setExposureMode(ExposureControl.Mode.AperturePriority);
-            try{
-                sleep(50);
-            } catch (Exception e){
-
-            }
-        }
-        setExposureControl(CAMERA_DEFAULT_EXPOSURE_LENGTH_MILLIS, TimeUnit.MILLISECONDS);
-
-        if (whiteBalanceControl.getMode()!= WhiteBalanceControl.Mode.AUTO){
-            setWhiteBalanceMode(WhiteBalanceControl.Mode.AUTO);
-            try{
-                sleep(50);
-            } catch (Exception e){
-
-            }
-        }
-        setWhiteBalanceControl(CAMERA_DEFAULT_WHITE_BALANCE_TEMPERATURE);
-
-        setGainControl(CAMERA_DEFAULT_GAIN);
-
-    }
-
-    public void setExposureMode(ExposureControl.Mode mode){
-        exposureControl.setMode(mode);
-    }
-
-    public void setExposureControl(long duration, TimeUnit unit){
-        exposureControl.setExposure(duration, unit);
-    }
-
-    public void setWhiteBalanceMode(WhiteBalanceControl.Mode mode){
-        whiteBalanceControl.setMode(mode);
-    }
-
-    public void setWhiteBalanceControl(int temperature){
-        whiteBalanceControl.setWhiteBalanceTemperature(temperature);
-    }
-
-    public void setGainControl(int gain){
-        gainControl.setGain(gain);
-    }
-
-    public void setProcessorEnabled(VisionProcessor processor, boolean enabled){
-        this.visionPortal.setProcessorEnabled(processor, enabled);
-    }
-
-    public VisionPortal.CameraState getCameraState(){
-        if (visionPortal != null) return visionPortal.getCameraState();
-        return null;
-    }
-
-    public void closeCamera(){
-        if (visionPortal != null){
-            visionPortal.stopLiveView();
-            visionPortal.stopStreaming();
-            visionPortal.close();
         }
     }
 

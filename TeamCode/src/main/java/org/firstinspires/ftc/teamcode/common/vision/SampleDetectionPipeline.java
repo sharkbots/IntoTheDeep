@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.vision.sampleDetection;
+package org.firstinspires.ftc.teamcode.common.vision;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.pow;
@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 @Config
 public class SampleDetectionPipeline implements VisionProcessor {
@@ -80,8 +79,8 @@ public class SampleDetectionPipeline implements VisionProcessor {
     Mat rvec = new Mat();
     Mat tvec = new Mat();
     MatOfPoint2f contour2f = new MatOfPoint2f();
-    private volatile Double[] closestCenter = {0.0, 0.0, 0.0, 0.0};
-    private volatile Double[] latestValidCenter = {0.0, 0.0, 0.0, 0.0};
+    public volatile Double[] closestCenter = {0.0, 0.0, 0.0, 0.0};
+    public volatile Double[] latestValidCenter = {0.0, 0.0, 0.0, 0.0};
 
     public static int color = 0;
 
@@ -181,7 +180,7 @@ public class SampleDetectionPipeline implements VisionProcessor {
             // TODO: add a stack to store last 5 frames (use list)
             closestCenter = closestCenter(centerCoords);
             Point closestCenterPoint = new Point(closestCenter[0].intValue(), closestCenter[1].intValue());
-            if (cameraInRange()){
+            if (robot.vision.cvCamera.cameraInRange()) {
                 Imgproc.circle(boundingImage, closestCenterPoint, 5, new Scalar(0, 255, 0), 4);
                 Imgproc.putText(boundingImage, closestCenter[3].toString(), closestCenterPoint, Imgproc.FONT_HERSHEY_SIMPLEX, 1.0, new Scalar(0, 255, 0), 2);
             }
@@ -342,77 +341,7 @@ public class SampleDetectionPipeline implements VisionProcessor {
 
     //TODO: REFACTOR TO CV MANAGER CLASS
 
-    public boolean cameraInRange(){
-        return cameraYInRange() && cameraHeadingInRange(); //&& cameraXInRange();
-    }
 
-    public boolean cameraXInRange(){
-        return Math.abs(getCameraXOffset()) <0.3;
-    }
-
-    public boolean cameraYInRange(){
-        return Math.abs(getCameraYOffset()) < 0.5;
-    }
-
-    public boolean cameraHeadingInRange(){
-        return Math.abs(getCameraHeadingOffsetDegrees()) < (20.0);
-    }
-
-    public double getCameraXOffset(){
-        if (this.closestCenter[0] == 0){
-            return 0;
-        }
-        else {
-            return -(Robot.getParallaxXCm(this.closestCenter[0].intValue(), this.closestCenter[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, this.closestCenter[1].intValue()))/2.54;
-        }
-    }
-    public double getCameraYOffset(){
-        if (this.closestCenter[1] == 0){
-            return 0;
-        }
-        else {
-            return (Robot.getParallaxYCm(this.closestCenter[1].intValue()) - Robot.getParallaxYCm(CAMERA_STREAM_HEIGHT/2))/2.54;
-        }
-    }
-    public double getCameraHeadingOffsetDegrees(){
-        return ((this.closestCenter[3]-(90+0))%180); // +0 is current angle claw
-    }
-
-
-    public double getLatestValidCameraXOffset(){
-        if (this.latestValidCenter[0] == 0){
-            return 0;
-        }
-        else {
-            return -(Robot.getParallaxXCm(this.latestValidCenter[0].intValue(), this.latestValidCenter[1].intValue()) - Robot.getParallaxXCm(CAMERA_STREAM_WIDTH/2, this.latestValidCenter[1].intValue()))/2.54;
-        }
-    }
-    public double getLatestValidCameraYOffset(){
-        if (this.latestValidCenter[1] == 0){
-            return 0;
-        }
-        else {
-            return (Robot.getParallaxYCm(this.latestValidCenter[1].intValue()) - Robot.getParallaxYCm(CAMERA_STREAM_HEIGHT/2))/2.54;
-        }
-    }
-    public double getLatestValidCameraHeadingOffsetDegrees(){
-        return ((this.latestValidCenter[3]-(90+0))%180); // +0 is current angle claw
-    }
-
-
-    public double getCameraOffsetMagnitude(){
-        if(getCameraXOffset() == 0 && getCameraYOffset() == 0){
-            return 0.0;
-        }
-        else {
-            return Math.sqrt(getCameraXOffset()*getCameraXOffset() + getCameraYOffset()*getCameraYOffset());
-        }
-
-    }
-
-    public double getCameraZOffset(){
-        return this.closestCenter[2]/2.54;
-    }
 
 
     private static double distance(Point p1, Point p2) {

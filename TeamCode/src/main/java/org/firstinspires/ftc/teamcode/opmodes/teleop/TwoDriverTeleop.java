@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import static com.qualcomm.robotcore.hardware.Gamepad.LED_DURATION_CONTINUOUS;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -16,10 +18,12 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
@@ -90,6 +94,17 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
 //        robot.swapYellow();
 
+        // TESTING: AUTO PICKUP
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.SUBMERSIBLE_SCAN).alongWith(
+                                new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
+                        )
+                );
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new CVIntakeCommand(robot)
+                );
 
         // GENERAL RESET
         operator.getGamepadButton(GamepadKeys.Button.SQUARE)
@@ -132,15 +147,6 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 () -> robot.lift.liftState == LiftSubsystem.LiftState.LVL2_ASCENT_SETUP
                         )
                 );
-
-//        // Switch grabbing mode
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-//                .whenPressed(
-//                        new InstantCommand(()->{
-//                            GRABBING_MODE = GRABBING_MODE.next();
-//                            SetOperatorGamepadColor();
-//                        })
-//                );
 
 
         // Shoot out intake
@@ -475,12 +481,19 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.telemetryA.addData("extendo pos inches", robot.intake.getExtendoPosInches());
 //        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
         robot.telemetryA.addData("runtime", timer.seconds());
-        //robot.telemetryA.addData("camera y offset", robot.sampleDetectionPipeline.getCameraYOffset());
-        //robot.telemetryA.addData("camera x offset (loop)", robot.sampleDetectionPipeline.getCameraXOffset());
-//        robot.telemetryA.addData("Pose (during loop, from follower)",String.format(" (%.2f,%.2f,%.2f)", robot.follower.getPose().getX(), robot.follower.getPose().getY(), Math.toDegrees(robot.follower.getPose().getHeading())));
-//        robot.telemetryA.addData("Pose (during loop, from pose updater)",String.format(" (%.2f,%.2f,%.2f)", robot.poseUpdater.getPose().getX(), robot.poseUpdater.getPose().getY(), Math.toDegrees(robot.poseUpdater.getPose().getHeading())));
+        /*if (!FREEZE_CAMERA_FRAME) */robot.vision.limelight.setLatestResults();
+        if (robot.vision.limelight.getLatestResults() != null){
+            robot.telemetryA.addLine("detection is not null");
+            LLResultTypes.DetectorResult result = robot.vision.limelight.getClosestResult();
+            if (result != null){
+                robot.telemetryA.addData("Closest result (Pixels): ",  result.getTargetXPixels() + ", " + result.getTargetYPixels());
+                robot.telemetryA.addData("Closest result (Offset): ", robot.vision.limelight.getClosestOffset()[0] + ", " + robot.vision.limelight.getClosestOffset()[1]);
+                robot.telemetryA.addData("Closest result color: ", robot.vision.limelight.getClassName());
+            }
+        }
         robot.telemetryA.addData("is busy", robot.follower.isBusy());
         robot.telemetryA.addData("intake pivot state", robot.intake.pivotState);
+        robot.telemetryA.addData("current pose", robot.follower.getPose());
         //robot.telemetryA.addData("robot voltage", robot.follower.getVoltage());
 
 

@@ -24,10 +24,12 @@ import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
+import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
@@ -341,12 +343,14 @@ public class FourSampleAuto extends CommandOpMode {
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new FollowPathChainCommand(robot.follower, paths.get(9)).alongWith(
                                 new SequentialCommandGroup(
+                                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.SUBMERSIBLE_SCAN),
                                         new WaitCommand(500),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-                        new InstantCommand(()-> robot.telemetryA.addData("extendo target ticks", (91.5 - (Globals.SampleAutonomousConfig.samp2Y+72) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH)),
-                        new InstantCommand(()-> robot.telemetryA.update()),
+//                        new InstantCommand(()-> robot.telemetryA.addData("extendo target ticks", (91.5 - (Globals.SampleAutonomousConfig.samp2Y+72) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH)),
+//                        new InstantCommand(()-> robot.telemetryA.update()),
+
                         new HoverCommand(robot, (91.5 - (Globals.SampleAutonomousConfig.samp2Y+72) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH),
                         new IntakeSampleCommand(robot),
 

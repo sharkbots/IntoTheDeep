@@ -67,7 +67,6 @@ import java.util.List;
  *   below the name of the Limelight on the top level configuration screen.
  */
 @TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
-@Disabled
 public class SensorLimelight3A extends LinearOpMode {
 
     private Limelight3A limelight;
@@ -75,15 +74,16 @@ public class SensorLimelight3A extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException
     {
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight = hardwareMap.get(Limelight3A.class, "Limelight3A");
 
         telemetry.setMsTransmissionInterval(11);
 
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(7);
 
         /*
          * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
          */
+        telemetry.addLine("here");
         limelight.start();
 
         telemetry.addData(">", "Robot Ready.  Press Play.");

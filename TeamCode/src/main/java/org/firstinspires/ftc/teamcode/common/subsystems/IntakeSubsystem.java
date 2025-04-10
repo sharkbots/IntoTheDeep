@@ -22,7 +22,8 @@ public class IntakeSubsystem extends SubsystemWrapper {
         HOVERING_NO_SAMPLE_MANUAL,
         HOVERING_WITH_SAMPLE,
         INTAKE,
-        TRANSFER
+        TRANSFER,
+        SUBMERSIBLE_SCAN
     }
 
     public enum ClawState{
@@ -137,6 +138,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
             case HOVERING_NO_SAMPLE_MANUAL:
             case HOVERING_WITH_SAMPLE:
             case INTAKE:
+            case SUBMERSIBLE_SCAN:
                 return INTAKE_CLAW_ROTATION_TRANSFER_POS;
             default:
                 throw new IllegalArgumentException("Unknown PivotState: " + state);
@@ -148,6 +150,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
      */
     private double getClawPivotPosition(PivotState state) {
         switch (state) {
+            case SUBMERSIBLE_SCAN:
             case TRANSFER:
                 return INTAKE_CLAW_PIVOT_TRANSFER_POS;
             case HOVERING_NO_SAMPLE:
@@ -167,6 +170,8 @@ public class IntakeSubsystem extends SubsystemWrapper {
      */
     private double getArmPivotPosition(PivotState state) {
         switch (state) {
+            case SUBMERSIBLE_SCAN:
+                return INTAKE_ARM_PIVOT_SUBMERSIBLE_SCAN_POS;
             case TRANSFER:
                 return INTAKE_ARM_PIVOT_TRANSFER_POS;
             case HOVERING_NO_SAMPLE:

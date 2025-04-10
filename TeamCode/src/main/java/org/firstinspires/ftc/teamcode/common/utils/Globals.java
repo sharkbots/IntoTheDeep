@@ -108,6 +108,8 @@ public class Globals {
 
 
     // Camera configurations
+    public static boolean FREEZE_CAMERA_FRAME = false;
+
     public static long CAMERA_EXPOSURE_MILLIS = 25; //33
     public static int CAMERA_WHITE_BALANCE_TEMPERATURE = 5500; //5500
     public static int CAMERA_GAIN = 30; //70
@@ -155,6 +157,7 @@ public class Globals {
 
     public static double AA_claw_rotation_heading_degrees = 0;
     // Intake Arm Pivot
+    public static double INTAKE_ARM_PIVOT_SUBMERSIBLE_SCAN_POS = 0.4;
     public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.29;
     public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.3; // TODO: update
     public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
