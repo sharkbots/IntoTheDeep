@@ -107,7 +107,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
         operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(
-                        new CVIntakeCommand(robot)
+                        new CVIntakeCommand(robot, "yellow")
                 );
 
         // GENERAL RESET

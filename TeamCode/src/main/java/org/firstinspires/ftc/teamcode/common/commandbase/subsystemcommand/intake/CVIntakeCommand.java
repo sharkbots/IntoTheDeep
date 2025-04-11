@@ -20,13 +20,13 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 public class CVIntakeCommand extends SequentialCommandGroup {
-    public CVIntakeCommand(Robot robot) {
+    public CVIntakeCommand(Robot robot, String color) {
         // Build the command sequence
         super(
                 //new InstantCommand(()->robot.visionPortal.setProcessorEnabled(robot.sampleDetectionPipeline, false)),
                 //new InstantCommand(()->robot.sampleDetectionPipeline.freeze(true)),
                 new RunCommand(
-                        ()-> robot.vision.limelight.setLatestResults("yellow"))
+                        ()-> robot.vision.limelight.setLatestResults(color))
                         // .withTimeout(2000) // TODO: activate when all is  so that it is fully protected against infinite loop
                         .interruptOn(() -> robot.vision.limelight.getLatestResults() != null),
                 //new InstantCommand(()-> Globals.FREEZE_CAMERA_FRAME = true),
