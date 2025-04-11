@@ -122,10 +122,25 @@ public class Vision {
                 maxY = Math.max(maxY, y);
             }
 
-            double dx = maxX - minX;
-            double dy = maxY - minY;
+            double width = maxX - minX;
+            double height = maxY - minY;
+            //return Math.toDegrees(Math.atan2(height, width));
 
-            return Math.toDegrees(Math.atan2(dy, dx));
+            if (width == 0 || height == 0) return 0.0; // protection against division by zero if input is wrong
+
+            // Get aspect ratio of bounding box
+            double boxAspect = width / height;
+            double targetAspect = 3.5 / 1.5;
+
+            // Log deviation from target aspect ratio (symmetric)
+            double ratioDeviation = Math.abs(Math.log(boxAspect / targetAspect));
+            double maxDeviation = Math.abs(Math.log(targetAspect));
+            double baseAngle = 45.0 * ratioDeviation / maxDeviation;
+
+            // Determine if the bounding box is more horizontal or vertical
+            boolean isHorizontal = boxAspect >= 1.0;
+
+            return isHorizontal ? baseAngle : 90.0 - baseAngle;
         }
 
         private void setClosestResult(String color){
