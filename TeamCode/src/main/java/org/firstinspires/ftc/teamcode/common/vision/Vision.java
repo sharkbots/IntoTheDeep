@@ -80,7 +80,7 @@ public class Vision {
 
         public void setLatestResults(){
             LLResult results = limelight.getLatestResult();
-            if (results != null){
+            if (results != null && results.isValid()){
                 this.latestResults = limelight.getLatestResult();
             }
         }
@@ -99,10 +99,16 @@ public class Vision {
 
         // TODO: refactor
         public float[] getCenterOffset(LLResultTypes.DetectorResult detection){
-            float [] center = computeGroundPosition(320-detection.getTargetXPixels(), detection.getTargetYPixels());
             float [] result = new float[2];
-            result[0] = center[1];
-            result[1] = -center[0]+4.53f;
+            if(detection==null) { //if nothing is detected, don't crash and don't move
+                result[0] = 0.0f;
+                result[1] = 0.0f;
+            }
+            else {
+                float[] center = computeGroundPosition(320 - detection.getTargetXPixels(), detection.getTargetYPixels());
+                result[0] = center[1];
+                result[1] = -center[0] + 4.53f;
+            }
             return result;
         }
 
