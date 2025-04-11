@@ -19,24 +19,31 @@ public class LimelightTesting extends LinearOpMode {
         robot.setTelemetry(telemetry);
 
         waitForStart();
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             robot.telemetryA.addLine("in loop");
             LLStatus status = robot.vision.limelight.getStatus();
             telemetry.addData("Name", "%s",
                     status.getName());
             telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
-                    status.getTemp(), status.getCpu(),(int)status.getFps());
+                    status.getTemp(), status.getCpu(), (int) status.getFps());
             telemetry.addData("Pipeline", "Index: %d, Type: %s",
                     status.getPipelineIndex(), status.getPipelineType());
 
-            if (robot.vision.limelight.getLatestResults() != null){
+
+            robot.vision.limelight.setLatestResults("yellow");
+
+            if (robot.vision.limelight.getLatestResults() != null) {
                 robot.telemetryA.addLine("detection is not null");
                 result = robot.vision.limelight.getClosestResult();
-                if (result != null){
-                    robot.telemetryA.addData("Closest result (Pixels): ",  result.getTargetXPixels() + ", " + result.getTargetYPixels());
-                    robot.telemetryA.addData("Closest result (Offset): ", robot.vision.limelight.getClosestOffset()[0] + ", " + robot.vision.limelight.getClosestOffset()[1]);
+                float[] offsets = robot.vision.limelight.getClosestOffset();
+                if (result != null) {
+                    robot.telemetryA.addData("Closest result (Pixels): ", result.getTargetXPixels() + ", " + result.getTargetYPixels());
+                    robot.telemetryA.addData("Closest result (Offset): ", offsets[0] + ", " + offsets[1] + ", " + offsets[2]);
+                    robot.telemetryA.addData("Closest result color: ", result.getClassName());
                 }
             }
+
+
             robot.telemetryA.update();
         }
 
