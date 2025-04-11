@@ -16,10 +16,13 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl;
+import org.firstinspires.ftc.teamcode.common.hardware.Robot;
+import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.calib3d.Calib3d;
@@ -38,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 public class Vision {
     public CVCamera cvCamera;
     public Limelight limelight;
+    Robot robot = Robot.getInstance();
 
     public Vision(){
         cvCamera = new CVCamera();
@@ -122,10 +126,25 @@ public class Vision {
                 maxY = Math.max(maxY, y);
             }
 
-            double dx = maxX - minX;
-            double dy = maxY - minY;
+            double width = maxX - minX;
+            double height = maxY - minY;
+            //return Math.toDegrees(Math.atan2(height, width));
 
-            return Math.toDegrees(Math.atan2(dy, dx));
+            if (width == 0 || height == 0) return 0.0; // protection against division by zero if input is wrong
+
+            // Get aspect ratio of bounding box
+            double boxAspect = width / height;
+            double targetAspect = 3.5 / 1.5;
+
+            // Log deviation from target aspect ratio (symmetric)
+            double ratioDeviation = Math.abs(Math.log(boxAspect / targetAspect));
+            double maxDeviation = Math.abs(Math.log(targetAspect));
+            double baseAngle = 45.0 * ratioDeviation / maxDeviation;
+
+            // Determine if the bounding box is more horizontal or vertical
+            boolean isHorizontal = boxAspect >= 1.0;
+
+            return isHorizontal ? baseAngle : 90.0 - baseAngle;
         }
 
         private void setClosestResult(String color){
@@ -134,13 +153,20 @@ public class Vision {
             if (latestDetectorResults==null || latestDetectorResults.isEmpty()) {
                 return;
             }
+//            robot.telemetryA.addData("latestDetectorResults ", latestDetectorResults.size());
             for (LLResultTypes.DetectorResult detectorResult: latestDetectorResults) {
-                if(color!=null && (color!="" || color!=detectorResult.getClassName())) {
+//                robot.telemetryA.addData("getClassName ", detectorResult.getClassName());
+
+                if(color!=null && !color.isEmpty() && !color.equals(detectorResult.getClassName())) {
                     continue;
                 }
+
                 float[] currentOffset = getCenterOffset(detectorResult);
+//                robot.telemetryA.addData("TOUCHE1 ", currentOffset[0] + ", " + currentOffset[1] + ", " + currentOffset[2]);
 
                 if(closestResult==null || Math.abs(currentOffset[1])<Math.abs(closestOffset[1])) {
+                    robot.telemetryA.addData("TOUCHE ", detectorResult.getClassName(),currentOffset[0] + ", " + currentOffset[1] + ", " + currentOffset[2]);
+
                     closestResult = detectorResult;
                     closestOffset = currentOffset;
                 }

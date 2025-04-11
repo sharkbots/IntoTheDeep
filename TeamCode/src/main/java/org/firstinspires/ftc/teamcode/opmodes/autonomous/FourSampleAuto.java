@@ -342,7 +342,7 @@ public class FourSampleAuto extends CommandOpMode {
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new FollowPathChainCommand(robot.follower, paths.get(9)).alongWith(
                                 new SequentialCommandGroup(
-                                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED),
+                                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0),
                                         new WaitCommand(500),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )

@@ -13,7 +13,7 @@ public class ManualSampleIntakeCommand extends SequentialCommandGroup {
                 //new WaitCommand(30),
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.CLOSED)),
                 new WaitCommand(230),
-                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)
+                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE, 0.0)
         );
     }
 }

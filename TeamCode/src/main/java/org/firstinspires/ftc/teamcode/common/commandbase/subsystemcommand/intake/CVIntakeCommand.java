@@ -34,7 +34,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                         new DeferredCommand(()-> new HoverCommand(robot,
                                 (robot.vision.limelight.getClosestOffset()[0]*1.1 - Globals.INTAKE_MINIMUM_EXTENSION) * Globals.EXTENDO_TICKS_PER_INCH), null),
                         new DeferredCommand(()-> new SetIntakeCommand(robot,
-                                IntakeSubsystem.PivotState.INTAKE, () -> robot.intake.getClawRotationDegrees()+robot.vision.limelight.getClosestOffset()[2]), null),
+                                IntakeSubsystem.PivotState.INTAKE, (double)(90-robot.vision.limelight.getClosestOffset()[2])), null),
 
                         new DeferredCommand(()-> new SequentialCommandGroup(
                                 new HoldPointCommand(robot.follower, new Pose(robot.follower.getPose().getX()-robot.vision.limelight.getClosestOffset()[1], robot.follower.getPose().getY())),

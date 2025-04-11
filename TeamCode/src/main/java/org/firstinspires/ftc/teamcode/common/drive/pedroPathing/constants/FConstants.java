@@ -35,55 +35,21 @@ public class FConstants {
         FollowerConstants.useSecondaryDrivePID = true;
 
 
-        FollowerConstants.translationalPIDFCoefficients.setCoefficients(
-                .1,
-                0,
-                .01,
-                0);
-        FollowerConstants.translationalIntegral.setCoefficients(
-                0,
-                0,
-                0,
-                0);
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(.1, 0, .01, 0);
+        FollowerConstants.translationalIntegral.setCoefficients(0, 0, 0, 0);
         FollowerConstants.translationalPIDFFeedForward = 0.02;
-        FollowerConstants.secondaryTranslationalPIDFCoefficients.setCoefficients(
-                0.075,
-                0,
-                0.05,
-                0);
-        FollowerConstants.secondaryTranslationalIntegral.setCoefficients(
-                0,
-                0,
-                0,
-                0);
+        FollowerConstants.secondaryTranslationalPIDFCoefficients.setCoefficients(0.075, 0, 0.05, 0);
+        FollowerConstants.secondaryTranslationalIntegral.setCoefficients(0, 0, 0, 0);
         FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.0005;
 
-        FollowerConstants.headingPIDFCoefficients.setCoefficients(
-                5,
-                0,
-                0.5,
-                0);
+        FollowerConstants.headingPIDFCoefficients.setCoefficients(5, 0, 0.5, 0);
         FollowerConstants.headingPIDFFeedForward = 0.01;
-        FollowerConstants.secondaryHeadingPIDFCoefficients.setCoefficients(
-                1.5,
-                0,
-                0.1,
-                0);
+        FollowerConstants.secondaryHeadingPIDFCoefficients.setCoefficients(1.5, 0, 0.1, 0);
         FollowerConstants.secondaryHeadingPIDFFeedForward = 0.0005;
 
-        FollowerConstants.drivePIDFCoefficients.setCoefficients(
-                0.01,
-                0,
-                0.0001,
-                0.6,
-                0);
+        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.01, 0, 0.0001, 0.6, 0);
         FollowerConstants.drivePIDFFeedForward = 0.01;
-        FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(
-                0.02,
-                0,
-                0.0005,
-                0.6,
-                0);
+        FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(0.02, 0, 0.0005, 0.6, 0);
         FollowerConstants.secondaryDrivePIDFFeedForward = 0.01;
 
 //        FollowerConstants.translationalPIDFFeedForward = 0.02; //0.03

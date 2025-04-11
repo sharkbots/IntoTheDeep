@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.commandbase;
 
+import com.pedropathing.util.CustomPIDFCoefficients;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.geometry.Pose2d;
 import com.seattlesolvers.solverslib.geometry.Vector2d;
@@ -56,10 +57,10 @@ public class HoldPointCommand extends CommandBase {
         Vector ffTargetVector = new Vector(targetMagnitude+Globals.HOLDPOINT_MANUAL_FEEDFORWARD, targetVector.getTheta());
         robotPose.add(new Pose(ffTargetVector.getXComponent(), ffTargetVector.getYComponent(), 0));
 
-//        follower.setTranslationalPIDF();
-//        follower.setSecondaryTranslationalPIDF();
-//        follower.setHeadingPIDF();
-//        follower.setSecondaryHeadingPIDF();
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.2, 0, 0.01, 0);
+        FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.3605;
+
+
 
         follower.holdPoint(robotPose);
 

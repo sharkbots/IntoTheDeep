@@ -94,7 +94,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         // TESTING: AUTO PICKUP
         operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED).alongWith(
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0).alongWith(
                                 new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
                         )
                 );
