@@ -121,7 +121,7 @@ public class Globals {
     public final static double CAMERA_OFFSET_FROM_CENTER_Y_IN = 3.0/8.0;
 
     public static double DEFAULT_LIFT_FEEDFORWARD = 0.08;
-    public static double LIFT_RESET_FEEDFORWARD = -0.3;
+    public static double LIFT_RESET_FEEDFORWARD = -0.2;
     public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.2;
     public static double EXTENDO_FEEDFORWARD_EXTENDING = 0.0;
     public static double EXTENDO_FEEDFORWARD_RETRACTING = -0.0;

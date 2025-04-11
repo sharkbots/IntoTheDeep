@@ -17,7 +17,7 @@ public class LiftCommand extends SequentialCommandGroup {
                 new ConditionalCommand(
                         new InstantCommand(() -> robot.liftActuator.updateFeedforward(LIFT_RESET_FEEDFORWARD)),
                         new InstantCommand(() -> robot.liftActuator.updateFeedforward(DEFAULT_LIFT_FEEDFORWARD)),
-                        () -> (state == LiftSubsystem.LiftState.RETRACTED || state == LiftSubsystem.LiftState.INTAKE_SPECIMEN)),
+                        () -> (state == LiftSubsystem.LiftState.RETRACTED || state == LiftSubsystem.LiftState.INTAKE_SPECIMEN || state == LiftSubsystem.LiftState.TRANSFER)),
                 new ConditionalCommand(
                         new InstantCommand(() -> robot.liftActuator.updateFeedforward(LIFT_NEAR_RESET_FEEDFORWARD)),
                         new InstantCommand(),
@@ -57,7 +57,7 @@ public class LiftCommand extends SequentialCommandGroup {
 //                })
 
                         new WaitUntilCommand(()->robot.lift.liftReached()),
-                        () -> state == LiftSubsystem.LiftState.RETRACTED || state == LiftSubsystem.LiftState.INTAKE_SPECIMEN
+                        () -> state == LiftSubsystem.LiftState.RETRACTED || state == LiftSubsystem.LiftState.INTAKE_SPECIMEN || state == LiftSubsystem.LiftState.TRANSFER
                 )
 
                 );

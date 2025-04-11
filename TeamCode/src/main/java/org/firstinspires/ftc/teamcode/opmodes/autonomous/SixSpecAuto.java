@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenC
 
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -25,6 +26,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
@@ -323,9 +325,10 @@ public class SixSpecAuto extends CommandOpMode {
                         new DepositSpecimenCommand(robot).andThen(
                                 new ParallelCommandGroup(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.TRANSFER),
-                                        new IntakeSampleCommand(robot)
+                                        new CVIntakeCommand(robot, "blue")
                                 )
-                        ),
+                        )
+                        /*
                         // pickup spec 2
                         new SequentialCommandGroup(
                                 new TransferCommand(robot),
@@ -352,7 +355,7 @@ public class SixSpecAuto extends CommandOpMode {
                                                 )
                                                 , null)
                                 ).alongWith(
-                                        new WaitCommand(400),
+                                        new WaitCommand(2000),
                                         new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.OPEN)),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
                                 )
@@ -455,6 +458,8 @@ public class SixSpecAuto extends CommandOpMode {
 
 
 
+                         */
+
 
 
                 )
@@ -486,6 +491,16 @@ public class SixSpecAuto extends CommandOpMode {
         robot.telemetryA.addData("Lift target", robot.liftActuator.getTargetPosition());
         robot.telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
 //        robot.telemetryA.addData("t value (general loop)", robot.follower.getCurrentTValue());
+        if (robot.vision.limelight.getLatestResults() != null) {
+            robot.telemetryA.addLine("detection is not null");
+            LLResultTypes.DetectorResult result = robot.vision.limelight.getClosestResult();
+            float[] offsets = robot.vision.limelight.getClosestOffset();
+            if (result != null) {
+                robot.telemetryA.addData("Closest result (Pixels): ", result.getTargetXPixels() + ", " + result.getTargetYPixels());
+                robot.telemetryA.addData("Closest result (Offset): ", offsets[0] + ", " + offsets[1] + ", " + offsets[2]);
+                robot.telemetryA.addData("Closest result color: ", result.getClassName());
+            }
+        }
 
         robot.telemetryA.update();
 

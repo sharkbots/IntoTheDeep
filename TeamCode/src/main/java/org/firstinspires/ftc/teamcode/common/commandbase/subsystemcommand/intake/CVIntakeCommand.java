@@ -37,9 +37,40 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                                 IntakeSubsystem.PivotState.INTAKE, (double)(90-robot.vision.limelight.getClosestOffset()[2])), null),
 
                         new DeferredCommand(()-> new SequentialCommandGroup(
-                                new HoldPointCommand(robot.follower, new Pose(robot.follower.getPose().getX()-robot.vision.limelight.getClosestOffset()[1], robot.follower.getPose().getY())),
-                                new InstantCommand(() -> robot.follower.startTeleopDrive())), null)
-                )// ,
+                                new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
+                                        new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
+                                        MathFunctions.rotatePose(new Pose(-robot.vision.limelight.getClosestOffset()[1],
+                                                0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
+                                ),
+                                new InstantCommand(()->robot.follower.startTeleopDrive())
+                        ),null)
+                ),
+                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.INTAKE),
+                new WaitCommand(30),
+//                new InstantCommand(()-> {
+//                    robot.telemetryA.addData("about to close claw (cv intake)", 0);
+//                    robot.telemetryA.update();}),
+                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.CLOSED)),
+//
+//                new InstantCommand(()->{
+//                    robot.telemetryA.addData("claw closed (cv intake)", 0);
+//                    robot.telemetryA.update();
+//                }),
+                // Step 6: Wait and transition to HOVERING_WITH_SAMPLE
+                new WaitCommand(230),
+//
+//                new InstantCommand(()-> {
+//                    robot.telemetryA.addData("about to pivot up (cv intake)", 0);
+//                    robot.telemetryA.update();}),
+                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL)
+               // new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)),
+//                new InstantCommand(()->{
+//                    robot.telemetryA.addData("sent pivot command (cv intake)", 0);
+//                    robot.telemetryA.update();
+//                })
+//                                new HoldPointCommand(robot.follower, new Pose(robot.follower.getPose().getX()-robot.vision.limelight.getClosestOffset()[1], robot.follower.getPose().getY())),
+//                                new InstantCommand(() -> robot.follower.startTeleopDrive())), null)
+                                // ,
                 //new InstantCommand(()-> Globals.FREEZE_CAMERA_FRAME = false)
                 //new InstantCommand(()->robot.vision.limelight.setLatestResults() .sampleDetectionPipeline.setLatestValidCenter()),
 //                new SequentialCommandGroup(
@@ -60,7 +91,8 @@ public class CVIntakeCommand extends SequentialCommandGroup {
 //                                new WaitCommand(1200)
 //                        )
 //                        // TODO: Once dynamic HoldPoint() works, add it below. .alongWith() is to make it a parallel command group.
-//                ).alongWith(
+//                )
+//                .alongWith(
 //                        new SequentialCommandGroup(
 //                                // Step 2: Adjust drivetrain in the x direction based on camera X offset
 //                                new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
@@ -100,7 +132,6 @@ public class CVIntakeCommand extends SequentialCommandGroup {
 //                })
             //    new InstantCommand(()->robot.visionPortal.setProcessorEnabled(robot.sampleDetectionPipeline, true))
 //        new InstantCommand(()->robot.sampleDetectionPipeline.freeze(false))
-
         );
     }
 }

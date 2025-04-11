@@ -59,6 +59,8 @@ public class HoldPointCommand extends CommandBase {
 
         FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.2, 0, 0.01, 0);
         FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.3605;
+        FollowerConstants.useSecondaryTranslationalPID = false;
+
 
 
 
@@ -75,15 +77,14 @@ public class HoldPointCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         // TODO: add timeout in globals
-        timeout = MathUtils.clamp(targetMagnitude/3.3 * 1500, 250, 1500);
+        timeout = MathUtils.clamp(targetMagnitude/3.3 * 750, 250, 750);
         if (timer.milliseconds() > timeout){
             Globals.IS_DT_AUTO_ALIGNING = false;
             if (dynMode) point = null;
 
-//            follower.setTranslationalPIDF();
-//            follower.setSecondaryTranslationalPIDF();
-//            follower.setHeadingPIDF();
-//            follower.setSecondaryHeadingPIDF();
+            FollowerConstants.translationalPIDFCoefficients.setCoefficients(.1, 0, .01, 0);
+            FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.0005;
+            FollowerConstants.useSecondaryTranslationalPID = true;
 
             return true;
         }

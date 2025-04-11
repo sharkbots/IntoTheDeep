@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake;
 
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -11,19 +12,23 @@ import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 public class TransferCommand extends SequentialCommandGroup {
-    public TransferCommand(Robot robot){
+    public TransferCommand(Robot robot, boolean delayRotation){
         super(
                 new InstantCommand(() -> Globals.INTAKING_SAMPLES = false),
                 new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN)),
                 //new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
                 new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0)),
-                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.TRANSFER, 0.0)/*.alongWith(
-                        new SequentialCommandGroup(
-                                new WaitCommand(460),
-                                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.MICRO_OPEN))
-                        )
-                )*/,
+                new ConditionalCommand(
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.TRANSFER),
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.TRANSFER, 0.0),
+                        ()-> delayRotation
+                ),
                 new WaitUntilCommand(() -> robot.intake.extendoReached()),
+                new ConditionalCommand(
+                        new InstantCommand(()-> robot.intake.setClawRotation(IntakeSubsystem.PivotState.TRANSFER)),
+                        new InstantCommand(),
+                        ()-> delayRotation
+                ),
 //                new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0)),
 //                new WaitUntilCommand(() -> robot.intake.extendoReached()), /*prev wait 350*/
                 new WaitCommand(35),
@@ -36,5 +41,8 @@ public class TransferCommand extends SequentialCommandGroup {
                 }),
                 new InstantCommand(() -> Globals.HOLDING_SAMPLE = true)
         );
+    }
+    public TransferCommand(Robot robot){
+        this(robot, false);
     }
 }
