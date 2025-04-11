@@ -65,7 +65,7 @@ public class LocalizationTest extends OpMode {
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 
         //poseUpdater.setStartingPose(Globals.END_OF_AUTO_POSE);
-        //poseUpdater.setPose(Globals.sampleAutoStartPose);
+        poseUpdater.setPose(Globals.specAutoStartPose);
 
         leftFront = hardwareMap.get(DcMotorEx.class, leftFrontMotorName);
         leftRear = hardwareMap.get(DcMotorEx.class, leftRearMotorName);

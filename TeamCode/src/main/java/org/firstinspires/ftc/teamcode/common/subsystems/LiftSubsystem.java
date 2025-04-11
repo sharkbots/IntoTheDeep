@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.common.subsystems;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
+import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,7 @@ public class LiftSubsystem extends SubsystemWrapper {
     public ClawState clawState = ClawState.OPEN;
 
     public boolean isResetting = false;
+    private int liftTargetTicks = 0;
 
     public enum ClawState {
         OPEN(DEPOSIT_CLAW_OPEN_POS),
@@ -76,6 +78,11 @@ public class LiftSubsystem extends SubsystemWrapper {
     public void setClawState(@NotNull ClawState state) {
         this.clawState = state;
         robot.depositClawServo.setPosition(state.getPosition());
+    }
+
+    public void setLiftTargetPosTicks(int pos){
+        this.liftTargetTicks = (int) MathUtils.clamp(pos, 0, MAX_SLIDES_EXTENSION);
+        robot.liftActuator.setTargetPosition(this.liftTargetTicks);
     }
 
     public LiftState getLiftState() {

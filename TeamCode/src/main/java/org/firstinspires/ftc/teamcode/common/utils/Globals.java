@@ -13,7 +13,7 @@ public class Globals {
     public static final Pose sampleAutoStartPose = new Pose(6.595, 111.355, Math.toRadians(270));
     public static final Pose bucketPose = new Pose(12.386+1.4, 128.573, Math.toRadians(315));
     // Specimen auto pose
-    public static final Pose specAutoStartPose = new Pose(6.465, 63.715, Math.toRadians(180));
+    public static final Pose specAutoStartPose = new Pose(6.465, 63.715, Math.toRadians(0));
 
     public static Pose END_OF_AUTO_POSE = new Pose(36, 36, Math.toRadians(90));
 
@@ -121,7 +121,7 @@ public class Globals {
     public final static double CAMERA_OFFSET_FROM_CENTER_Y_IN = 3.0/8.0;
 
     public static double DEFAULT_LIFT_FEEDFORWARD = 0.08;
-    public static double LIFT_RESET_FEEDFORWARD = -0.2;
+    public static double LIFT_RESET_FEEDFORWARD = -0.3;
     public static double LIFT_NEAR_RESET_FEEDFORWARD = 0.2;
     public static double EXTENDO_FEEDFORWARD_EXTENDING = 0.0;
     public static double EXTENDO_FEEDFORWARD_RETRACTING = -0.0;
@@ -160,7 +160,7 @@ public class Globals {
     // Intake Arm Pivot
     public static double INTAKE_ARM_PIVOT_SUBMERSIBLE_SCAN_POS = 0.4;
     public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.29;
-    public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.3; // TODO: update
+    public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.24; // TODO: update
     public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
     public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_MANUAL_POS = 0.21;
     public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.13; // 0.79
@@ -171,7 +171,7 @@ public class Globals {
     public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS = 0.735; //0.79
     public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_MANUAL_POS = 0.615;
     public static double INTAKE_CLAW_PIVOT_INTAKE_POS = 0.555;
-    public static double INTAKE_CLAW_PIVOT_HOLDING_POS = 0.42; // TODO: update
+    public static double INTAKE_CLAW_PIVOT_HOLDING_POS = 0.8; // TODO: update
 
     // Intake Claw Rotation
     public static double INTAKE_CLAW_ROTATION_TRANSFER_POS = 0.53;

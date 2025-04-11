@@ -3,13 +3,10 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import static com.qualcomm.robotcore.hardware.Gamepad.LED_DURATION_CONTINUOUS;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
-import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -24,7 +21,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ReGrabSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
@@ -38,9 +34,6 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
-import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
-import org.opencv.calib3d.Calib3d;
-import org.opencv.core.Mat;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
@@ -101,7 +94,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         // TESTING: AUTO PICKUP
         operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.SUBMERSIBLE_SCAN).alongWith(
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED).alongWith(
                                 new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
                         )
                 );

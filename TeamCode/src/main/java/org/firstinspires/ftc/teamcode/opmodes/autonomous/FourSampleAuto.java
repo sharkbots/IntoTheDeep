@@ -33,7 +33,6 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
-import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.PreloadSampleCycleGenerator;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SubSampleCycleGenerator;
 
@@ -343,7 +342,7 @@ public class FourSampleAuto extends CommandOpMode {
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new FollowPathChainCommand(robot.follower, paths.get(9)).alongWith(
                                 new SequentialCommandGroup(
-                                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.SUBMERSIBLE_SCAN),
+                                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED),
                                         new WaitCommand(500),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )

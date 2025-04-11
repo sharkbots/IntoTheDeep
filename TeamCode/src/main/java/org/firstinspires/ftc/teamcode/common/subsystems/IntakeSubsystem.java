@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
+import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
 import org.jetbrains.annotations.NotNull;
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
@@ -26,7 +27,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
         HOVERING_WITH_SAMPLE,
         INTAKE,
         TRANSFER,
-        SUBMERSIBLE_SCAN
+        FULLY_RETRACTED
     }
 
     public enum ClawState{
@@ -50,7 +51,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
 
     public void setExtendoTargetTicks(int pos){
         previousExtendoTargetPos = extendoTargetPos;
-        this.extendoTargetPos = Math.max(Math.min(pos, MAX_EXTENDO_EXTENSION), 0);
+        this.extendoTargetPos = (int) MathUtils.clamp(pos, 0, MAX_EXTENDO_EXTENSION);
         if (extendoTargetPos > EXTENDO_FEEDFORWARD_TRIGGER_THRESHOLD){
             if (getExtendoPosTicks() < extendoTargetPos) robot.extendoActuator.updateFeedforward(EXTENDO_FEEDFORWARD_EXTENDING);
             else robot.extendoActuator.updateFeedforward(EXTENDO_FEEDFORWARD_RETRACTING);
@@ -151,7 +152,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
             case HOVERING_NO_SAMPLE_MANUAL:
             case HOVERING_WITH_SAMPLE:
             case INTAKE:
-            case SUBMERSIBLE_SCAN:
+            case FULLY_RETRACTED:
                 return INTAKE_CLAW_ROTATION_TRANSFER_POS;
             default:
                 throw new IllegalArgumentException("Unknown PivotState: " + state);
@@ -163,7 +164,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
      */
     private double getClawPivotPosition(PivotState state) {
         switch (state) {
-            case SUBMERSIBLE_SCAN:
+            case FULLY_RETRACTED:
             case TRANSFER:
                 return INTAKE_CLAW_PIVOT_TRANSFER_POS;
             case HOVERING_NO_SAMPLE:
@@ -183,7 +184,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
      */
     private double getArmPivotPosition(PivotState state) {
         switch (state) {
-            case SUBMERSIBLE_SCAN:
+            case FULLY_RETRACTED:
                 return INTAKE_ARM_PIVOT_SUBMERSIBLE_SCAN_POS;
             case TRANSFER:
                 return INTAKE_ARM_PIVOT_TRANSFER_POS;

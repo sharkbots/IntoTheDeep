@@ -170,10 +170,10 @@ public class Robot extends SubsystemWrapper{
         vision = new Vision();
         //vision.cvCamera.setWebcamName(hardwareMap.get(WebcamName.class, "Webcam 1"));
         vision.limelight.setLimelight(hardwareMap.get(Limelight3A.class, "Limelight3A"));
-        if (IS_AUTONOMOUS){
-            vision.limelight.setPipeline(7);
-            vision.limelight.start();
-        }
+//        if (IS_AUTONOMOUS){
+//            vision.limelight.setPipeline(7);
+//            vision.limelight.start();
+//        }
 
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
