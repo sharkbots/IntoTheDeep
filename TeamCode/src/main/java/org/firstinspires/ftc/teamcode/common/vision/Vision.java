@@ -139,20 +139,18 @@ public class Vision {
         public double computeDiagonalAngleDegrees(List<List<Double>> targetCorners) {
             double[] box = getBoundingBox(targetCorners);
             double width = box[0], height = box[1];
-            if (width == 0 || height == 0) return 0.0;
+            double TARGET_RATIO = 3.5 / 1.5;
 
-            double boxAspect = width / height;
-            double targetAspect = 3.5 / 1.5;
+            if (width == 0 || height == 0) return 0;
 
-            // Log deviation from target aspect ratio (symmetric)
-            double ratioDeviation = Math.abs(Math.log(boxAspect / targetAspect));
-            double maxDeviation = Math.abs(Math.log(targetAspect));
-            double baseAngle = 45.0 * ratioDeviation / maxDeviation;
+            double ratio = height / width;
 
-            // Determine if the bounding box is more horizontal or vertical
-            boolean isHorizontal = boxAspect >= 1.0;
-            return baseAngle;
-            //return isHorizontal ? baseAngle : 90.0 - baseAngle;
+            if (ratio == TARGET_RATIO) {
+                return 90;
+            } else {
+                double tanAngle = (ratio * TARGET_RATIO - 1) / (TARGET_RATIO - ratio);
+                return Math.toDegrees(Math.atan(tanAngle));
+            }
         }
 
         private void setClosestResult(String color){
