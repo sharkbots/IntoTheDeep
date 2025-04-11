@@ -243,14 +243,18 @@ public class TwoDriverTeleop extends CommandOpMode {
                         new ConditionalCommand(
                                 new ManualSampleIntakeCommand(robot).alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
                                         .andThen(
-                                            new ParallelRaceGroup(
-                                                    new TransferCommand(robot).andThen(
-                                                            new InstantCommand(()-> INTAKE_JUST_CANCELLED = false)
-                                                    ),
-                                            new WaitUntilCommand(()->operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get()).andThen(
-                                                    new InstantCommand(()-> INTAKE_JUST_CANCELLED = true))
-                                            )
-                                        ),
+                                               new TransferCommand(robot)
+                                        )
+//                                            new ParallelRaceGroup(
+//                                                    new TransferCommand(robot).andThen(
+//                                                            new InstantCommand(()-> INTAKE_JUST_CANCELLED = false)
+//                                                    ),
+//                                            new WaitUntilCommand(()->operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get()).andThen(
+//                                                    new InstantCommand(()-> INTAKE_JUST_CANCELLED = true))
+//                                            )
+//                                        )
+                                    .interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                ,
                                 new InstantCommand(),
                                 () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL && !HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
                                 && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE
@@ -258,33 +262,37 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
 
         // sample grab (spec mode)
+// sample grab (spec mode)
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(
-                                new ManualSampleIntakeCommand(robot).alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
+                                new ManualSampleIntakeCommand(robot)
+                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
                                         .andThen(
                                                 new ParallelRaceGroup(
                                                         new TransferCommand(robot)
                                                                 .andThen(
                                                                         new SequentialCommandGroup(
                                                                                 new WaitCommand(130),
-                                                                                new LiftCommand(robot, LiftSubsystem.LiftState.READY_FOR_OZ).alongWith(
-                                                                                        new WaitCommand(400),
-                                                                                        new InstantCommand(()-> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN)),
-                                                                                        new InstantCommand(()-> INTAKE_JUST_CANCELLED = false)
-                                                                                )
+                                                                                new LiftCommand(robot, LiftSubsystem.LiftState.READY_FOR_OZ)
+                                                                                        .alongWith(
+                                                                                                new WaitCommand(400),
+                                                                                                new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN)),
+                                                                                                new InstantCommand(() -> INTAKE_JUST_CANCELLED = false)
+                                                                                        )
                                                                         )
                                                                 ),
-                                                        new WaitUntilCommand(()->operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get()).andThen(
-                                                                new InstantCommand(()-> INTAKE_JUST_CANCELLED = true))
+                                                        new WaitUntilCommand(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                                                .andThen(new InstantCommand(() -> INTAKE_JUST_CANCELLED = true))
                                                 )
-                                        ),
+                                        )
+                                ,
                                 new InstantCommand(),
-                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL && !HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
-                                && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN
+                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL
+                                        && !HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
+                                        && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN
                         )
                 );
-
 //        // Re grab sample in case of failed grab
 //        operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
 //                .whenPressed(
