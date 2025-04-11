@@ -16,10 +16,13 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl;
+import org.firstinspires.ftc.teamcode.common.hardware.Robot;
+import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.calib3d.Calib3d;
@@ -38,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 public class Vision {
     public CVCamera cvCamera;
     public Limelight limelight;
+    Robot robot = Robot.getInstance();
 
     public Vision(){
         cvCamera = new CVCamera();
@@ -125,6 +129,11 @@ public class Vision {
             double dx = maxX - minX;
             double dy = maxY - minY;
 
+//            double dx = MathUtils.distance(targetCorners.get(0).get(0), targetCorners.get(0).get(1),
+//                    targetCorners.get(1).get(0), targetCorners.get(1).get(1));
+//            double dy = MathUtils.distance(targetCorners.get(1).get(0), targetCorners.get(1).get(1),
+//                    targetCorners.get(2).get(0), targetCorners.get(2).get(1));
+
             return Math.toDegrees(Math.atan2(dy, dx));
         }
 
@@ -134,13 +143,20 @@ public class Vision {
             if (latestDetectorResults==null || latestDetectorResults.isEmpty()) {
                 return;
             }
+//            robot.telemetryA.addData("latestDetectorResults ", latestDetectorResults.size());
             for (LLResultTypes.DetectorResult detectorResult: latestDetectorResults) {
-                if(color!=null && (color!="" || color!=detectorResult.getClassName())) {
+//                robot.telemetryA.addData("getClassName ", detectorResult.getClassName());
+
+                if(color!=null && !color.isEmpty() && !color.equals(detectorResult.getClassName())) {
                     continue;
                 }
+
                 float[] currentOffset = getCenterOffset(detectorResult);
+//                robot.telemetryA.addData("TOUCHE1 ", currentOffset[0] + ", " + currentOffset[1] + ", " + currentOffset[2]);
 
                 if(closestResult==null || Math.abs(currentOffset[1])<Math.abs(closestOffset[1])) {
+                    robot.telemetryA.addData("TOUCHE ", detectorResult.getClassName(),currentOffset[0] + ", " + currentOffset[1] + ", " + currentOffset[2]);
+
                     closestResult = detectorResult;
                     closestOffset = currentOffset;
                 }

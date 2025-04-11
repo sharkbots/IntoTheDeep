@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.specAutoStartPose;
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.depositLocation;
+import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.intermediatePickupLocation;
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.pickupLocation;
 
 
@@ -40,8 +41,8 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGen
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "🔵/🔴 5-Spec Auto", group = "1 blue auto", preselectTeleOp = "Two Driver Teleop")
-public class FiveSpecAuto extends CommandOpMode {
+@Autonomous(name = "🔵/🔴 6-Spec Auto", group = "1 blue auto", preselectTeleOp = "Two Driver Teleop")
+public class SixSpecAuto extends CommandOpMode {
     //private Telemetry telemetryA;
 
     private final Robot robot = Robot.getInstance();
@@ -86,25 +87,7 @@ public class FiveSpecAuto extends CommandOpMode {
                         .build()
         ); // path 0
 
-        paths.add(specimenCyclePaths.getDepositPath(2));
-
-        // pickup spec 3
-        paths.add(specimenCyclePaths.getPickupPath(3));
-
-        // depo spec 3
-        paths.add(specimenCyclePaths.getDepositPath(3));
-
-        // pickup spec 4
-        paths.add(specimenCyclePaths.getPickupPath(4));
-
-        // depo spec 4
-        paths.add(specimenCyclePaths.getDepositPath(4));
-
-        // pickup spec 4
-        paths.add(specimenCyclePaths.getPickupPath(5));
-
-        // depo spec 4
-        paths.add(specimenCyclePaths.getDepositPath(5));
+        paths.add(specimenCyclePaths.getDepositPathStrafe(1)); // path 1
 
         paths.add(
                 robot.follower.pathBuilder()
@@ -117,7 +100,7 @@ public class FiveSpecAuto extends CommandOpMode {
                                         new Point(56.216, 31.100, Point.CARTESIAN)
                                 )
                         )
-                        .setTangentHeadingInterpolation()
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 3
                                 new BezierCurve(
@@ -126,7 +109,7 @@ public class FiveSpecAuto extends CommandOpMode {
                                         new Point(25.314, 21.400, Point.CARTESIAN)
                                 )
                         )
-                        .setZeroPowerAccelerationMultiplier(2)
+//                        .setZeroPowerAccelerationMultiplier(2)
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 4
@@ -144,7 +127,7 @@ public class FiveSpecAuto extends CommandOpMode {
                                         new Point(25.314, 11.400, Point.CARTESIAN)
                                 )
                         )
-                        .setZeroPowerAccelerationMultiplier(2)
+//                        .setZeroPowerAccelerationMultiplier(2)
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 6
@@ -163,55 +146,91 @@ public class FiveSpecAuto extends CommandOpMode {
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
-                                // Line 8\
-
-
-
+                                // Line 8
                                 new BezierLine(
                                         new Point(49.216, 7.300, Point.CARTESIAN),
                                         new Point(23.314, 7.300, Point.CARTESIAN)
                                 )
                         )
-                        .setZeroPowerAccelerationMultiplier(2)
+//                        .setZeroPowerAccelerationMultiplier(2)
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 9
                                 new BezierLine(
                                         new Point(23.314, 7.300, Point.CARTESIAN),
-                                        new Point(17.297, 29.342, Point.CARTESIAN)
+                                        new Point(pickupLocation.getX(), 7.300+5, Point.CARTESIAN)
                                 )
                         )
+                        .addParametricCallback(0.7, ()->robot.follower.setMaxPower(0.6))
                         .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .addPath(
-                                // Line 10
-                                new BezierLine(
-                                        new Point(17.297, 29.342, Point.CARTESIAN),
-                                        new Point(7.595, 32.342, Point.CARTESIAN)
-                                )
-                        )
-                        .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .addParametricCallback(0.0, ()-> robot.follower.setMaxPower(0.7))
+//                        .addPath(
+//                                // Line 10
+//                                new BezierLine(
+//                                        new Point(17.297, 29.342, Point.CARTESIAN),
+//                                        new Point(7.595, 32.342, Point.CARTESIAN)
+//                                )
+//                        )
+//                        .setConstantHeadingInterpolation(Math.toRadians(0))
+//                        .addParametricCallback(0.0, ()-> robot.follower.setMaxPower(0.7))
                         .build()
-        );
+        ); // path 2
+
+
+        // pickup spec 4
+        paths.add(specimenCyclePaths.getPickupPathSpline(3));
+
+        // depo spec 4
+        paths.add(specimenCyclePaths.getDepositPathSpline(3));
+
+        // pickup spec 5
+        paths.add(specimenCyclePaths.getPickupPathSpline(4));
+
+        // depo spec 5
+        paths.add(specimenCyclePaths.getDepositPathSpline(4));
+
+        // pickup spec 6
+        paths.add(specimenCyclePaths.getPickupPathSpline(5));
+
+        // depo spec 6
+        paths.add(specimenCyclePaths.getDepositPathSpline(5));
+
+
+//        // pickup spec 4
+//        paths.add(specimenCyclePaths.getPickupPathStrafe(3));
+//
+//        // depo spec 4
+//        paths.add(specimenCyclePaths.getDepositPathStrafe(3));
+//
+//        // pickup spec 5
+//        paths.add(specimenCyclePaths.getPickupPathStrafe(4));
+//
+//        // depo spec 5
+//        paths.add(specimenCyclePaths.getDepositPathStrafe(4));
+//
+//        // pickup spec 6
+//        paths.add(specimenCyclePaths.getPickupPathStrafe(5));
+//
+//        // depo spec 6
+//        paths.add(specimenCyclePaths.getDepositPathStrafe(5));
 
 
 
-
-        // park
-        paths.add(
-
-                robot.follower.pathBuilder()
-                        .addPath(
-                                // Line 13
-                                new BezierCurve(
-                                        new Point(40.432, 61.720, Point.CARTESIAN),
-                                        new Point(36.4, 61.72, Point.CARTESIAN),
-                                        new Point(19.459, 42.811, Point.CARTESIAN)
-                                )
-                        )
-                        .setTangentHeadingInterpolation()
-                        .build()
-        ); // path 9
+//
+//        // park
+//        paths.add(
+//
+//                robot.follower.pathBuilder()
+//                        .addPath(
+//                                // Line 13
+//                                new BezierCurve(
+//                                        new Point(40.432, 61.720, Point.CARTESIAN),
+//                                        new Point(36.4, 61.72, Point.CARTESIAN),
+//                                        new Point(19.459, 42.811, Point.CARTESIAN)
+//                                )
+//                        )
+//                        .setTangentHeadingInterpolation()
+//                        .build()
+//        ); // path 9
     }
 
     public SequentialCommandGroup specimenCycle (int cycleNum) {
@@ -245,6 +264,50 @@ public class FiveSpecAuto extends CommandOpMode {
                 new RunCommand(robot.follower::update),
 
                 new SequentialCommandGroup(
+//                        // Deposit specimen 1 (preload)
+//                        new FollowPathChainCommand(robot.follower, paths.get(0)).setHoldEnd(false),
+//                        new DeferredCommand(()->
+//                                // Pickup second spec
+//                                new FollowPathChainCommand(robot.follower,
+//                                        robot.follower.pathBuilder().addPath(
+//                                                        new BezierLine(
+//                                                                robot.follower.getPose(),
+//                                                                allianceColor.convert(pickupLocation, Pose.class)
+//                                                        )
+//                                                )
+//                                                .setPathEndTValueConstraint(0.995)
+//                                                .setConstantHeadingInterpolation(Math.toRadians(0))
+//                                                .build()
+//                                )
+//                                , null),
+//
+//                        // deposit spec 2
+//                        new FollowPathChainCommand(robot.follower, paths.get(1)),
+//
+//                        // spec 3
+//                        // Push all 3 into sub
+//                        new FollowPathChainCommand(robot.follower, paths.get(2)),
+//
+//                        // Deposit spec 3
+//                        new DeferredCommand(()->
+//                                new FollowPathChainCommand(robot.follower,
+//                                        robot.follower.pathBuilder().addPath(
+//                                                        new BezierLine(
+//                                                                robot.follower.getPose(),
+//                                                                new Pose(depositLocation.getX(), depositLocation.getY()-2*1.5)
+//                                                        )
+//                                                ).setConstantHeadingInterpolation(Math.toRadians(0))
+//                                                .build()
+//                                )
+//                                , null),
+//
+//                        // spec 4
+//                        new FollowPathChainCommand(robot.follower, paths.get(3)),
+//                        new FollowPathChainCommand(robot.follower, paths.get(4)),
+//                        new FollowPathChainCommand(robot.follower, paths.get(5)),
+//                        new FollowPathChainCommand(robot.follower, paths.get(6))
+
+
                         // Deposit specimen 1 (preload)
                         new FollowPathChainCommand(robot.follower, paths.get(0)).setHoldEnd(false)
                                 .alongWith(
@@ -273,10 +336,17 @@ public class FiveSpecAuto extends CommandOpMode {
                                                         robot.follower.pathBuilder().addPath(
                                                                         new BezierLine(
                                                                                 robot.follower.getPose(),
+                                                                                allianceColor.convert(intermediatePickupLocation, Pose.class)
+                                                                        )
+                                                                )
+                                                                .setConstantHeadingInterpolation(Math.toRadians(0))
+                                                                .addPath(
+                                                                        new BezierLine(
+                                                                                allianceColor.convert(intermediatePickupLocation, Pose.class),
                                                                                 allianceColor.convert(pickupLocation, Pose.class)
                                                                         )
                                                                 )
-                                                                .setPathEndTValueConstraint(0.995)
+                                                                .setPathEndTValueConstraint(0.99)
                                                                 .setConstantHeadingInterpolation(Math.toRadians(0))
                                                                 .build()
                                                 )
@@ -301,31 +371,45 @@ public class FiveSpecAuto extends CommandOpMode {
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
                         new DepositSpecimenCommand(robot),
 
+
                         // spec 3
+                        // Push all 3 into sub
                         new FollowPathChainCommand(robot.follower, paths.get(2))
                                 .alongWith(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
                                 ),
                         new IntakeSpecimenCommand(robot),
 
-                        new FollowPathChainCommand(robot.follower, paths.get(3))
-                                .alongWith(
-                                        new SequentialCommandGroup(
-                                                new WaitCommand(500),
-                                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
-                                        )
-                                ),
+                        // Deposit spec 3
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
+                        new DeferredCommand(()->
+                                new FollowPathChainCommand(robot.follower,
+                                        robot.follower.pathBuilder().addPath(
+                                                new BezierLine(
+                                                        robot.follower.getPose(),
+                                                        new Pose(depositLocation.getX(), depositLocation.getY()-2*1.5)
+                                                )
+                                        ).setConstantHeadingInterpolation(Math.toRadians(0))
+                                                .build()
+                                )
+                                , null)
+                        .alongWith(
+                                new SequentialCommandGroup(
+                                        new WaitCommand(500),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
+                                )
+                        ),
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
                         new DepositSpecimenCommand(robot),
 
                         // spec 4
-                        new FollowPathChainCommand(robot.follower, paths.get(4))
+                        new FollowPathChainCommand(robot.follower, paths.get(3))
                                 .alongWith(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
                                 ),
                         new IntakeSpecimenCommand(robot),
 
-                        new FollowPathChainCommand(robot.follower, paths.get(5))
+                        new FollowPathChainCommand(robot.follower, paths.get(4))
                                 .alongWith(
                                         new SequentialCommandGroup(
                                                 new WaitCommand(500),
@@ -336,13 +420,30 @@ public class FiveSpecAuto extends CommandOpMode {
                         new DepositSpecimenCommand(robot),
 
                         // spec 5
-                        new FollowPathChainCommand(robot.follower, paths.get(6))
+                        new FollowPathChainCommand(robot.follower, paths.get(5))
                                 .alongWith(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
                                 ),
                         new IntakeSpecimenCommand(robot),
 
+                        new FollowPathChainCommand(robot.follower, paths.get(6))
+                                .alongWith(
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(500),
+                                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
+                                        )
+                                ),
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
+                        new DepositSpecimenCommand(robot),
+
+                        // spec 6
                         new FollowPathChainCommand(robot.follower, paths.get(7))
+                                .alongWith(
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
+                                ),
+                        new IntakeSpecimenCommand(robot),
+
+                        new FollowPathChainCommand(robot.follower, paths.get(8))
                                 .alongWith(
                                         new SequentialCommandGroup(
                                                 new WaitCommand(500),
@@ -356,132 +457,17 @@ public class FiveSpecAuto extends CommandOpMode {
 
 
 
-
-
-
-
-
-
-                        // Deposit spec 2
-
-
-                        /*
-                        // bring two specimens back && pickup specimen 2
-                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        new FollowPathChainCommand(robot.follower, paths.get(1)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.99)
-                                .alongWith(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(400),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
-                                        new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true)
-                                )
-                        ),
-                        new IntakeSpecimenCommand(robot),
-
-                        // Deposit specimen 2
-                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
-
-                        new FollowPathChainCommand(robot.follower, paths.get(2)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.99)
-                                .alongWith(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(600),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
-                                )
-                        ),
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-                        new DepositSpecimenCommand(robot),
-
-
-                        // Pickup specimen 3
-                        new FollowPathChainCommand(robot.follower, paths.get(3)).setHoldEnd(false).disableUseIsBusy()
-                                .alongWith(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(400),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
-                                        new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
-                        ),
-                        new IntakeSpecimenCommand(robot),
-
-                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        // Deposit specimen 3
-                        new FollowPathChainCommand(robot.follower, paths.get(4)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.99)
-                                .alongWith(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(600),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
-                                )
-                        ),
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-                        new DepositSpecimenCommand(robot),
-
-
-                        // Pickup specimen 4
-                        new FollowPathChainCommand(robot.follower, paths.get(5)).setHoldEnd(false).disableUseIsBusy()
-                                .alongWith(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(400),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
-                                        new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
-                        ),
-                        new IntakeSpecimenCommand(robot),
-
-                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        // Deposit specimen 4
-                        new FollowPathChainCommand(robot.follower, paths.get(6)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.99)
-                                .alongWith(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(600),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
-                                )
-                        ),
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-                        new DepositSpecimenCommand(robot),
-
-                        // Pickup specimen 5
-                        new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).disableUseIsBusy().setCompletionThreshold(0.99)
-                                .alongWith(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(400),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
-                                        new InstantCommand(() -> Globals.INTAKING_SPECIMENS = true))
-                        ),
-                        new IntakeSpecimenCommand(robot),
-
-                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
-                        // Deposit specimen 5
-                        new FollowPathChainCommand(robot.follower, paths.get(8)).disableUseIsBusy().setHoldEnd(false).setCompletionThreshold(0.97)
-                                .alongWith(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(600),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
-                                )
-                        ),
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-                        new DepositSpecimenCommand(robot),
-
-                        // Park
-                        new FollowPathChainCommand(robot.follower, paths.get(9))
-                                .alongWith(
-                                        new ParallelCommandGroup(
-                                                new SequentialCommandGroup(
-                                                        new WaitCommand(300),
-                                                        new LiftCommand(robot, LiftSubsystem.LiftState.TRANSFER)
-                                                ),
-                                                new HoverCommand(robot, 1500)
-                                        )
-                                )
-                         */
-
                 )
 
         );
         robot.intake.setExtendoTargetTicks(0);
         robot.intake.setPivotState(IntakeSubsystem.PivotState.FULLY_RETRACTED);
         robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN);
+        robot.intake.setClawRotationDegrees(0);
         //robot.reset();
         robot.lift.updateState(LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP);
         robot.lift.setLiftTargetPosTicks(150);
-        robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN);
+        robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED);
 
 
     }

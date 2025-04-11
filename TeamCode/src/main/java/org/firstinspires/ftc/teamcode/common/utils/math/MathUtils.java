@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.common.utils.math;
 import com.seattlesolvers.solverslib.geometry.Vector2d;
 
 public class MathUtils {
+    public static double distance(double x1, double y1, double x2, double y2){
+        return Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+    }
+
     public static double clamp(double num, double min, double max) {
         return Math.max(min, Math.min(num, max));
     }

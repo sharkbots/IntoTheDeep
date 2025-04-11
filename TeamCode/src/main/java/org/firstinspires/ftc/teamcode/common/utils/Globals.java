@@ -224,7 +224,7 @@ public class Globals {
 
     // Deposit Slides
     public static int MAX_SLIDES_EXTENSION = 2070;
-    public static int HOLDING_SPECIMEN_HEIGHT = 65;
+    public static int HOLDING_SPECIMEN_HEIGHT = 100;
     public static int LOW_BUCKET_HEIGHT = 1030;
     public static int HIGH_BUCKET_HEIGHT = 2030;
     public static int LOW_SPECIMEN_HEIGHT = 85;

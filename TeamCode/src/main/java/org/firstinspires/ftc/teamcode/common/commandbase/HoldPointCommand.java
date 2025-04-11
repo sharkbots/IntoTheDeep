@@ -56,6 +56,11 @@ public class HoldPointCommand extends CommandBase {
         Vector ffTargetVector = new Vector(targetMagnitude+Globals.HOLDPOINT_MANUAL_FEEDFORWARD, targetVector.getTheta());
         robotPose.add(new Pose(ffTargetVector.getXComponent(), ffTargetVector.getYComponent(), 0));
 
+//        follower.setTranslationalPIDF();
+//        follower.setSecondaryTranslationalPIDF();
+//        follower.setHeadingPIDF();
+//        follower.setSecondaryHeadingPIDF();
+
         follower.holdPoint(robotPose);
 
         robot.telemetryA.addData("target magnitude", targetMagnitude);
@@ -69,10 +74,16 @@ public class HoldPointCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         // TODO: add timeout in globals
-        timeout = MathUtils.clamp(targetMagnitude/3.3 * 750, 250, 750);
+        timeout = MathUtils.clamp(targetMagnitude/3.3 * 1500, 250, 1500);
         if (timer.milliseconds() > timeout){
             Globals.IS_DT_AUTO_ALIGNING = false;
             if (dynMode) point = null;
+
+//            follower.setTranslationalPIDF();
+//            follower.setSecondaryTranslationalPIDF();
+//            follower.setHeadingPIDF();
+//            follower.setSecondaryHeadingPIDF();
+
             return true;
         }
         else {
