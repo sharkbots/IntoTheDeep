@@ -113,11 +113,10 @@ public class Vision {
             return result;
         }
 
-        public double computeDiagonalAngleDegrees(List<List<Double>> targetCorners) {
+        private double[] getBoundingBox(List<List<Double>> corners) {
             double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
             double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
-
-            for (List<Double> point : targetCorners) {
+            for (List<Double> point : corners) {
                 double x = point.get(0);
                 double y = point.get(1);
                 minX = Math.min(minX, x);
@@ -125,14 +124,23 @@ public class Vision {
                 maxX = Math.max(maxX, x);
                 maxY = Math.max(maxY, y);
             }
+            return new double[]{maxX - minX, maxY - minY};
+        }
 
-            double width = maxX - minX;
-            double height = maxY - minY;
-            //return Math.toDegrees(Math.atan2(height, width));
+        private double computeAspectRatioScore(List<List<Double>> corners) {
+            double[] box = getBoundingBox(corners);
+            double width = box[0], height = box[1];
+            if (width == 0 || height == 0) return 0.0;
+            double aspect = width / height;
+            return Math.abs(Math.log(aspect / (3.5 / 1.5)));
+        }
 
-            if (width == 0 || height == 0) return 0.0; // protection against division by zero if input is wrong
 
-            // Get aspect ratio of bounding box
+        public double computeDiagonalAngleDegrees(List<List<Double>> targetCorners) {
+            double[] box = getBoundingBox(targetCorners);
+            double width = box[0], height = box[1];
+            if (width == 0 || height == 0) return 0.0;
+
             double boxAspect = width / height;
             double targetAspect = 3.5 / 1.5;
 
@@ -153,22 +161,38 @@ public class Vision {
             if (latestDetectorResults==null || latestDetectorResults.isEmpty()) {
                 return;
             }
-//            robot.telemetryA.addData("latestDetectorResults ", latestDetectorResults.size());
-            for (LLResultTypes.DetectorResult detectorResult: latestDetectorResults) {
-//                robot.telemetryA.addData("getClassName ", detectorResult.getClassName());
-
-                if(color!=null && !color.isEmpty() && !color.equals(detectorResult.getClassName())) {
+            LLResultTypes.DetectorResult bestCandidate = null;
+            float[] bestOffset = null;
+            // Pass 1: Filter by color and angle criteria
+            for (LLResultTypes.DetectorResult detectorResult : latestDetectorResults) {
+                if (color != null && !color.equals(detectorResult.getClassName())) {
                     continue;
                 }
-
+                double angle = computeDiagonalAngleDegrees(detectorResult.getTargetCorners());
+                if (!((angle >= -20 && angle <= 20) || (angle >= 70 && angle <= 110))) {
+                    continue;
+                }
                 float[] currentOffset = getCenterOffset(detectorResult);
-//                robot.telemetryA.addData("TOUCHE1 ", currentOffset[0] + ", " + currentOffset[1] + ", " + currentOffset[2]);
+                if (bestCandidate == null || Math.abs(currentOffset[1]) < Math.abs(bestOffset[1])) {
+                    bestCandidate = detectorResult;
+                    bestOffset = currentOffset;
+                }
+            }
 
-                if(closestResult==null || Math.abs(currentOffset[1])<Math.abs(closestOffset[1])) {
-                    robot.telemetryA.addData("TOUCHE ", detectorResult.getClassName(),currentOffset[0] + ", " + currentOffset[1] + ", " + currentOffset[2]);
-
-                    closestResult = detectorResult;
-                    closestOffset = currentOffset;
+            if (bestCandidate != null) {
+                closestResult = bestCandidate;
+                closestOffset = bestOffset;
+            } else {
+                // Fallback: Y-only selection among all matching color targets
+                for (LLResultTypes.DetectorResult detectorResult : latestDetectorResults) {
+                    if (color != null && !color.equals(detectorResult.getClassName())) {
+                        continue;
+                    }
+                    float[] currentOffset = getCenterOffset(detectorResult);
+                    if (closestResult == null || Math.abs(currentOffset[1]) < Math.abs(closestOffset[1])) {
+                        closestResult = detectorResult;
+                        closestOffset = currentOffset;
+                    }
                 }
             }
         }
