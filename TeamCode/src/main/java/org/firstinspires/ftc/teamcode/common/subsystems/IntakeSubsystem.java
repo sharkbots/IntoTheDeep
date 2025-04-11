@@ -14,8 +14,11 @@ public class IntakeSubsystem extends SubsystemWrapper {
     //public ClawRotationState clawRotationState = ClawRotationState.TRANSFER;
 
     private double clawRotationAngleDegrees = 0;
+    private double previousClawRotation = 0;
 
-    public int extendoTargetPos = 0;
+    private int extendoTargetPos = 0;
+    private double previousExtendoTargetPos = 0;
+
 
     public enum PivotState{
         HOVERING_NO_SAMPLE,
@@ -46,6 +49,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
     }
 
     public void setExtendoTargetTicks(int pos){
+        previousExtendoTargetPos = extendoTargetPos;
         this.extendoTargetPos = Math.max(Math.min(pos, MAX_EXTENDO_EXTENSION), 0);
         if (extendoTargetPos > EXTENDO_FEEDFORWARD_TRIGGER_THRESHOLD){
             if (getExtendoPosTicks() < extendoTargetPos) robot.extendoActuator.updateFeedforward(EXTENDO_FEEDFORWARD_EXTENDING);
@@ -80,6 +84,7 @@ public class IntakeSubsystem extends SubsystemWrapper {
     }
 
     public void setClawRotationDegrees(double targetAngleDegrees){
+        previousClawRotation = clawRotationAngleDegrees;
         // Clamp the angle between -90 and +90 degrees
         targetAngleDegrees = Math.max(-90, Math.min(90, targetAngleDegrees));
         this.clawRotationAngleDegrees = targetAngleDegrees;
@@ -120,12 +125,20 @@ public class IntakeSubsystem extends SubsystemWrapper {
         return this.clawRotationAngleDegrees;
     }
 
+    public double getPreviousClawRotation(){
+        return previousClawRotation;
+    }
+
     public double getExtendoPosTicks(){
         return robot.extendoActuator.getPosition();
     }
 
     public double getExtendoPosInches(){
         return getExtendoPosTicks()/EXTENDO_TICKS_PER_INCH;
+    }
+
+    public double getPreviousExtendoTarget(){
+        return previousExtendoTargetPos;
     }
 
     /**

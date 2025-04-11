@@ -133,11 +133,12 @@ public class LiftSubsystem extends SubsystemWrapper {
                 return DEPOSIT_CLAW_PIVOT_TRANSFER_POS;
             case INTAKE_SPECIMEN:
             case READY_FOR_OZ:
+            case HOLDING_SPECIMEN:
                 return DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS;
+            case DEPOSIT_HIGH_RUNG_SETUP:
+                return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_SPECIMEN:
-            case DEPOSIT_HIGH_RUNG_SETUP:
-            case HOLDING_SPECIMEN:
                 return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS;
             case PUSHING_SPECIMEN: return DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS;
             case DEPOSIT_LOW_BUCKET:

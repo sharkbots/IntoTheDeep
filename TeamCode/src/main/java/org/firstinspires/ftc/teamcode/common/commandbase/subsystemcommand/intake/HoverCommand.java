@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class HoverCommand extends SequentialCommandGroup {
     public HoverCommand(Robot robot, double extension, Double clawRotationDegrees) {
         super(
+                new InstantCommand(() -> Globals.INTAKING_SAMPLES = true),
                 new InstantCommand(() -> robot.intake.setExtendoTargetTicks((int)extension)),
                 new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL, clawRotationDegrees),
 //                new ConditionalCommand(
@@ -19,12 +20,11 @@ public class HoverCommand extends SequentialCommandGroup {
 //                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL, clawRotationDegrees),
 //                        ()-> Globals.GRABBING_MODES.current() != Globals.GRABBING_MODES.MANUAL
 //                ),
-                new WaitUntilCommand(()-> robot.intake.extendoReached()),
+                new WaitUntilCommand(()-> robot.intake.extendoReached())
                 //new InstantCommand(()-> robot.intakeClawLED.setPwmEnable()),
 
                 /*new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE)),
                 new WaitCommand(600),*/
-                new InstantCommand(() -> Globals.INTAKING_SAMPLES = true)
         );
     }
 

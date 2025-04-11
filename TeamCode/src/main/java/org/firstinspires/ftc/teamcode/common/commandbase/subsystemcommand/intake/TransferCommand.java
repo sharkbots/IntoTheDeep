@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class TransferCommand extends SequentialCommandGroup {
     public TransferCommand(Robot robot){
         super(
+                new InstantCommand(() -> Globals.INTAKING_SAMPLES = false),
                 new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN)),
                 //new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
                 new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0)),
@@ -30,10 +31,9 @@ public class TransferCommand extends SequentialCommandGroup {
                 new WaitCommand(90),
                 new InstantCommand(() -> {
                     robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN);
-                    robot.intakeArmPivotActuator.setTargetPosition(Globals.INTAKE_ARM_PIVOT_TRANSFER_POS + 0.0);
-                    robot.intakeClawPivotServo.setPosition(Globals.INTAKE_CLAW_PIVOT_TRANSFER_POS + 0.0);
+//                    robot.intakeArmPivotActuator.setTargetPosition(Globals.INTAKE_ARM_PIVOT_TRANSFER_POS + 0.0);
+//                    robot.intakeClawPivotServo.setPosition(Globals.INTAKE_CLAW_PIVOT_TRANSFER_POS + 0.0);
                 }),
-                new InstantCommand(() -> Globals.INTAKING_SAMPLES = false),
                 new InstantCommand(() -> Globals.HOLDING_SAMPLE = true)
         );
     }
