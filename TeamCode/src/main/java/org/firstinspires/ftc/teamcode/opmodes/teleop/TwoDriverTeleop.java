@@ -578,16 +578,24 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.telemetryA.addData("extendo pos inches", robot.intake.getExtendoPosInches());
 //        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
         robot.telemetryA.addData("runtime", timer.seconds());
-        /*if (!FREEZE_CAMERA_FRAME) */robot.vision.limelight.setLatestResults();
-        if (robot.vision.limelight.getLatestResults() != null){
+
+
+        robot.vision.limelight.setLatestResults("yellow");
+
+        if (robot.vision.limelight.getLatestResults() != null) {
             robot.telemetryA.addLine("detection is not null");
             LLResultTypes.DetectorResult result = robot.vision.limelight.getClosestResult();
-            if (result != null){
-                robot.telemetryA.addData("Closest result (Pixels): ",  result.getTargetXPixels() + ", " + result.getTargetYPixels());
-                robot.telemetryA.addData("Closest result (Offset): ", robot.vision.limelight.getClosestOffset()[0] + ", " + robot.vision.limelight.getClosestOffset()[1]);
-                robot.telemetryA.addData("Closest result color: ", robot.vision.limelight.getClassName());
+            float[] offsets = robot.vision.limelight.getClosestOffset();
+            if (result != null) {
+                robot.telemetryA.addData("Closest result (Pixels): ", result.getTargetXPixels() + ", " + result.getTargetYPixels());
+                robot.telemetryA.addData("Closest result (Offset): ", offsets[0] + ", " + offsets[1] + ", " + offsets[2]);
+                robot.telemetryA.addData("Closest result color: ", result.getClassName());
             }
         }
+
+
+
+
         robot.telemetryA.addData("is busy", robot.follower.isBusy());
         robot.telemetryA.addData("intake pivot state", robot.intake.pivotState);
         robot.telemetryA.addData("grabbing mode", GRABBING_MODES.current());

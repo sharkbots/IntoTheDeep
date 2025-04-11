@@ -56,6 +56,7 @@ public class Vision {
         LLResult latestResults = null;
         List<LLResultTypes.DetectorResult> latestDetectorResults = null;
         LLResultTypes.DetectorResult closestResult = null;
+        float[] closestOffset = null;
 
         /** Constructor */
         public Limelight() {
@@ -78,10 +79,12 @@ public class Vision {
             return limelight.getStatus();
         }
 
-        public void setLatestResults(){
+        public void setLatestResults(String color){
             LLResult results = limelight.getLatestResult();
             if (results != null && results.isValid()){
                 this.latestResults = limelight.getLatestResult();
+                this.latestDetectorResults = latestResults.getDetectorResults();
+                setClosestResult(color);
             }
         }
 
@@ -89,46 +92,70 @@ public class Vision {
             return this.latestResults;
         }
 
-        public List<LLResultTypes.DetectorResult> getDetectorResults(){
-            if (latestResults != null){
-                this.latestDetectorResults = latestResults.getDetectorResults();
-                return latestResults.getDetectorResults();
-            }
-            else return null;
-        }
-
         // TODO: refactor
         public float[] getCenterOffset(LLResultTypes.DetectorResult detection){
-            float [] result = new float[2];
+            float [] result = new float[3];
             if(detection==null) { //if nothing is detected, don't crash and don't move
                 result[0] = 0.0f;
                 result[1] = 0.0f;
+                result[2] = 0.0f;
             }
             else {
                 float[] center = computeGroundPosition(320 - detection.getTargetXPixels(), detection.getTargetYPixels());
                 result[0] = center[1];
                 result[1] = -center[0] + 4.53f;
+                result[2] = (float) computeDiagonalAngleDegrees(detection.getTargetCorners());
             }
             return result;
         }
 
-        public LLResultTypes.DetectorResult getClosestResult(){
-            // TODO: add proper election algorithm
-            latestDetectorResults = getDetectorResults();
-            if (latestDetectorResults != null && !latestDetectorResults.isEmpty()){
-                this.closestResult = latestDetectorResults.get(0);
-                return this.closestResult;
+        public double computeDiagonalAngleDegrees(List<List<Double>> targetCorners) {
+            double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
+            double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
+
+            for (List<Double> point : targetCorners) {
+                double x = point.get(0);
+                double y = point.get(1);
+                minX = Math.min(minX, x);
+                minY = Math.min(minY, y);
+                maxX = Math.max(maxX, x);
+                maxY = Math.max(maxY, y);
             }
-            else return null;
+
+            double dx = maxX - minX;
+            double dy = maxY - minY;
+
+            return Math.toDegrees(Math.atan2(dy, dx));
+        }
+
+        private void setClosestResult(String color){
+            closestResult = null;
+            closestOffset = null;
+            if (latestDetectorResults==null || latestDetectorResults.isEmpty()) {
+                return;
+            }
+            for (LLResultTypes.DetectorResult detectorResult: latestDetectorResults) {
+                if(color!=null && (color!="" || color!=detectorResult.getClassName())) {
+                    continue;
+                }
+                float[] currentOffset = getCenterOffset(detectorResult);
+
+                if(closestResult==null || Math.abs(currentOffset[1])<Math.abs(closestOffset[1])) {
+                    closestResult = detectorResult;
+                    closestOffset = currentOffset;
+                }
+            }
+        }
+
+        // Should be used now debugging only right now like telemetry print
+        public LLResultTypes.DetectorResult getClosestResult(){
+            return closestResult;
         }
 
         public float[] getClosestOffset(){
-            return getCenterOffset(getClosestResult());
+            return closestOffset;
         }
 
-        public String getClassName(){
-            return getClosestResult().getClassName();
-        }
 
         /** Compute homography from image **/
         void initializeHomography()
