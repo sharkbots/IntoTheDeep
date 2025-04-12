@@ -78,7 +78,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         IS_AUTONOMOUS = false;
 
-        Globals.GRABBING_MODES.set(GRABBING_MODES.SPECIMEN);
+        //Globals.GRABBING_MODES.set(GRABBING_MODES.SPECIMEN);
         UpdateOperatorGamepadColor();
 
         robot.setTelemetry(telemetry);
@@ -194,7 +194,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new TransferCommand(robot).andThen(
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.READY_FOR_OZ)
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
                                 ),
                                 new InstantCommand(),
                                 () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
@@ -208,13 +208,14 @@ public class TwoDriverTeleop extends CommandOpMode {
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
                                         new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN)),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
+//                                        new InstantCommand(()->robot.lift.updateState(LiftSubsystem.LiftState.INTAKE_SPECIMEN))
+//                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
                                         new InstantCommand(() -> {
                                             INTAKING_SPECIMENS = true;
                                             HOLDING_SAMPLE = false;
                                         })),
                                 new InstantCommand(),
-                                () -> robot.lift.liftState == LiftSubsystem.LiftState.READY_FOR_OZ
+                                () -> robot.lift.liftState == LiftSubsystem.LiftState.INTAKE_SPECIMEN && HOLDING_SAMPLE
                         )
                 );
 
@@ -234,10 +235,9 @@ public class TwoDriverTeleop extends CommandOpMode {
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(
-                                new ManualSampleIntakeCommand(robot).alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
-                                        .andThen(
-                                               new TransferCommand(robot)
-                                        )
+                                new ManualSampleIntakeCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
+                                        .andThen(new TransferCommand(robot))
 //                                            new ParallelRaceGroup(
 //                                                    new TransferCommand(robot).andThen(
 //                                                            new InstantCommand(()-> INTAKE_JUST_CANCELLED = false)
@@ -255,19 +255,18 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
 
         // sample grab (spec mode)
-// sample grab (spec mode)
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(
-                                new ManualSampleIntakeCommand(robot)
+                                new ManualSampleIntakeCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
                                         .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
                                         .andThen(
                                                 new ParallelRaceGroup(
-                                                        new TransferCommand(robot)
+                                                        new TransferCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
                                                                 .andThen(
                                                                         new SequentialCommandGroup(
                                                                                 new WaitCommand(130),
-                                                                                new LiftCommand(robot, LiftSubsystem.LiftState.READY_FOR_OZ)
+                                                                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
                                                                                         .alongWith(
                                                                                                 new WaitCommand(400),
                                                                                                 new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN)),
@@ -286,6 +285,8 @@ public class TwoDriverTeleop extends CommandOpMode {
                                         && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN
                         )
                 );
+
+
 //        // Re grab sample in case of failed grab
 //        operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
 //                .whenPressed(
@@ -495,7 +496,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 || robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL)*/){
             //robot.extendoActuator.enableManualPower();
             robot.intake.setExtendoTargetTicks((int)(robot.intake.getExtendoPosTicks()+(
-                    Math.copySign(Math.pow(Math.abs(gamepad2.right_stick_y), 5), -gamepad2.right_stick_y)*300)));
+                    Math.copySign(Math.pow(Math.abs(gamepad2.right_stick_y), 2), -gamepad2.right_stick_y)*300)));
         }
 
         // emergency lift override

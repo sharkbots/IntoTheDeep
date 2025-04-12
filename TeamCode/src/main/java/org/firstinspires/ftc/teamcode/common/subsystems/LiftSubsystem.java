@@ -41,7 +41,6 @@ public class LiftSubsystem extends SubsystemWrapper {
         DEPOSIT_LOW_SPECIMEN,
         DEPOSIT_HIGH_RUNG_SETUP,
         DEPOSIT_HIGH_SPECIMEN,
-        READY_FOR_OZ,
         PUSHING_SPECIMEN,
         DEPOSIT_LOW_BUCKET,
         DEPOSIT_HIGH_BUCKET,
@@ -108,13 +107,16 @@ public class LiftSubsystem extends SubsystemWrapper {
             case TRANSFER:
             case RETRACTED:
             case INTAKE_SPECIMEN:
-            case READY_FOR_OZ:
                 return 0;
             case HOLDING_SPECIMEN:
                 return HOLDING_SPECIMEN_HEIGHT;
             case DEPOSIT_LOW_SPECIMEN: return LOW_SPECIMEN_HEIGHT;
-            case DEPOSIT_HIGH_RUNG_SETUP: return HIGH_SPECIMEN_SETUP_HEIGHT;
-            case DEPOSIT_HIGH_SPECIMEN: return HIGH_SPECIMEN_HEIGHT;
+            case DEPOSIT_HIGH_RUNG_SETUP:
+                if (IS_AUTONOMOUS) return HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT;
+                else return HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT;
+            case DEPOSIT_HIGH_SPECIMEN:
+                if (IS_AUTONOMOUS) return HIGH_SPECIMEN_AUTONOMOUS_HEIGHT;
+                else return HIGH_SPECIMEN_TELEOP_HEIGHT;
             case PUSHING_SPECIMEN: return PUSHING_SPECIMEN_HEIGHT;
             case DEPOSIT_LOW_BUCKET: return LOW_BUCKET_HEIGHT;
             case DEPOSIT_HIGH_BUCKET: return HIGH_BUCKET_HEIGHT;
@@ -139,14 +141,19 @@ public class LiftSubsystem extends SubsystemWrapper {
             case LVL2_ASCENT_DOWN:
                 return DEPOSIT_CLAW_PIVOT_TRANSFER_POS;
             case INTAKE_SPECIMEN:
-            case READY_FOR_OZ:
             case HOLDING_SPECIMEN:
                 return DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS;
             case DEPOSIT_HIGH_RUNG_SETUP:
-                return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_POS;
+                if (IS_AUTONOMOUS){
+                    return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_AUTONOMOUS_POS;
+                }
+                else return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_TELEOP_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_SPECIMEN:
-                return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_POS;
+                if (IS_AUTONOMOUS){
+                    return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS;
+                }
+                else return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_TELEOP_POS;
             case PUSHING_SPECIMEN: return DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
@@ -167,13 +174,15 @@ public class LiftSubsystem extends SubsystemWrapper {
             case LVL2_ASCENT_DOWN:
                 return DEPOSIT_ARM_PIVOT_TRANSFER_POS;
             case INTAKE_SPECIMEN:
-            case READY_FOR_OZ:
             case HOLDING_SPECIMEN:
                 return DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
-                return DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_POS;
+                if (IS_AUTONOMOUS){
+                    return DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS;
+                }
+                else return DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_TELEOP_POS;
             case PUSHING_SPECIMEN: return DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
@@ -191,7 +200,6 @@ public class LiftSubsystem extends SubsystemWrapper {
             case RETRACTED:
             case LVL1_ASCENT:
             case INTAKE_SPECIMEN:
-            case READY_FOR_OZ:
             case HOLDING_SPECIMEN:
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
@@ -200,7 +208,10 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_HIGH_RUNG_SETUP:
             case DEPOSIT_HIGH_SPECIMEN:
             case PUSHING_SPECIMEN:
-                return DEPOSIT_CLAW_ROTATION_SPECIMEN_SCORING_POS;
+                if (IS_AUTONOMOUS){
+                    return DEPOSIT_CLAW_ROTATION_SPECIMEN_SCORING_AUTONOMOUS_POS;
+                }
+                else return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
                 return IS_AUTONOMOUS ? DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS : DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS;

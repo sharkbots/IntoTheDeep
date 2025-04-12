@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.IntakeSpecimenCommand;
@@ -160,7 +161,7 @@ public class SixSpecAuto extends CommandOpMode {
                                 // Line 9
                                 new BezierLine(
                                         new Point(23.314, 7.300, Point.CARTESIAN),
-                                        new Point(pickupLocation.getX(), 7.300+5, Point.CARTESIAN)
+                                        new Point(pickupLocation.getX()+2.5, 7.300+5, Point.CARTESIAN)
                                 )
                         )
                         .addParametricCallback(0.7, ()->robot.follower.setMaxPower(0.6))
@@ -242,6 +243,7 @@ public class SixSpecAuto extends CommandOpMode {
     public void initialize() {
         super.reset();
         Globals.IS_AUTONOMOUS = true;
+        Globals.GRABBING_MODES.set(Globals.GRABBING_MODES.SPECIMEN);
         //Globals.ALLIANCE_FIXED_VAL = Globals.AllianceColor.BLUE;
 
         operator = new GamepadEx(gamepad2);
@@ -327,39 +329,33 @@ public class SixSpecAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.TRANSFER),
                                         new CVIntakeCommand(robot, "blue")
                                 )
-                        )
-                        /*
+                        ),
                         // pickup spec 2
-                        new SequentialCommandGroup(
-                                new TransferCommand(robot),
-                                new LiftCommand(robot, LiftSubsystem.LiftState.READY_FOR_OZ).alongWith(
-                                        new DeferredCommand(()->
-                                                // Pickup second spec
-                                                new FollowPathChainCommand(robot.follower,
-                                                        robot.follower.pathBuilder().addPath(
-                                                                        new BezierLine(
-                                                                                robot.follower.getPose(),
-                                                                                allianceColor.convert(intermediatePickupLocation, Pose.class)
-                                                                        )
+                        new TransferCommand(robot),
+                        new ParallelCommandGroup(
+                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN).andThen(
+                                        new WaitCommand(1000).alongWith(
+                                                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0)
+                                        ),
+                                        new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.OPEN))
+                                ),
+                                new DeferredCommand(()->
+                                        // Pickup second spec
+                                        new FollowPathChainCommand(robot.follower,
+                                                robot.follower.pathBuilder().addPath(
+                                                                new BezierCurve(
+                                                                        robot.follower.getPose(),
+                                                                        new Pose(30.44,  robot.follower.getPose().getY()),
+                                                                        new Pose(40.3, pickupLocation.getY()),
+                                                                        allianceColor.convert(pickupLocation, Pose.class)
                                                                 )
-                                                                .setConstantHeadingInterpolation(Math.toRadians(0))
-                                                                .addPath(
-                                                                        new BezierLine(
-                                                                                allianceColor.convert(intermediatePickupLocation, Pose.class),
-                                                                                allianceColor.convert(pickupLocation, Pose.class)
-                                                                        )
-                                                                )
-                                                                .setPathEndTValueConstraint(0.99)
-                                                                .setConstantHeadingInterpolation(Math.toRadians(0))
-                                                                .build()
-                                                )
-                                                , null)
-                                ).alongWith(
-                                        new WaitCommand(2000),
-                                        new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.OPEN)),
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
-                                )
-
+                                                        )
+                                                        .setPathEndTValueConstraint(0.95)
+                                                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                                                        .setZeroPowerAccelerationMultiplier(4)
+                                                        .build()
+                                        )
+                                        , null)
                         ),
                         new IntakeSpecimenCommand(robot),
 
@@ -388,10 +384,11 @@ public class SixSpecAuto extends CommandOpMode {
                         new DeferredCommand(()->
                                 new FollowPathChainCommand(robot.follower,
                                         robot.follower.pathBuilder().addPath(
-                                                new BezierLine(
+                                                new BezierCurve(
                                                         robot.follower.getPose(),
-                                                        new Pose(depositLocation.getX(), depositLocation.getY()-2*1.5)
-                                                )
+                                                        new Pose(depositLocation.getX()-5, depositLocation.getY()-2*1.5),
+                                                        new Pose(depositLocation.getX()-5, depositLocation.getY()-2*1.5),
+                                                        new Pose(depositLocation.getX(), depositLocation.getY()-2*1.5))
                                         ).setConstantHeadingInterpolation(Math.toRadians(0))
                                                 .build()
                                 )
@@ -455,10 +452,6 @@ public class SixSpecAuto extends CommandOpMode {
                                 ),
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
                         new DepositSpecimenCommand(robot)
-
-
-
-                         */
 
 
 

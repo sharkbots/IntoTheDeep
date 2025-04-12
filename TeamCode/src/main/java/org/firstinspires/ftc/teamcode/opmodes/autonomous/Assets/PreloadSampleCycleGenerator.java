@@ -14,7 +14,7 @@ public class PreloadSampleCycleGenerator {
     private Pose cycleBucketLocation = new Pose(bucketLocation.getX()+2, bucketLocation.getY()+2, Math.toRadians(315));
     private Pose insideSampleLocation = new Pose(24, 119, Math.toRadians(0));
     private Pose middleSampleLocation = new Pose(24, 129, Math.toRadians(0));
-    private Pose outsideSampleLocation = new Pose(24, 130, Math.toRadians(30));
+    private Pose outsideSampleLocation = new Pose(24, 130, Math.toRadians(28));
 
 
     private Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
@@ -52,22 +52,25 @@ public class PreloadSampleCycleGenerator {
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(insideSampleLocation, Point.class)))
-                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), insideSampleLocation.getHeading());
+                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), insideSampleLocation.getHeading())
+                    .setZeroPowerAccelerationMultiplier(4);
 
         else if (sampleLocation == SampleLocation.MIDDLE)
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(middleSampleLocation, Point.class)))
-                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), middleSampleLocation.getHeading());
+                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), middleSampleLocation.getHeading())
+                    .setZeroPowerAccelerationMultiplier(2);
 
         else if (sampleLocation == SampleLocation.OUTSIDE)
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(middleSampleLocation, Point.class)))
-                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), outsideSampleLocation.getHeading());
+                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), outsideSampleLocation.getHeading())
+                    .setZeroPowerAccelerationMultiplier(6);
 
         builder.addParametricCallback(0.6, () -> follower.setMaxPower(0.6));
-        return builder.setZeroPowerAccelerationMultiplier(1).build();
+        return builder.build();
     }
 
     public PathChain getBucketPath(SampleLocation sampleLocation) throws IllegalStateException {

@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
@@ -42,8 +43,8 @@ import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "🟡 4-Sample Auto", group = "1 blue auto", preselectTeleOp = "Two Driver Teleop")
-public class FourSampleAuto extends CommandOpMode {
+@Autonomous(name = "🟡 6-Sample Auto", group = "1 blue auto", preselectTeleOp = "Two Driver Teleop")
+public class SixSampleAuto extends CommandOpMode {
     private Telemetry telemetryA;
 
     private final Robot robot = Robot.getInstance();
@@ -168,10 +169,9 @@ public class FourSampleAuto extends CommandOpMode {
                 .setAlliance(allianceColor)
                 .setFollower(robot.follower);
 
-
-
         robot.reset();
-        robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED);
+        robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN);
+
         while(opModeInInit()){
             menu.periodic();
 //            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1X, Globals.sampleAutoStartPose.getX(), 12.5);
@@ -262,7 +262,7 @@ public class FourSampleAuto extends CommandOpMode {
                             new SequentialCommandGroup(
                                     new WaitCommand(300),
                                     new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                            new HoverCommand(robot, 900+403.2)
+                                            new HoverCommand(robot, 900+403.2-112.5)
                                     )
                             )
                         ),
@@ -290,7 +290,7 @@ public class FourSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 900+403.2)
+                                                new HoverCommand(robot, 900+403.2-112.5)
                                         )
                                 )
                         ),
@@ -318,7 +318,7 @@ public class FourSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 1050+403.2, 30.0)
+                                                new HoverCommand(robot, 1050+403.2+150-112.5, 30.0)
                                         )
                                 )
                         ),
@@ -340,6 +340,30 @@ public class FourSampleAuto extends CommandOpMode {
 
                         // Pickup 5th sample from sub
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
+                        new FollowPathChainCommand(robot.follower, paths.get(7)).alongWith(
+                                new SequentialCommandGroup(
+                                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0),
+                                        new WaitCommand(500),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
+                                )
+                        ),
+                        new WaitCommand(1500),
+                        new CVIntakeCommand(robot, "yellow"),
+
+                        // Deposit 5th sample from sub
+                        new FollowPathChainCommand(robot.follower, paths.get(8)).alongWith(
+                                new SequentialCommandGroup(
+                                        new TransferCommand(robot),
+                                        new WaitCommand(200),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
+                                )
+                        ),
+                        new WaitCommand(150),
+                        new DepositSampleCommand(robot),
+
+
+                        // Pickup 6th sample from sub
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new FollowPathChainCommand(robot.follower, paths.get(9)).alongWith(
                                 new SequentialCommandGroup(
                                         new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0),
@@ -347,22 +371,22 @@ public class FourSampleAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-//                        new InstantCommand(()-> robot.telemetryA.addData("extendo target ticks", (91.5 - (Globals.SampleAutonomousConfig.samp2Y+72) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH)),
-//                        new InstantCommand(()-> robot.telemetryA.update()),
+                        new WaitCommand(1500),
+                        new CVIntakeCommand(robot, "yellow"),
 
-                        new HoverCommand(robot, (91.5 - (Globals.SampleAutonomousConfig.samp2Y+72) - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH),
-                        new IntakeSampleCommand(robot),
-
-                        // Deposit 5th sample from sub
+                        // Deposit 6th sample from sub
                         new FollowPathChainCommand(robot.follower, paths.get(10)).alongWith(
                                 new SequentialCommandGroup(
-                                        new TransferCommand(robot)),
-                                        new WaitCommand(200)
-                                        //new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
+                                        new TransferCommand(robot),
+                                        new WaitCommand(200),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
                                 )
+
                         ),
                         new WaitCommand(150),
                         new DepositSampleCommand(robot)
+
+
 
 //                        // Park
 //                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
@@ -372,6 +396,7 @@ public class FourSampleAuto extends CommandOpMode {
 //                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
 //                                )
 //                        )
+                )
             );
     }
 

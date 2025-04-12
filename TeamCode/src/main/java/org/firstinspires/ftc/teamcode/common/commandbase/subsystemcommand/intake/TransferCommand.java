@@ -36,9 +36,9 @@ public class TransferCommand extends SequentialCommandGroup {
                 ),
 //                new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0)),
 //                new WaitUntilCommand(() -> robot.intake.extendoReached()), /*prev wait 350*/
-                new WaitCommand(35),
+                //new WaitCommand(20),
                 new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED)),
-                new WaitCommand(90),
+                new WaitCommand(60),
                 new InstantCommand(() -> {
                     robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN);
 //                    robot.intakeArmPivotActuator.setTargetPosition(Globals.INTAKE_ARM_PIVOT_TRANSFER_POS + 0.0);
