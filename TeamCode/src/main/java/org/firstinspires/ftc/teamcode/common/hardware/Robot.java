@@ -168,11 +168,9 @@ public class Robot extends SubsystemWrapper{
 
         // Vision
         vision = new SamplesDetection("Limelight3A",hardwareMap,this.telemetryA);
+
         vision.start();
-//        if (IS_AUTONOMOUS){
-//            vision.limelight.setPipeline(7);
-//            vision.limelight.start();
-//        }
+        //if (IS_AUTONOMOUS)
 
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");

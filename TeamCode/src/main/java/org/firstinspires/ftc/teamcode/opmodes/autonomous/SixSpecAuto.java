@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenC
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.pickupLocation;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
@@ -317,18 +318,21 @@ public class SixSpecAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(0)).setHoldEnd(false)
                                 .alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(200).alongWith(
+                                                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0)
+                                        ),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
 
                                 )
                         ),
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN).alongWith(new HoverCommand(robot, 300)),
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
 
                         // Intake sample from sub
                         new DepositSpecimenCommand(robot).andThen(
                                 new ParallelCommandGroup(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.TRANSFER),
-                                        new CVIntakeCommand(robot, "blue")
+                                        new WaitCommand(3000).andThen(
+                                                new CVIntakeCommand(robot, "blue"))
                                 )
                         ),
                         // pickup spec 2
@@ -485,6 +489,8 @@ public class SixSpecAuto extends CommandOpMode {
         robot.telemetryA.addData("Lift target", robot.liftActuator.getTargetPosition());
         robot.telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
         robot.telemetryA.addData("t value (general loop)", robot.follower.getCurrentTValue());
+
+        FtcDashboard.getInstance().sendImage(robot.vision.draw(320,240));
         if(!robot.vision.samples().isEmpty())
         {
             robot.telemetryA.addLine("Samples found");

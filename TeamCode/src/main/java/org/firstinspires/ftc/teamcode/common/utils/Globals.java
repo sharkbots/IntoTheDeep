@@ -109,6 +109,7 @@ public class Globals {
 
     // Camera configurations
     public static boolean FREEZE_CAMERA_FRAME = false;
+    public static String COLOR_SAMPLE_FILTERING = "yellow";
 
     public static long CAMERA_EXPOSURE_MILLIS = 25; //33
     public static int CAMERA_WHITE_BALANCE_TEMPERATURE = 5500; //5500
@@ -234,7 +235,7 @@ public class Globals {
     public static int LOW_SPECIMEN_HEIGHT = 85;
     public static int HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT = 885;
     public static int HIGH_SPECIMEN_AUTONOMOUS_HEIGHT = 480;
-    public static int HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT = 480;
+    public static int HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT = 700;
     public static int HIGH_SPECIMEN_TELEOP_HEIGHT = 800;
     public static int PUSHING_SPECIMEN_HEIGHT = 650;
     public static int LVL1_ASCENT_HEIGHT = 825;

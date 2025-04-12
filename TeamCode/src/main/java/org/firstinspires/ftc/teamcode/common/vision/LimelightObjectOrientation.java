@@ -10,10 +10,6 @@ package org.firstinspires.ftc.teamcode.common.vision;
 import java.util.ArrayList;
 import java.util.List;
 
-/* JSON includes */
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /* Qualcomm includes */
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -61,7 +57,7 @@ public class LimelightObjectOrientation  {
         mLogger.addLine("starting object orientation pipeline");
 
         // Format samples into pipeline inputs
-        double[] data = new double[samples.size() * 7 + 1];
+        double[] data = new double[ Math.min(1,samples.size()) * 7 + 1];
 
         mLogger.addLine(""+samples.size());
         data[0] = mLastProcessed;
@@ -73,7 +69,7 @@ public class LimelightObjectOrientation  {
             Sample.Color color = sample.color();
             int col = -1;
             if (color == Sample.Color.RED)         { col = 0; }
-            else if (color == Sample.Color.BLUE)   { col = 1;}
+            else if (color == Sample.Color.BLUE)   { col = 1; }
             else if (color == Sample.Color.YELLOW) { col = 2; }
 
             mLogger.addLine("" + sample.index());
@@ -112,6 +108,9 @@ public class LimelightObjectOrientation  {
 
             mLogger.addLine("" + orientations[0]);
             mLogger.addLine("" + mLastProcessed);
+            mLogger.addLine("" + orientations[4]);
+            mLogger.addLine("" + orientations[5]);
+            mLogger.addLine("" + orientations[6]);
             if (orientations[0] == mLastProcessed) {
                 for (int i_sample = 0; i_sample < (int) ((orientations.length - 1) / 10); i_sample++) {
 
@@ -150,6 +149,10 @@ public class LimelightObjectOrientation  {
             }
         }
         return result;
+    }
+
+    public void stop() {
+        if(mWebcam != null && mWebcam.isRunning()) { mWebcam.stop(); }
     }
 
 }

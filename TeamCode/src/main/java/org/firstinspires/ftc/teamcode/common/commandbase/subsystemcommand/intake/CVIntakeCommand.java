@@ -34,7 +34,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                         new DeferredCommand(()-> new HoverCommand(robot,
                                 (robot.vision.selected()[0] - Globals.INTAKE_MINIMUM_EXTENSION) * Globals.EXTENDO_TICKS_PER_INCH), null),
                         new DeferredCommand(()-> new SetIntakeCommand(robot,
-                                IntakeSubsystem.PivotState.INTAKE, (double)(90-robot.vision.selected()[2])), null),
+                                IntakeSubsystem.PivotState.INTAKE, (double)(robot.vision.selected()[2])), null),
 
                         new DeferredCommand(()-> new SequentialCommandGroup(
                                 new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
@@ -45,6 +45,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                                 new InstantCommand(()->robot.follower.startTeleopDrive())
                         ),null)
                 ),
+                new WaitCommand(3000),
                 new SetIntakeCommand(robot, IntakeSubsystem.PivotState.INTAKE),
                 new WaitCommand(30),
 //                new InstantCommand(()-> {

@@ -39,7 +39,7 @@ public class SamplesDetection  {
         DETECT,
         ORIENT}
 
-    static  double                  sCameraYOffset = 4.53;
+    static  float                  sCameraYOffset = 4.53f;
 
     final Telemetry                 mLogger;
 
@@ -89,25 +89,25 @@ public class SamplesDetection  {
         }
     }
 
-    public List<Sample>                     samples() { return mConsolidated; }
+    public List<Sample> samples() { return mConsolidated; }
 
 
-    public float[]                          selected() {
+    public float[] selected() {
         float[] result = new float[3];
         if(mSelected != null) {
             result[0] = (float)(mSelected.distanceX() * 1.1);
             result[1] = (float)mSelected.distanceY();
-            result[2] = (float)mSelected.orientation();
+            result[2] = (float)mSelected.orientation() - 90;
         }
         return result;
     }
 
-    public Sample                           selectedSample() { return mSelected; }
+    public Sample selectedSample() { return mSelected; }
 
     /**
      * Start sample detection
      */
-    public void                             start() {
+    public void start() {
         mDetection.start();
         mImageIndex = 0;
         mCalibration.initialize();
@@ -117,7 +117,7 @@ public class SamplesDetection  {
     /**
      * Detect new samples
      */
-    public void                             detect(String color) {
+    public void detect(String color) {
 
         selectColor(color);
         mLogger.addLine(""+mColor);
@@ -129,7 +129,7 @@ public class SamplesDetection  {
             if (!detections.isEmpty()) {
                 mOngoing.clear();
                 for (Sample sample : detections) {
-                    float[] ground = mCalibration.computeGroundPosition(sample.x(), sample.y());
+                    float[] ground = mCalibration.computeGroundPosition(320 - sample.x(), sample.y());
                     sample.distanceX(ground[1]);
                     sample.distanceY(-ground[0] + sCameraYOffset);
                     mOngoing.add(sample);
@@ -252,6 +252,11 @@ public class SamplesDetection  {
         result.append("</details>\n");
 
         mLogger.addLine(result.toString());
+    }
+
+    public void stop() {
+        if(mDetection != null) { mDetection.stop(); }
+        if(mOrientation != null) { mOrientation.stop(); }
     }
 
 }

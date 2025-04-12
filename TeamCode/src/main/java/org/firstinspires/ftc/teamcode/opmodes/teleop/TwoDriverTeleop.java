@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static com.qualcomm.robotcore.hardware.Gamepad.LED_DURATION_CONTINUOUS;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -33,7 +33,6 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.R
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
-import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.vision.Sample;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
@@ -101,7 +100,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
         operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(
-                        new CVIntakeCommand(robot, "yellow")
+                        new CVIntakeCommand(robot, "red")
                 );
 
         // GENERAL RESET
@@ -582,7 +581,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
         robot.telemetryA.addData("runtime", timer.seconds());
 
-        robot.vision.detect("yellow");
+        robot.vision.detect(COLOR_SAMPLE_FILTERING);
         if(!robot.vision.samples().isEmpty()) {
             robot.telemetryA.addLine("samples found");
             float[] offsets = robot.vision.selected();
@@ -593,6 +592,8 @@ public class TwoDriverTeleop extends CommandOpMode {
                 robot.telemetryA.addData("Closest result color: ", result.color());
             }
         }
+
+        FtcDashboard.getInstance().sendImage(robot.vision.draw(320,240));
 
         robot.telemetryA.addData("is busy", robot.follower.isBusy());
         robot.telemetryA.addData("intake pivot state", robot.intake.pivotState);
@@ -614,5 +615,10 @@ public class TwoDriverTeleop extends CommandOpMode {
     public void reset(){
         super.reset();
         robot.telemetryA.addLine("eye of Sauron shutting down...");
+    }
+
+    @Override
+    public void end(){
+        robot.vision.stop();
     }
 }

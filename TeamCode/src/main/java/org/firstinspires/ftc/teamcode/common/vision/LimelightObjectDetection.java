@@ -88,4 +88,8 @@ public class LimelightObjectDetection {
 
         return result;
     }
+
+    public void stop() {
+        if(mWebcam != null && mWebcam.isRunning()) { mWebcam.stop(); }
+    }
 }
