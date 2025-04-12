@@ -26,13 +26,6 @@ public class LimelightObjectOrientation  {
 
     final Telemetry                 mLogger;
 
-    protected boolean               mConfigurationValid;
-
-    final String                    mName;
-    String                          mHwName;
-
-    final HardwareMap               mMap;
-
     protected Limelight3A           mWebcam;
     int                             mPipeline;
     int                             mLastProcessed;
@@ -65,45 +58,41 @@ public class LimelightObjectOrientation  {
      */
     public void                         start(List<Sample> samples) {
 
-        if (mConfigurationValid) {
+        mLogger.addLine("starting object orientation pipeline");
 
-            mLogger.addLine("starting object orientation pipeline");
+        // Format samples into pipeline inputs
+        double[] data = new double[samples.size() * 7 + 1];
 
-            // Format samples into pipeline inputs
-            double[] data = new double[samples.size() * 7 + 1];
+        mLogger.addLine(""+samples.size());
+        data[0] = mLastProcessed;
+        int i_data = 1;
+        for (int i_sample = 0; i_sample < Math.min(1,samples.size()); i_sample++) {
 
-            mLogger.addLine(""+samples.size());
-            data[0] = mLastProcessed;
-            int i_data = 1;
-            for (int i_sample = 0; i_sample < samples.size(); i_sample++) {
+            Sample sample = samples.get(i_sample);
 
-                Sample sample = samples.get(i_sample);
-                double size = Math.sqrt(sample.area() * 2.33);
+            Sample.Color color = sample.color();
+            int col = -1;
+            if (color == Sample.Color.RED)         { col = 0; }
+            else if (color == Sample.Color.BLUE)   { col = 1;}
+            else if (color == Sample.Color.YELLOW) { col = 2; }
 
-                Sample.Color color = sample.color();
-                int col = -1;
-                if (color == Sample.Color.RED)         { col = 0; }
-                else if (color == Sample.Color.BLUE)   { col = 1;}
-                else if (color == Sample.Color.YELLOW) { col = 2; }
+            mLogger.addLine("" + sample.index());
 
-                mLogger.addLine("" + sample.index());
-
-                data[i_data] = sample.index(); i_data++;
-                data[i_data] = sample.x(); i_data++;
-                data[i_data] = sample.y(); i_data++;
-                data[i_data] = size; i_data++;
-                data[i_data] = size; i_data++;
-                data[i_data] = col; i_data++;
-                data[i_data] = sample.area(); i_data ++;
-            }
-
-            mLogger.addLine(""+data.length);
-
-            mWebcam.pipelineSwitch(mPipeline);
-            mWebcam.start();
-            mWebcam.updatePythonInputs(data);
-            mWaitingList = samples;
+            data[i_data] = sample.index(); i_data++;
+            data[i_data] = sample.x(); i_data++;
+            data[i_data] = sample.y(); i_data++;
+            data[i_data] = sample.xMax() - sample.xMin(); i_data++;
+            data[i_data] = sample.yMax() - sample.yMin(); i_data++;
+            data[i_data] = col; i_data++;
+            data[i_data] = sample.area(); i_data ++;
         }
+
+        mLogger.addLine(""+data.length);
+
+        mWebcam.pipelineSwitch(mPipeline);
+        mWebcam.start();
+        mWebcam.updatePythonInputs(data);
+        mWaitingList = samples;
     }
 
     /**
@@ -115,48 +104,49 @@ public class LimelightObjectOrientation  {
 
         List<Sample> result = new ArrayList<>();
 
-        if (mConfigurationValid) {
+        LLResult results = mWebcam.getLatestResult();
+        if(results != null) {
+            mLogger.addLine(""+mWaitingList.size());
+            mLogger.addLine(""+results.getPipelineIndex());
+            double[] orientations = results.getPythonOutput();
 
-            LLResult results = mWebcam.getLatestResult();
-            if(results != null) {
-                double[] orientations = results.getPythonOutput();
+            mLogger.addLine("" + orientations[0]);
+            mLogger.addLine("" + mLastProcessed);
+            if (orientations[0] == mLastProcessed) {
+                for (int i_sample = 0; i_sample < (int) ((orientations.length - 1) / 10); i_sample++) {
 
-                if (orientations[0] == mLastProcessed) {
-                    for (int i_sample = 0; i_sample < (int) ((orientations.length - 1) / 10); i_sample++) {
+                    int index = (int) (orientations[i_sample * 10 + 1]);
+                    if(index != 0) {
+                        mLogger.addLine("" + index);
 
-                        int index = (int) (orientations[i_sample * 10 + 1]);
-                        if(index != 0) {
-                            mLogger.addLine("" + index);
+                        double orientation = orientations[i_sample * 10 + 5];
+                        int col = (int) orientations[i_sample * 10 + 4];
 
-                            double orientation = orientations[i_sample * 10 + 5];
-                            int col = (int) orientations[i_sample * 10 + 4];
-
-                            Sample.Color color = Sample.Color.UNKNOWN;
-                            if (col == 0) {
-                                color = Sample.Color.RED;
-                            } else if (col == 1) {
-                                color = Sample.Color.BLUE;
-                            } else if (col == 2) {
-                                color = Sample.Color.YELLOW;
-                            }
-
-                            for (int j_sample = 0; j_sample < mWaitingList.size(); j_sample++) {
-                                mLogger.addLine("" + mWaitingList.get(j_sample).index());
-                                if (index == mWaitingList.get(j_sample).index()) {
-                                    if (mShallUpdateColor) {
-                                        mWaitingList.get(j_sample).color(color);
-                                    }
-                                    mWaitingList.get(j_sample).orientation(orientation);
-                                }
-                            }
+                        Sample.Color color = Sample.Color.UNKNOWN;
+                        if (col == 0) {
+                            color = Sample.Color.RED;
+                        } else if (col == 1) {
+                            color = Sample.Color.BLUE;
+                        } else if (col == 2) {
+                            color = Sample.Color.YELLOW;
                         }
 
+                        for (int j_sample = 0; j_sample < mWaitingList.size(); j_sample++) {
+                            mLogger.addLine("" + mWaitingList.get(j_sample).index());
+                            if (index == mWaitingList.get(j_sample).index()) {
+                                if (mShallUpdateColor) {
+                                    mWaitingList.get(j_sample).color(color);
+                                }
+                                mWaitingList.get(j_sample).orientation(orientation);
+                            }
+                        }
                     }
 
-                    mLastProcessed ++;
-                    result = mWaitingList;
-
                 }
+
+                mLastProcessed ++;
+                result = mWaitingList;
+
             }
         }
         return result;

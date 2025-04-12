@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
+import org.firstinspires.ftc.teamcode.common.vision.Sample;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
@@ -572,22 +573,17 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
         robot.telemetryA.addData("runtime", timer.seconds());
 
-
-        robot.vision.limelight.setLatestResults("yellow");
-
-        if (robot.vision.limelight.getLatestResults() != null) {
-            robot.telemetryA.addLine("detection is not null");
-            LLResultTypes.DetectorResult result = robot.vision.limelight.getClosestResult();
-            float[] offsets = robot.vision.limelight.getClosestOffset();
+        robot.vision.detect("yellow");
+        if(!robot.vision.samples().isEmpty()) {
+            robot.telemetryA.addLine("samples found");
+            float[] offsets = robot.vision.selected();
+            Sample result = robot.vision.selectedSample();
             if (result != null) {
-                robot.telemetryA.addData("Closest result (Pixels): ", result.getTargetXPixels() + ", " + result.getTargetYPixels());
+                robot.telemetryA.addData("Closest result (Pixels): ", result.x() + ", " + result.y());
                 robot.telemetryA.addData("Closest result (Offset): ", offsets[0] + ", " + offsets[1] + ", " + offsets[2]);
-                robot.telemetryA.addData("Closest result color: ", result.getClassName());
+                robot.telemetryA.addData("Closest result color: ", result.color());
             }
         }
-
-
-
 
         robot.telemetryA.addData("is busy", robot.follower.isBusy());
         robot.telemetryA.addData("intake pivot state", robot.intake.pivotState);

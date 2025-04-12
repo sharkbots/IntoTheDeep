@@ -5,7 +5,7 @@
    Localizers final test tool
    ------------------------------------------------------- */
 
-package org.firstinspires.ftc.teamcode.opmodes.testing;
+package org.firstinspires.ftc.teamcode.opmodes.testing.vision;
 
 /* System includes */
 import java.util.List;

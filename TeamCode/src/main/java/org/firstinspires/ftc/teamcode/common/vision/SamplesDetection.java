@@ -34,17 +34,25 @@ import org.opencv.imgproc.Imgproc;
 
 public class SamplesDetection  {
 
+    public enum Mode {
+        NONE,
+        DETECT,
+        ORIENT}
+
     static  double                  sCameraYOffset = 4.53;
 
     final Telemetry                 mLogger;
 
     LimelightObjectDetection        mDetection;
+    LimelightObjectOrientation      mOrientation;
     Calibration                     mCalibration;
 
-    boolean                         mIsReady;
-    List<Sample>                    mSamples;
-    Sample                          mSelected;
+    Mode                            mMode;
     Sample.Color                    mColor;
+
+    List<Sample>                    mOngoing;
+    List<Sample>                    mConsolidated;
+    Sample                          mSelected;
 
     int                             mImageIndex;
 
@@ -58,12 +66,14 @@ public class SamplesDetection  {
     public  SamplesDetection(String name, HardwareMap map, Telemetry logger) {
 
         mLogger             = logger;
-        mIsReady            = false;
+        mMode               = Mode.NONE;
 
         mDetection          = new LimelightObjectDetection(name, map, logger);
+        mOrientation        = new LimelightObjectOrientation(name, map, logger);
         mCalibration        = new Calibration();
         mImageIndex         = 0;
-        mSamples            = new ArrayList<>();
+        mConsolidated       = new ArrayList<>();
+        mOngoing            = new ArrayList<>();
         mSelected           = null;
         mColor              = Sample.Color.UNKNOWN;
 
@@ -79,17 +89,20 @@ public class SamplesDetection  {
         }
     }
 
-    public List<Sample>                     samples() { return mSamples; }
+    public List<Sample>                     samples() { return mConsolidated; }
+
 
     public float[]                          selected() {
         float[] result = new float[3];
         if(mSelected != null) {
-            result[0] = (float)(mSelected.distanceX() *1.1);
+            result[0] = (float)(mSelected.distanceX() * 1.1);
             result[1] = (float)mSelected.distanceY();
             result[2] = (float)mSelected.orientation();
         }
         return result;
     }
+
+    public Sample                           selectedSample() { return mSelected; }
 
     /**
      * Start sample detection
@@ -98,7 +111,7 @@ public class SamplesDetection  {
         mDetection.start();
         mImageIndex = 0;
         mCalibration.initialize();
-        mIsReady = false;
+        mMode = Mode.DETECT;
     }
 
     /**
@@ -109,19 +122,37 @@ public class SamplesDetection  {
         selectColor(color);
         mLogger.addLine(""+mColor);
 
-        List<Sample> detections = mDetection.process();
-        mLogger.addLine(""+detections.size());
-        if (!detections.isEmpty()) {
-            mSamples.clear();
-            for(Sample sample : detections) {
-                float[] ground = mCalibration.computeGroundPosition(sample.x(), sample.y());
-                sample.distanceX(ground[1]);
-                sample.distanceY(-ground[0] + sCameraYOffset);
-                mSamples.add(sample);
+        if (mMode == Mode.DETECT) {
+
+            List<Sample> detections = mDetection.process();
+            mLogger.addLine("" + detections.size());
+            if (!detections.isEmpty()) {
+                mOngoing.clear();
+                for (Sample sample : detections) {
+                    float[] ground = mCalibration.computeGroundPosition(sample.x(), sample.y());
+                    sample.distanceX(ground[1]);
+                    sample.distanceY(-ground[0] + sCameraYOffset);
+                    mOngoing.add(sample);
+                }
+                mOngoing.sort(Comparator.comparingDouble(s -> mergedRanking((Sample) s, mColor)));
+                mLogger.addLine("Switching to orientation");
+                mOrientation.start(mOngoing);
+                mMode = Mode.ORIENT;
             }
-            mSamples.sort(Comparator.comparingDouble(s -> mergedRanking((Sample)s, mColor)));
-            mSelected = mSamples.get(0);
         }
+        else if (mMode == Mode.ORIENT) {
+            List<Sample> oriented = mOrientation.process();
+            if (!oriented.isEmpty()) {
+                mLogger.addLine("Switching back to detection");
+                mConsolidated.clear();
+                mConsolidated.addAll(oriented);
+                mSelected = mConsolidated.get(0);
+                mDetection.start();
+                mMode = Mode.DETECT;
+                mOngoing.clear();
+            }
+        }
+
         mLogger.addLine("Processing image " + mImageIndex);
         mImageIndex++;
     }
@@ -156,7 +187,7 @@ public class SamplesDetection  {
         // Create a blank image (black)
         Mat frame = new Mat(height, width, CvType.CV_8UC3, new Scalar(0, 0, 0));
 
-        for(Sample sample : mSamples) {
+        for(Sample sample : mConsolidated) {
 
             Point topLeft = new Point(sample.xMin(), sample.yMin());
             Point bottomRight = new Point(sample.xMax(), sample.yMax());
@@ -200,10 +231,21 @@ public class SamplesDetection  {
 
         StringBuilder result = new StringBuilder();
 
+        result.append("<p>" + mMode + "</p>");
+
         result.append("<details open style=\"margin-left:10px\">\n");
-        result.append("<summary style=\"font-size: 12px; font-weight: 500\"> SAMPLES </summary>\n");
+        result.append("<summary style=\"font-size: 12px; font-weight: 500\"> CONSOLIDATED SAMPLES </summary>\n");
         result.append("<ul>\n");
-        for (Sample sample : mSamples) {
+        for (Sample sample : mConsolidated) {
+            result.append(sample.logHTML());
+        }
+        result.append("</ul>\n");
+        result.append("</details>\n");
+
+        result.append("<details open style=\"margin-left:10px\">\n");
+        result.append("<summary style=\"font-size: 12px; font-weight: 500\"> ON GOING SAMPLES </summary>\n");
+        result.append("<ul>\n");
+        for (Sample sample : mOngoing) {
             result.append(sample.logHTML());
         }
         result.append("</ul>\n");

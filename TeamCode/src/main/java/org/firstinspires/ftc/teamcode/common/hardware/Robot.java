@@ -42,7 +42,7 @@ import org.firstinspires.ftc.teamcode.common.utils.wrappers.ActuatorGroupWrapper
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.EncoderWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.ServoWrapper;
 import org.firstinspires.ftc.teamcode.common.utils.wrappers.SubsystemWrapper;
-import org.firstinspires.ftc.teamcode.common.vision.Vision;
+import org.firstinspires.ftc.teamcode.common.vision.SamplesDetection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,7 +114,7 @@ public class Robot extends SubsystemWrapper{
     public Telemetry telemetryA;
 
     // vision
-    public Vision vision;
+    public SamplesDetection vision;
 
 
     private final double voltageReadTimeIntervalMS = 5000;
@@ -167,11 +167,8 @@ public class Robot extends SubsystemWrapper{
         sensorValues.put(Sensors.SensorType.DEPOSIT_PIVOT_ENCODER, 0.0);
 
         // Vision
-        vision = new Vision();
-        //vision.cvCamera.setWebcamName(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        vision.limelight.setLimelight(hardwareMap.get(Limelight3A.class, "Limelight3A"));
-        vision.limelight.setPipeline(7);
-        vision.limelight.start();
+        vision = new SamplesDetection("Limelight3A",hardwareMap,this.telemetryA);
+        vision.start();
 //        if (IS_AUTONOMOUS){
 //            vision.limelight.setPipeline(7);
 //            vision.limelight.start();
@@ -302,7 +299,7 @@ public class Robot extends SubsystemWrapper{
         addSubsystem(intake, lift);
 
         if (IS_AUTONOMOUS){
-            vision.limelight.start();
+            vision.start();
         }
 
 //        if (IS_AUTONOMOUS) {
