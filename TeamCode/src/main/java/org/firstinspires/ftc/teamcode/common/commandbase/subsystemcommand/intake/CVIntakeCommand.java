@@ -26,20 +26,20 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                 //new InstantCommand(()->robot.visionPortal.setProcessorEnabled(robot.sampleDetectionPipeline, false)),
                 //new InstantCommand(()->robot.sampleDetectionPipeline.freeze(true)),
                 new RunCommand(
-                        ()-> robot.vision.limelight.setLatestResults(color))
+                        ()-> robot.vision.detect(color))
                         // .withTimeout(2000) // TODO: activate when all is  so that it is fully protected against infinite loop
-                        .interruptOn(() -> robot.vision.limelight.getLatestResults() != null),
+                        .interruptOn(() -> !robot.vision.samples().isEmpty()),
                 //new InstantCommand(()-> Globals.FREEZE_CAMERA_FRAME = true),
                 new ParallelCommandGroup(
                         new DeferredCommand(()-> new HoverCommand(robot,
-                                (robot.vision.limelight.getClosestOffset()[0]*1.1 - Globals.INTAKE_MINIMUM_EXTENSION) * Globals.EXTENDO_TICKS_PER_INCH), null),
+                                (robot.vision.selected()[0] - Globals.INTAKE_MINIMUM_EXTENSION) * Globals.EXTENDO_TICKS_PER_INCH), null),
                         new DeferredCommand(()-> new SetIntakeCommand(robot,
-                                IntakeSubsystem.PivotState.INTAKE, (double)(90-robot.vision.limelight.getClosestOffset()[2])), null),
+                                IntakeSubsystem.PivotState.INTAKE, (double)(90-robot.vision.selected()[2])), null),
 
                         new DeferredCommand(()-> new SequentialCommandGroup(
                                 new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
                                         new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
-                                        MathFunctions.rotatePose(new Pose(-robot.vision.limelight.getClosestOffset()[1],
+                                        MathFunctions.rotatePose(new Pose(-robot.vision.selected()[1],
                                                 0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
                                 ),
                                 new InstantCommand(()->robot.follower.startTeleopDrive())

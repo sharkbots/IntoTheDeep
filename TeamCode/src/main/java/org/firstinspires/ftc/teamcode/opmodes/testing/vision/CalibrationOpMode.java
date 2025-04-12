@@ -14,7 +14,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.common.vision.Vision;
+import org.firstinspires.ftc.teamcode.common.vision.Calibration;
 
 
 @Config
@@ -22,13 +22,13 @@ import org.firstinspires.ftc.teamcode.common.vision.Vision;
 public class CalibrationOpMode extends LinearOpMode {
     static public double X = 0;
     static public double Y = 0;
-    Vision vision;
+    Calibration vision;
     
     @Override
     public void runOpMode() {
 
         try {
-            vision = new Vision();
+            vision = new Calibration();
         }
         catch(Exception e){
             telemetry.addLine(e.getMessage());
@@ -38,7 +38,7 @@ public class CalibrationOpMode extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-            float [] result = vision.limelight.computeGroundPosition(X, Y);
+            float [] result = vision.computeGroundPosition(X, Y);
 
             FtcDashboard.getInstance().getTelemetry().addData("x",result[0]);
             FtcDashboard.getInstance().getTelemetry().addData("y",result[1]);

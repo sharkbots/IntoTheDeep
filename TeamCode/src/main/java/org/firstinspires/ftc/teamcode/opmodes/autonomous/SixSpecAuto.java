@@ -39,6 +39,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
+import org.firstinspires.ftc.teamcode.common.vision.Sample;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator;
 
 import java.util.ArrayList;
@@ -483,15 +484,16 @@ public class SixSpecAuto extends CommandOpMode {
         robot.telemetryA.addData("Lift pos", robot.liftActuator.getPosition());
         robot.telemetryA.addData("Lift target", robot.liftActuator.getTargetPosition());
         robot.telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
-//        robot.telemetryA.addData("t value (general loop)", robot.follower.getCurrentTValue());
-        if (robot.vision.limelight.getLatestResults() != null) {
-            robot.telemetryA.addLine("detection is not null");
-            LLResultTypes.DetectorResult result = robot.vision.limelight.getClosestResult();
-            float[] offsets = robot.vision.limelight.getClosestOffset();
+        robot.telemetryA.addData("t value (general loop)", robot.follower.getCurrentTValue());
+        if(!robot.vision.samples().isEmpty())
+        {
+            robot.telemetryA.addLine("Samples found");
+            float[] offsets = robot.vision.selected();
+            Sample result = robot.vision.selectedSample();
             if (result != null) {
-                robot.telemetryA.addData("Closest result (Pixels): ", result.getTargetXPixels() + ", " + result.getTargetYPixels());
+                robot.telemetryA.addData("Closest result (Pixels): ", result.x() + ", " + result.y());
                 robot.telemetryA.addData("Closest result (Offset): ", offsets[0] + ", " + offsets[1] + ", " + offsets[2]);
-                robot.telemetryA.addData("Closest result color: ", result.getClassName());
+                robot.telemetryA.addData("Closest result color: ", result.color());
             }
         }
 
