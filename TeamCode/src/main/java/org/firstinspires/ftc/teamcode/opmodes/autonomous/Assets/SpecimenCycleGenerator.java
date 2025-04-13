@@ -17,6 +17,7 @@ public class SpecimenCycleGenerator {
     //public static Pose intermediateDepositLocation = new Pose(depositLocation.getX(), depositLocation.getY()-3, depositLocation.getHeading());
     //public static Pose depositSetupLocation = new Pose(depositLocation.getX()-10, intermediateDepositLocation.getY(), depositLocation.getHeading());
     private final double depositGap = 1.5;
+    private final double constantCycleShift = 1;
 
     private Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
     private Follower follower;
@@ -44,9 +45,9 @@ public class SpecimenCycleGenerator {
         builder.addPath(
                         new BezierCurve(
                                 allianceColor.convert(pickupLocation, Point.class),
-                                new Point(depositLocation.getX()-5, depositLocation.getY()-cycleNum*depositGap),
-                                new Point(depositLocation.getX()-5, depositLocation.getY()-cycleNum*depositGap),
-                                allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-cycleNum*depositGap))))
+                                new Point(depositLocation.getX()-5, depositLocation.getY()-constantCycleShift-cycleNum*depositGap),
+                                new Point(depositLocation.getX()-5, depositLocation.getY()-constantCycleShift-cycleNum*depositGap),
+                                allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-constantCycleShift-cycleNum*depositGap))))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .setPathEndTValueConstraint(0.95)
                 .setZeroPowerAccelerationMultiplier(4);
@@ -63,13 +64,13 @@ public class SpecimenCycleGenerator {
 
         builder.addPath(
                         new BezierCurve(
-                                allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-(cycleNum-1)*depositGap)),
-                                new Point(30.44, depositLocation.getY()-(cycleNum-1)*depositGap),
+                                allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-constantCycleShift-(cycleNum-1)*depositGap)),
+                                new Point(30.44, depositLocation.getY()-constantCycleShift-(cycleNum-1)*depositGap),
                                 new Point(40.3, pickupLocation.getY()),
                                 allianceColor.convert(pickupLocation, Point.class)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
-                .setPathEndTValueConstraint(0.95)
-                .setZeroPowerAccelerationMultiplier(4);
+                .setPathEndTValueConstraint(0.98)
+                .setZeroPowerAccelerationMultiplier(6);
 
         return builder
                 .build();
@@ -86,7 +87,7 @@ public class SpecimenCycleGenerator {
         builder.addPath(
                         new BezierLine(
                                 allianceColor.convert(pickupLocation, Point.class),
-                                allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-cycleNum*depositGap))))
+                                allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-constantCycleShift-cycleNum*depositGap))))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .setPathEndTValueConstraint(0.95)
                 .setZeroPowerAccelerationMultiplier(4);
@@ -122,7 +123,7 @@ public class SpecimenCycleGenerator {
 
         builder.addPath(
                 new BezierLine(
-                        allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-(cycleNum-1)*depositGap)),
+                        allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-constantCycleShift-(cycleNum-1)*depositGap)),
                         allianceColor.convert(intermediatePickupLocation, Point.class)))
                 .setZeroPowerAccelerationMultiplier(6)
                 .setConstantHeadingInterpolation(Math.toRadians(0));

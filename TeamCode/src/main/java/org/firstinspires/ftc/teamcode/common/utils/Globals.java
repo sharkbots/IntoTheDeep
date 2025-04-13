@@ -223,13 +223,13 @@ public class Globals {
 
     // Deposit Claw Rotation
     public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.89; //0.3365
+    public static double DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_POS = 0.87; //0.3365
     public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.89; //0.0575
     public static double DEPOSIT_CLAW_ROTATION_LOW_BUCKET_SCORING_POS = 0.615;
     public static double DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS = 0.89; //0.615
     public static double DEPOSIT_CLAW_ROTATION_SPECIMEN_SCORING_AUTONOMOUS_POS = 0.3365;
 
 
-    // Deposit Slides
     public static int MAX_SLIDES_EXTENSION = 2070;
     public static int HOLDING_SPECIMEN_HEIGHT = 100;
     public static int LOW_BUCKET_HEIGHT = 800;

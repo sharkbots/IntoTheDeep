@@ -500,7 +500,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         double loop = System.nanoTime();
         robot.telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
-        robot.telemetryA.addData("Operator rigth joystick y value", -operator.getRightY());
+        robot.telemetryA.addData("Operator right joystick y value", -operator.getRightY());
         robot.telemetryA.addData("lift pos", robot.liftActuator.getPosition());
         robot.telemetryA.addData("extendo pos ticks", robot.intake.getExtendoPosTicks());
 //        robot.telemetryA.addData("extendo pos inches", robot.intake.getExtendoPosInches());

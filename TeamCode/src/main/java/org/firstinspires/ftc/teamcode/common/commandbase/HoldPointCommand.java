@@ -82,9 +82,9 @@ public class HoldPointCommand extends CommandBase {
             Globals.IS_DT_AUTO_ALIGNING = false;
             if (dynMode) point = null;
 
-            FollowerConstants.translationalPIDFCoefficients.setCoefficients(.1, 0, .01, 0);
-            FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.0005;
-            FollowerConstants.useSecondaryTranslationalPID = true;
+//            FollowerConstants.translationalPIDFCoefficients.setCoefficients(.1, 0, .01, 0);
+//            FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.0005;
+//            FollowerConstants.useSecondaryTranslationalPID = true;
 
             return true;
         }
@@ -95,9 +95,9 @@ public class HoldPointCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted){
-//        FollowerConstants.translationalPIDFCoefficients.setCoefficients(.1, 0, .01, 0);
-//        FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.0005;
-//        FollowerConstants.useSecondaryTranslationalPID = true;
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(.1, 0, .01, 0);
+        FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.0005;
+        FollowerConstants.useSecondaryTranslationalPID = true;
 
     }
 }

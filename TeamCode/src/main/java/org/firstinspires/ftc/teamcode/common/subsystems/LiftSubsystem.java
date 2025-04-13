@@ -69,6 +69,18 @@ public class LiftSubsystem extends SubsystemWrapper {
         robot.liftActuator.setTargetPosition(getActuatorPosition(liftState));
     }
 
+    public void updateState(@NotNull LiftState state, double liftHeight) {
+        this.liftState = state;
+        robot.depositArmPivotBottomServo.setPosition(getArmPivotPosition(liftState));
+        robot.depositArmPivotTopServo.setPosition(getArmPivotPosition(liftState));
+        //robot.depositArmPivotActuator.setTargetPosition(getArmPivotPosition(liftState));
+        robot.depositClawPivotServo.setPosition(getClawPivotPosition(liftState));
+        //robot.depositArmPivotTopServo.setPosition(getArmPivotPosition(liftState));
+        robot.depositClawRotationServo.setPosition(getClawRotationPosition(liftState));
+        if(liftHeight == 0.0); // do nothing
+        else robot.liftActuator.setTargetPosition(liftHeight);
+    }
+
     /**
      * Updates the claw state and sets the servo positions.
      *
@@ -195,11 +207,13 @@ public class LiftSubsystem extends SubsystemWrapper {
         switch (state) {
             case RETRACTED:
             case LVL1_ASCENT:
-            case INTAKE_SPECIMEN:
             case HOLDING_SPECIMEN:
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
                 return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
+            case INTAKE_SPECIMEN:
+                if (IS_AUTONOMOUS) return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
+                else return DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
             case DEPOSIT_HIGH_SPECIMEN:
