@@ -20,7 +20,7 @@ public class TransferCommand extends SequentialCommandGroup {
     public TransferCommand(Robot robot, boolean delayRotation){
         super(
                 new InstantCommand(() -> Globals.INTAKING_SAMPLES = false),
-                new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN)),
+                new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN_TRANSFER)),
                 //new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
                 new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0)),
                 new ConditionalCommand(
@@ -60,7 +60,7 @@ public class TransferCommand extends SequentialCommandGroup {
                                                     r.intake.setClawState(IntakeSubsystem.ClawState.OPEN);
                                                     r.intake.setExtendoTargetTicks((int)r.intake.getPreviousExtendoTarget());
                                                 }),
-                                                new LiftCommand(r, LiftSubsystem.LiftState.TRANSFER)
+                                                new LiftCommand(r, LiftSubsystem.LiftState.RETRACTED)
                                 ).schedule();
         }
     }

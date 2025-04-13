@@ -18,11 +18,9 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
@@ -33,6 +31,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.R
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.teamcode.common.vision.Sample;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
@@ -78,7 +77,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         IS_AUTONOMOUS = false;
 
-        //Globals.GRABBING_MODES.set(GRABBING_MODES.SPECIMEN);
+        GRABBING_MODES.set(GRABBING_MODES.SPECIMEN);
         UpdateOperatorGamepadColor();
 
         robot.setTelemetry(telemetry);
@@ -92,16 +91,16 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.swapYellow();
 
         // TESTING: AUTO PICKUP
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0).alongWith(
-                                new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
-                        )
-                );
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(
-                        new CVIntakeCommand(robot, "red")
-                );
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(
+//                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0).alongWith(
+//                                new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
+//                        )
+//                );
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//                .whenPressed(
+//                        new CVIntakeCommand(robot, "red")
+//                );
 
         // GENERAL RESET
         operator.getGamepadButton(GamepadKeys.Button.SQUARE)
@@ -170,37 +169,37 @@ public class TwoDriverTeleop extends CommandOpMode {
         operator.getGamepadButton(GamepadKeys.Button.CROSS)
                 .whenPressed(
                         new ConditionalCommand(
-                                new LiftCommand(robot, LiftSubsystem.LiftState.TRANSFER),
+                                new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED),
                                 new InstantCommand(),
                                 ()->!HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
                         )
                 );
 
 
-
-        // Transfer (sample mode)
-        operator.getGamepadButton(GamepadKeys.Button.CROSS)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new TransferCommand(robot),
-                                new InstantCommand(),
-                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
-                                        && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE
-                        )
-                );
-
-        // Transfer (specimen mode)
-        operator.getGamepadButton(GamepadKeys.Button.CROSS)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new TransferCommand(robot).andThen(
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
-                                ),
-                                new InstantCommand(),
-                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
-                                        && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN
-                        )
-                );
+//
+//        // Transfer (sample mode)
+//        operator.getGamepadButton(GamepadKeys.Button.CROSS)
+//                .whenPressed(
+//                        new ConditionalCommand(
+//                                new TransferCommand(robot),
+//                                new InstantCommand(),
+//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
+//                                        && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE
+//                        )
+//                );
+//
+//        // Transfer (specimen mode)
+//        operator.getGamepadButton(GamepadKeys.Button.CROSS)
+//                .whenPressed(
+//                        new ConditionalCommand(
+//                                new TransferCommand(robot).andThen(
+//                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
+//                                ),
+//                                new InstantCommand(),
+//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
+//                                        && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN
+//                        )
+//                );
 
         // Drop off sample in OZ and setup specimen intake
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -218,17 +217,6 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 () -> robot.lift.liftState == LiftSubsystem.LiftState.INTAKE_SPECIMEN && HOLDING_SAMPLE
                         )
                 );
-
-
-
-//        // Auto grab
-//        operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-//                .whenPressed(
-//                        new ConditionalCommand(new CVIntakeCommand(robot)
-//                                .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
-//                                new InstantCommand(),
-//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE && robot.sampleDetectionPipeline.getCameraOffsetMagnitude() != 0
-//                        ));
 
 
         // Sample grab (sample mode)
@@ -287,47 +275,6 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
 
 
-//        // Re grab sample in case of failed grab
-//        operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-//                .whenPressed(
-//                        new ConditionalCommand(
-//                                // Manual command interruption: re grab samples
-//                                new DeferredCommand(()->new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL,
-//                                        robot.intake.getPreviousClawRotation()), null).alongWith(
-//                                                new InstantCommand(()->{
-//                                                    INTAKE_JUST_CANCELLED = false;
-//                                                    INTAKING_SAMPLES = true;
-//                                                    robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN);
-//                                                    robot.intake.setExtendoTargetTicks((int)robot.intake.getPreviousExtendoTarget());
-//                                                }),
-//                                                new LiftCommand(robot, LiftSubsystem.LiftState.TRANSFER)
-//                                ),
-//                                new InstantCommand(),
-//                                () -> INTAKE_JUST_CANCELLED
-//                        ));
-
-        // Sample grab (spec mode)
-//        operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-//                .whenPressed(
-//                        new ConditionalCommand(
-//                                new ManualSampleIntakeCommand(robot).alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
-//                                        .alongWith(new LiftCommand(robot, LiftSubsystem.LiftState.TRANSFER))
-//                                        .andThen(new TransferCommand(robot))
-//                                        .andThen(
-//                                                new WaitCommand(130),
-//                                                new LiftCommand(robot, LiftSubsystem.LiftState.READY_FOR_OZ).alongWith(
-//                                                new WaitCommand(400),
-//                                                new InstantCommand(()-> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN))
-//                                        )),
-//                                new InstantCommand(),
-//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS  && !HOLDING_SAMPLE
-//                                        && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN
-//                        )/*.interruptOn(
-//                                operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).
-//                        )*/
-//                );
-
-
         // Deposit high basket setup
         operator.getGamepadButton(GamepadKeys.Button.CIRCLE)
                 .whenPressed(new ConditionalCommand(
@@ -338,7 +285,9 @@ public class TwoDriverTeleop extends CommandOpMode {
         // Deposit low basket setup
         operator.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new ConditionalCommand(
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_LOW_BUCKET),
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_LOW_BUCKET).andThen(
+                                new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED))
+                        ),
                         new InstantCommand(), () -> HOLDING_SAMPLE && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE)
                 );
 
@@ -374,7 +323,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                             new IntakeSpecimenCommand(robot)
                                     .alongWith(new InstantCommand(()-> gamepad1.rumble(200))),
                             new InstantCommand(),
-                            ()-> robot.lift.getLiftState() == LiftSubsystem.LiftState.INTAKE_SPECIMEN
+                            ()-> robot.lift.getLiftState() == LiftSubsystem.LiftState.INTAKE_SPECIMEN && !HOLDING_SAMPLE
                         )
                 );
 
@@ -405,10 +354,13 @@ public class TwoDriverTeleop extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN)
-                                        .alongWith(new InstantCommand(()-> {
-                                            gamepad1.rumble(200);
-                                            robot.depositClawServo.setPosition(DEPOSIT_CLAW_MICRO_OPEN_POS);
-                                        })),
+                                        .alongWith(
+                                                new InstantCommand(()-> {
+                                                    gamepad1.rumble(200);
+                                                    robot.depositClawServo.setPosition(DEPOSIT_CLAW_MICRO_OPEN_POS);
+                                                }),
+                                                new HoverCommand(robot, 50).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).get())
+                                        ),
                                 new InstantCommand(),
                                 ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP
                         )
@@ -421,7 +373,8 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitUntilCommand(()->robot.lift.liftReached()),
                                         new DepositSpecimenCommand(robot),
-                                        new WaitCommand(200)
+                                        new WaitCommand(200),
+                                        new ResetLiftCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).get())
                                 ),
                                 new InstantCommand(),
                                 ()-> robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN
@@ -490,13 +443,9 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         // manual extendo control
         //robot.extendoActuator.disableManualPower();
-        if (Math.abs(gamepad2.right_stick_y)>= 0.2 && INTAKING_SAMPLES /*
-                (robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE
-                || robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
-                || robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL)*/){
-            //robot.extendoActuator.enableManualPower();
-            robot.intake.setExtendoTargetTicks((int)(robot.intake.getExtendoPosTicks()+(
-                    Math.copySign(Math.pow(Math.abs(gamepad2.right_stick_y), 2), -gamepad2.right_stick_y)*300)));
+        if (Math.abs(gamepad2.right_stick_y)>= 0.2 && INTAKING_SAMPLES){
+            robot.intake.setExtendoTargetTicks((int)(robot.intake.getExtendoPosTicks()+
+                    MathUtils.extendoJoystickScalar(-gamepad2.right_stick_y, 0.025, 0.4, 0.2, 0.98, 0.7, 1.5, 250)));
         }
 
         // emergency lift override
@@ -536,30 +485,6 @@ public class TwoDriverTeleop extends CommandOpMode {
         }
 
         // TODO: fix using turn to
-//        // align to closest cardinal point
-//        if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
-//            double alignmentHeading = ((int) Math.round(currentHeading / (Math.PI/2))) * (Math.PI/2);
-//
-//            if (Math.abs(alignmentHeading-currentHeading) > Math.toRadians(0.5)){
-//                rotation = dtHeadingLockOn.calculate(currentHeading, alignmentHeading);
-//                rotation = MathUtils.clamp(rotation,-1, 1);
-//            }
-//        }
-
-
-//        if(Math.abs(forward) >= 0.1 && Math.abs(strafe) >= 0.1 && Math.abs(rotation) >= 0.1){
-//            //if(!IS_DT_MANUAL_CONTROL)robot.follower.breakFollowing();
-//            IS_DT_MANUAL_CONTROL = true;
-//            robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
-//            robot.previousPose = robot.follower.getPose();
-//        }
-//        else if (IS_DT_AUTO_ALIGNING){
-//            robot.previousPose = robot.follower.getPose();
-//        }
-//        else{
-//            robot.follower.holdPoint(robot.previousPose); //unpushable robot
-//            IS_DT_MANUAL_CONTROL = false;
-//        }
 
         robot.follower.setTeleOpMovementVectors(forward, strafe, rotation, true);
 //        if (!IS_DT_AUTO_ALIGNING){
@@ -575,6 +500,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         double loop = System.nanoTime();
         robot.telemetryA.addData("hz ", 1000000000 / (loop - loopTime));
+        robot.telemetryA.addData("Operator rigth joystick y value", -operator.getRightY());
         robot.telemetryA.addData("lift pos", robot.liftActuator.getPosition());
         robot.telemetryA.addData("extendo pos ticks", robot.intake.getExtendoPosTicks());
 //        robot.telemetryA.addData("extendo pos inches", robot.intake.getExtendoPosInches());
@@ -592,17 +518,17 @@ public class TwoDriverTeleop extends CommandOpMode {
                 robot.telemetryA.addData("Closest result color: ", result.color());
             }
         }
+        // Vision testing
+        //FtcDashboard.getInstance().sendImage(robot.vision.draw(320,240));
 
-        FtcDashboard.getInstance().sendImage(robot.vision.draw(320,240));
-
-        robot.telemetryA.addData("is busy", robot.follower.isBusy());
-        robot.telemetryA.addData("intake pivot state", robot.intake.pivotState);
+        //robot.telemetryA.addData("current pose", robot.follower.getPose());
+       // robot.telemetryA.addData("is busy", robot.follower.isBusy());
+        //robot.telemetryA.addData("intake pivot state", robot.intake.pivotState);
         robot.telemetryA.addData("grabbing mode", GRABBING_MODES.current());
         robot.telemetryA.addData("intaking samples", INTAKING_SAMPLES);
         robot.telemetryA.addData("intaking specimens", INTAKING_SPECIMENS);
         robot.telemetryA.addData("holding sample", HOLDING_SAMPLE);
         robot.telemetryA.addData("holding specimen", HOLDING_SPECIMEN);
-        robot.telemetryA.addData("current pose", robot.follower.getPose());
         //robot.telemetryA.addData("robot voltage", robot.follower.getVoltage());
 
 
@@ -619,6 +545,6 @@ public class TwoDriverTeleop extends CommandOpMode {
 
     @Override
     public void end(){
-        robot.vision.stop();
+        //robot.vision.stop();
     }
 }

@@ -2,13 +2,11 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.specAutoStartPose;
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.depositLocation;
-import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.intermediatePickupLocation;
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.pickupLocation;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -28,8 +26,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
@@ -330,16 +326,15 @@ public class SixSpecAuto extends CommandOpMode {
                         // Intake sample from sub
                         new DepositSpecimenCommand(robot).andThen(
                                 new ParallelCommandGroup(
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.TRANSFER),
-                                        new WaitCommand(3000).andThen(
-                                                new CVIntakeCommand(robot, "blue"))
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED),
+                                        new CVIntakeCommand(robot, "blue")
                                 )
                         ),
                         // pickup spec 2
                         new TransferCommand(robot),
                         new ParallelCommandGroup(
                                 new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN).andThen(
-                                        new WaitCommand(1000).alongWith(
+                                        new WaitCommand(200).alongWith(
                                                 new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0)
                                         ),
                                         new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.OPEN))

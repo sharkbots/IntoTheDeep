@@ -45,7 +45,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                                 new InstantCommand(()->robot.follower.startTeleopDrive())
                         ),null)
                 ),
-                new WaitCommand(3000),
+                //new WaitCommand(3000),
                 new SetIntakeCommand(robot, IntakeSubsystem.PivotState.INTAKE),
                 new WaitCommand(30),
 //                new InstantCommand(()-> {

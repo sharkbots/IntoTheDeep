@@ -92,4 +92,12 @@ public class HoldPointCommand extends CommandBase {
             return false;
         }
     }
+
+    @Override
+    public void end(boolean interrupted){
+//        FollowerConstants.translationalPIDFCoefficients.setCoefficients(.1, 0, .01, 0);
+//        FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.0005;
+//        FollowerConstants.useSecondaryTranslationalPID = true;
+
+    }
 }

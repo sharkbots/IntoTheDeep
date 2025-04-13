@@ -198,7 +198,7 @@ public class Globals {
     // Bottom servo is 0.01 less than top servo
     // Range (with top servo): 0.75 (wall pickup) --> 0.2 (out the front)
     public static double DEPOSIT_ARM_PIVOT_TRANSFER_POS = 0.315;
-    public static double DEPOSIT_ARM_PIVOT_BUCKET_POS = 0.65;
+    public static double DEPOSIT_ARM_PIVOT_BUCKET_POS = 0.6;
     public static double DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS = 0.76;
     public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS = 0.29;
     public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_TELEOP_POS = 0.29;
@@ -207,22 +207,24 @@ public class Globals {
     // Deposit Claw Pivot
     // Full range: 0.40 --> 1.0
     public static double DEPOSIT_CLAW_PIVOT_TRANSFER_POS = 0.37;
-    public static double DEPOSIT_CLAW_PIVOT_BUCKET_POS = 0.69; //0.81
+    public static double DEPOSIT_CLAW_PIVOT_BUCKET_POS = 0.705; //0.81
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS = 0.64;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_AUTONOMOUS_POS = 0.55;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS = 0.49;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_TELEOP_POS = 0.55;
-    public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_TELEOP_POS = 0.61;
+    public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_TELEOP_POS = 0.63;
     public static double DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS = 0.5;
 
     // Deposit Claw
-    public static double DEPOSIT_CLAW_OPEN_POS = 0.47;
+    public static double DEPOSIT_CLAW_OPEN_POS = 0.38;
+    public static double DEPOSIT_CLAW_OPEN_TRANSFER_POS = 0.47;
     public static double DEPOSIT_CLAW_CLOSED_POS = 0.70;
     public static double DEPOSIT_CLAW_MICRO_OPEN_POS = 0.64;
 
     // Deposit Claw Rotation
     public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.89; //0.3365
     public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.89; //0.0575
+    public static double DEPOSIT_CLAW_ROTATION_LOW_BUCKET_SCORING_POS = 0.615;
     public static double DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS = 0.89; //0.615
     public static double DEPOSIT_CLAW_ROTATION_SPECIMEN_SCORING_AUTONOMOUS_POS = 0.3365;
 
@@ -230,13 +232,13 @@ public class Globals {
     // Deposit Slides
     public static int MAX_SLIDES_EXTENSION = 2070;
     public static int HOLDING_SPECIMEN_HEIGHT = 100;
-    public static int LOW_BUCKET_HEIGHT = 1030;
-    public static int HIGH_BUCKET_HEIGHT = 2030;
+    public static int LOW_BUCKET_HEIGHT = 800;
+    public static int HIGH_BUCKET_HEIGHT = 1925;
     public static int LOW_SPECIMEN_HEIGHT = 85;
     public static int HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT = 885;
     public static int HIGH_SPECIMEN_AUTONOMOUS_HEIGHT = 480;
-    public static int HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT = 700;
-    public static int HIGH_SPECIMEN_TELEOP_HEIGHT = 800;
+    public static int HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT = 950;
+    public static int HIGH_SPECIMEN_TELEOP_HEIGHT = 1250;
     public static int PUSHING_SPECIMEN_HEIGHT = 650;
     public static int LVL1_ASCENT_HEIGHT = 825;
     public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2000;

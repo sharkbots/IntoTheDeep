@@ -11,9 +11,9 @@ import com.pedropathing.pathgen.Point;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 public class SpecimenCycleGenerator {
-    public static Pose pickupLocation = new Pose(9.095, 32.342, Math.toRadians(180));
+    public static Pose pickupLocation = new Pose(9.595+2, 32.342, Math.toRadians(180));
     public static Pose intermediatePickupLocation = new Pose(pickupLocation.getX()+5, pickupLocation.getY(), pickupLocation.getHeading());
-    public static Pose depositLocation = new Pose(40, 67.72/*+1.5+2*/, Math.toRadians(0));
+    public static Pose depositLocation = new Pose(40-1.5, 67.72/*+1.5+2*/, Math.toRadians(0));
     //public static Pose intermediateDepositLocation = new Pose(depositLocation.getX(), depositLocation.getY()-3, depositLocation.getHeading());
     //public static Pose depositSetupLocation = new Pose(depositLocation.getX()-10, intermediateDepositLocation.getY(), depositLocation.getHeading());
     private final double depositGap = 1.5;

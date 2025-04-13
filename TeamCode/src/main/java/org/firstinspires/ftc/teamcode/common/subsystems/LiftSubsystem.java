@@ -19,6 +19,7 @@ public class LiftSubsystem extends SubsystemWrapper {
 
     public enum ClawState {
         OPEN(DEPOSIT_CLAW_OPEN_POS),
+        OPEN_TRANSFER(DEPOSIT_CLAW_OPEN_TRANSFER_POS),
         MICRO_OPEN(DEPOSIT_CLAW_MICRO_OPEN_POS),
         CLOSED(DEPOSIT_CLAW_CLOSED_POS);
 
@@ -35,7 +36,6 @@ public class LiftSubsystem extends SubsystemWrapper {
 
     public enum LiftState {
         RETRACTED,
-        TRANSFER,
         INTAKE_SPECIMEN,
         HOLDING_SPECIMEN,
         DEPOSIT_LOW_SPECIMEN,
@@ -104,7 +104,6 @@ public class LiftSubsystem extends SubsystemWrapper {
      */
     private int getActuatorPosition(LiftState state) {
         switch (state) {
-            case TRANSFER:
             case RETRACTED:
             case INTAKE_SPECIMEN:
                 return 0;
@@ -134,7 +133,6 @@ public class LiftSubsystem extends SubsystemWrapper {
      */
     private double getClawPivotPosition(LiftState state) {
         switch (state) {
-            case TRANSFER:
             case RETRACTED:
             case LVL1_ASCENT:
             case LVL2_ASCENT_SETUP:
@@ -167,7 +165,6 @@ public class LiftSubsystem extends SubsystemWrapper {
      */
     private double getArmPivotPosition(LiftState state) {
         switch (state) {
-            case TRANSFER:
             case RETRACTED:
             case LVL1_ASCENT:
             case LVL2_ASCENT_SETUP:
@@ -196,7 +193,6 @@ public class LiftSubsystem extends SubsystemWrapper {
      */
     private double getClawRotationPosition(LiftState state) {
         switch (state) {
-            case TRANSFER:
             case RETRACTED:
             case LVL1_ASCENT:
             case INTAKE_SPECIMEN:
@@ -213,6 +209,7 @@ public class LiftSubsystem extends SubsystemWrapper {
                 }
                 else return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
             case DEPOSIT_LOW_BUCKET:
+                return DEPOSIT_CLAW_ROTATION_LOW_BUCKET_SCORING_POS;
             case DEPOSIT_HIGH_BUCKET:
                 return IS_AUTONOMOUS ? DEPOSIT_CLAW_ROTATION_AUTO_BUCKET_SCORING_POS : DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS;
 
