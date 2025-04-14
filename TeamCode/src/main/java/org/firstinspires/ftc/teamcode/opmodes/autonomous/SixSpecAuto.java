@@ -159,7 +159,10 @@ public class SixSpecAuto extends CommandOpMode {
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .setZeroPowerAccelerationMultiplier(6)
+                        .setPathEndTValueConstraint(0.97)
+                        //.addParametricCallback(0.7, ()-> robot.follower.setMaxPower(0.7))
+                        //.setPathEndVelocityConstraint(3)
+                        .setZeroPowerAccelerationMultiplier(3)
 //                        .addPath(
 //                                // Line 8
 //                                new BezierLine(
@@ -342,7 +345,7 @@ public class SixSpecAuto extends CommandOpMode {
                         new TransferCommand(robot),
                         new ParallelCommandGroup(
                                 new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN).andThen(
-                                        new WaitCommand(200).alongWith(
+                                        new WaitCommand(300).alongWith(
                                                 new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0)
                                         ),
                                         new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.OPEN))
@@ -354,21 +357,26 @@ public class SixSpecAuto extends CommandOpMode {
                                                                 new BezierCurve(
                                                                         robot.follower.getPose(),
                                                                         new Pose(30.44,  robot.follower.getPose().getY()),
-                                                                        new Pose(40.3, pickupLocation.getY()),
+                                                                        new Pose(45.3, pickupLocation.getY()),
                                                                         allianceColor.convert(pickupLocation, Pose.class)
                                                                 )
                                                         )
                                                         .setPathEndTValueConstraint(0.95)
                                                         .setConstantHeadingInterpolation(Math.toRadians(0))
-                                                        .setZeroPowerAccelerationMultiplier(4)
+                                                        //.setPathEndVelocityConstraint(3)
+                                                        .setPathEndHeadingConstraint(Math.toRadians(3))
+                                                        .setZeroPowerAccelerationMultiplier(3.5)
+                                                        //.addParametricCallback(0.8, ()-> robot.follower.setMaxPower(0.7))
                                                         .build()
                                         )
                                         , null)
                         ),
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
+
                         new IntakeSpecimenAutoCommand(robot).alongWith(
                                 // Deposit spec 2
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(300),
                                         new FollowPathChainCommand(robot.follower, paths.get(1))
                                                 .alongWith(
                                                         new SequentialCommandGroup(
@@ -421,10 +429,12 @@ public class SixSpecAuto extends CommandOpMode {
                                 .alongWith(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
                                 ),
+
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new IntakeSpecimenAutoCommand(robot).alongWith(
                                 // Deposit spec 4
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(300),
                                         new FollowPathChainCommand(robot.follower, paths.get(4))
                                                 .alongWith(
                                                         new SequentialCommandGroup(
@@ -442,10 +452,12 @@ public class SixSpecAuto extends CommandOpMode {
                                 .alongWith(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
                                 ),
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
+
                         new IntakeSpecimenAutoCommand(robot).alongWith(
                                 // Deposit spec 5
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(300),
                                         new FollowPathChainCommand(robot.follower, paths.get(6))
                                                 .alongWith(
                                                         new SequentialCommandGroup(
@@ -463,10 +475,12 @@ public class SixSpecAuto extends CommandOpMode {
                                 .alongWith(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
                                 ),
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
+
                         new IntakeSpecimenAutoCommand(robot).alongWith(
                                 // Deposit spec 6
                                 new SequentialCommandGroup(
-                                        new WaitCommand(200),
+                                        new WaitCommand(300),
                                         new FollowPathChainCommand(robot.follower, paths.get(8))
                                                 .alongWith(
                                                         new SequentialCommandGroup(

@@ -445,7 +445,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         //robot.extendoActuator.disableManualPower();
         if (Math.abs(gamepad2.right_stick_y)>= 0.2 && INTAKING_SAMPLES){
             robot.intake.setExtendoTargetTicks((int)(robot.intake.getExtendoPosTicks()+
-                    MathUtils.extendoJoystickScalar(-gamepad2.right_stick_y, 0.025, 0.4, 0.2, 0.98, 0.7, 1.5, 250)));
+                    MathUtils.extendoJoystickScalar(-gamepad2.right_stick_y, 0.025, 0.4, 0.2, 0.98, 0.6, 1.5, 250)));
         }
 
         // emergency lift override
