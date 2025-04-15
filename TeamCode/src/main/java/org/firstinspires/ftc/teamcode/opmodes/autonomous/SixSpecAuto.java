@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
-import static org.firstinspires.ftc.teamcode.common.utils.Globals.specAutoStartPose;
+
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.depositLocation;
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.pickupLocation;
 
@@ -23,7 +23,9 @@ import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
@@ -32,9 +34,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.IntakeSpecimenAutoCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.IntakeSpecimenAutoCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.LiftCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.ResetLiftCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
@@ -59,14 +59,73 @@ public class SixSpecAuto extends CommandOpMode {
 
     public GamepadEx operator;
     ConfigMenu menu;
+    boolean alreadyCompiled = false;
 
     private final ArrayList<PathChain> paths = new ArrayList<>();
 
     private DashboardPoseTracker dashboardPoseTracker;
 
-    public void generatePaths(){
+    public SequentialCommandGroup specimenCycle (int cycleNum) {
+        return new SequentialCommandGroup();
+    }
+    @Override
+    public void initialize() {
+        super.reset();
+        Globals.IS_AUTONOMOUS = true;
+        Globals.GRABBING_MODES.set(Globals.GRABBING_MODES.SPECIMEN);
+
+        timer.reset();
+
+        operator = new GamepadEx(gamepad2);
+
+        robot.setTelemetry(telemetry);
+        robot.telemetryA.setDisplayFormat(Telemetry.DisplayFormat.HTML);
+        sleep(500);
+
+        menu = new ConfigMenu(operator, robot);
+        menu.setConfigurationObject(new Globals.SpecAutonomousConfig());
+        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(menu::backupCurrentField);
+
+        robot.init(hardwareMap);
+
+        robot.follower.setMaxPower(1);
+
+        robot.reset();
+
+        while(opModeInInit()){
+            menu.periodic();
+
+            if (menu.isLocked() && !alreadyCompiled){
+                alreadyCompiled = true;
+
+                Globals.ALLIANCE_COLOR = Globals.SampleAutonomousConfig.allianceColor;
+
+                generatePaths();
+                generateSchedule();
+                robot.telemetryA.addLine("recompiled");
+            }
+            else if (!menu.isLocked()){
+                alreadyCompiled = false;
+                super.reset();
+            }
+            robot.telemetryA.addData("right trigger", operator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+        }
+
+        robot.intake.setExtendoTargetTicks(0);
+        robot.intake.setPivotState(IntakeSubsystem.PivotState.FULLY_RETRACTED);
+        robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN);
+        robot.intake.setClawRotationDegrees(0);
+        //robot.reset();
+        robot.lift.updateState(LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP);
+        robot.lift.setLiftTargetPosTicks(150);
+        robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED);
+
+    }
+
+
+    private void generatePaths(){
         //robot.follower.setStartingPose(allianceColor.convert(Globals.preloadSampleStartPose));
-        robot.follower.setPose(allianceColor.convert(specAutoStartPose, Pose.class));
+        robot.follower.setPose(allianceColor.convert(Globals.specAutoStartPose, Pose.class));
 
 
         SpecimenCycleGenerator specimenCyclePaths = new SpecimenCycleGenerator()
@@ -79,7 +138,7 @@ public class SixSpecAuto extends CommandOpMode {
                         .addPath(
                                 // Line 1
                                 new BezierLine(
-                                        allianceColor.convert(specAutoStartPose, Point.class),
+                                        allianceColor.convert(Globals.specAutoStartPose, Point.class),
                                         allianceColor.convert(depositLocation, Point.class)
                                 )
                         )
@@ -242,30 +301,7 @@ public class SixSpecAuto extends CommandOpMode {
 //        ); // path 9
     }
 
-    public SequentialCommandGroup specimenCycle (int cycleNum) {
-        return new SequentialCommandGroup();
-    }
-    @Override
-    public void initialize() {
-        super.reset();
-        Globals.IS_AUTONOMOUS = true;
-        Globals.GRABBING_MODES.set(Globals.GRABBING_MODES.SPECIMEN);
-        //Globals.ALLIANCE_FIXED_VAL = Globals.AllianceColor.BLUE;
-
-        operator = new GamepadEx(gamepad2);
-
-        robot.setTelemetry(telemetry);
-
-        timer.reset();
-
-        super.reset();
-
-        robot.init(hardwareMap);
-
-        robot.follower.setMaxPower(1); //0.7
-
-        generatePaths();
-
+    private void generateSchedule() {
         schedule(
                 new RunCommand(robot::clearChubCache),
                 new RunCommand(robot::read),
@@ -337,8 +373,8 @@ public class SixSpecAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED),
                                         new HoverCommand(robot, 300).andThen(
                                                 new IntakeSampleCommand(robot)
-                                        )
-                                        //new CVIntakeCommand(robot, "blue")
+                                        ),
+                                        new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? "blue":"red")
                                 )
                         ),
                         // pickup spec 2
@@ -497,16 +533,6 @@ public class SixSpecAuto extends CommandOpMode {
 
                 )
         );
-        robot.intake.setExtendoTargetTicks(0);
-        robot.intake.setPivotState(IntakeSubsystem.PivotState.FULLY_RETRACTED);
-        robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN);
-        robot.intake.setClawRotationDegrees(0);
-        //robot.reset();
-        robot.lift.updateState(LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP);
-        robot.lift.setLiftTargetPosTicks(150);
-        robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED);
-
-
     }
 
     @Override
@@ -533,8 +559,8 @@ public class SixSpecAuto extends CommandOpMode {
             float[] offsets = robot.vision.selected();
             Sample result = robot.vision.selectedSample();
             if (result != null) {
-                robot.telemetryA.addData("Closest result (Pixels): ", result.x() + ", " + result.y());
-                robot.telemetryA.addData("Closest result (Offset): ", offsets[0] + ", " + offsets[1] + ", " + offsets[2]);
+                robot.telemetryA.addData("Closest result (Pixels): ", String.format("%.1f, %.1f",result.x(), result.y()));
+                robot.telemetryA.addData("Closest result (Offset): ", String.format("%.1f, %.1f, %.1f", offsets[0], offsets[1], offsets[2]));
                 robot.telemetryA.addData("Closest result color: ", result.color());
             }
         }

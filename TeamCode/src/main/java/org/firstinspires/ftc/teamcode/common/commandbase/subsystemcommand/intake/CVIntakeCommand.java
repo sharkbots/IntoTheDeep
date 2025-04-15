@@ -44,7 +44,10 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                                 ),
                                 new InstantCommand(()->robot.follower.startTeleopDrive())
                         ),null)
-                ),
+                )
+
+                /***********
+                ,
                 //new WaitCommand(3000),
                 new SetIntakeCommand(robot, IntakeSubsystem.PivotState.INTAKE),
                 new WaitCommand(30),
@@ -64,6 +67,10 @@ public class CVIntakeCommand extends SequentialCommandGroup {
 //                    robot.telemetryA.addData("about to pivot up (cv intake)", 0);
 //                    robot.telemetryA.update();}),
                 new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL)
+                ***********/
+
+
+
                // new InstantCommand(() -> robot.intake.setPivotState(IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE)),
 //                new InstantCommand(()->{
 //                    robot.telemetryA.addData("sent pivot command (cv intake)", 0);

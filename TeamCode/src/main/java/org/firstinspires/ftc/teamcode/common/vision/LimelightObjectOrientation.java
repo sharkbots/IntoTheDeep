@@ -54,12 +54,12 @@ public class LimelightObjectOrientation  {
      */
     public void                         start(List<Sample> samples) {
 
-        mLogger.addLine("starting object orientation pipeline");
+//        mLogger.addLine("starting object orientation pipeline");
 
         // Format samples into pipeline inputs
         double[] data = new double[ Math.min(1,samples.size()) * 7 + 1];
 
-        mLogger.addLine(""+samples.size());
+//        mLogger.addLine(""+samples.size());
         data[0] = mLastProcessed;
         int i_data = 1;
         for (int i_sample = 0; i_sample < Math.min(1,samples.size()); i_sample++) {
@@ -72,7 +72,7 @@ public class LimelightObjectOrientation  {
             else if (color == Sample.Color.BLUE)   { col = 1; }
             else if (color == Sample.Color.YELLOW) { col = 2; }
 
-            mLogger.addLine("" + sample.index());
+//            mLogger.addLine("" + sample.index());
 
             data[i_data] = sample.index(); i_data++;
             data[i_data] = sample.x(); i_data++;
@@ -83,7 +83,7 @@ public class LimelightObjectOrientation  {
             data[i_data] = sample.area(); i_data ++;
         }
 
-        mLogger.addLine(""+data.length);
+//        mLogger.addLine(""+data.length);
 
         mWebcam.pipelineSwitch(mPipeline);
         mWebcam.start();
@@ -102,21 +102,21 @@ public class LimelightObjectOrientation  {
 
         LLResult results = mWebcam.getLatestResult();
         if(results != null) {
-            mLogger.addLine(""+mWaitingList.size());
-            mLogger.addLine(""+results.getPipelineIndex());
+//            mLogger.addLine(""+mWaitingList.size());
+//            mLogger.addLine(""+results.getPipelineIndex());
             double[] orientations = results.getPythonOutput();
 
-            mLogger.addLine("" + orientations[0]);
-            mLogger.addLine("" + mLastProcessed);
-            mLogger.addLine("" + orientations[4]);
-            mLogger.addLine("" + orientations[5]);
-            mLogger.addLine("" + orientations[6]);
+//            mLogger.addLine("" + orientations[0]);
+//            mLogger.addLine("" + mLastProcessed);
+//            mLogger.addLine("" + orientations[4]);
+//            mLogger.addLine("" + orientations[5]);
+//            mLogger.addLine("" + orientations[6]);
             if (orientations[0] == mLastProcessed) {
                 for (int i_sample = 0; i_sample < (int) ((orientations.length - 1) / 10); i_sample++) {
 
                     int index = (int) (orientations[i_sample * 10 + 1]);
                     if(index != 0) {
-                        mLogger.addLine("" + index);
+//                        mLogger.addLine("" + index);
 
                         double orientation = orientations[i_sample * 10 + 5];
                         int col = (int) orientations[i_sample * 10 + 4];
@@ -131,7 +131,7 @@ public class LimelightObjectOrientation  {
                         }
 
                         for (int j_sample = 0; j_sample < mWaitingList.size(); j_sample++) {
-                            mLogger.addLine("" + mWaitingList.get(j_sample).index());
+//                            mLogger.addLine("" + mWaitingList.get(j_sample).index());
                             if (index == mWaitingList.get(j_sample).index()) {
                                 if (mShallUpdateColor) {
                                     mWaitingList.get(j_sample).color(color);

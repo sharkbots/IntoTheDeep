@@ -37,7 +37,6 @@ import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.PreloadSampleCycleGenerator;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SubSampleCycleGenerator;
 
-import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
 
 import java.util.ArrayList;
@@ -64,7 +63,70 @@ public class SixSampleAuto extends CommandOpMode {
     PreloadSampleCycleGenerator preloadSampleCyclePathGen;
     SubSampleCycleGenerator subSampleCyclePathGen;
 
-    public void generatePaths(){
+    @Override
+    public void initialize() {
+        super.reset();
+        Globals.IS_AUTONOMOUS = true;
+        Globals.GRABBING_MODES.set(Globals.GRABBING_MODES.SAMPLE);
+
+        timer.reset();
+
+        operator = new GamepadEx(gamepad2);
+
+        robot.setTelemetry(telemetry);
+        robot.telemetryA.setDisplayFormat(Telemetry.DisplayFormat.HTML);
+        sleep(500);
+
+        menu = new ConfigMenu(operator, robot);
+        menu.setConfigurationObject(new Globals.SampleAutonomousConfig());
+        operator.getGamepadButton(GamepadKeys.Button.CROSS).whenPressed(menu::backupCurrentField);
+
+        robot.init(hardwareMap);
+
+        robot.follower.setMaxPower(1);
+
+        preloadSampleCyclePathGen = new PreloadSampleCycleGenerator()
+                .setAlliance(allianceColor)
+                .setFollower(robot.follower);
+
+        subSampleCyclePathGen = new SubSampleCycleGenerator()
+                .setAlliance(allianceColor)
+                .setFollower(robot.follower);
+
+        robot.reset();
+        robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN);
+
+        while(opModeInInit()){
+            menu.periodic();
+//            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1X, Globals.sampleAutoStartPose.getX(), 12.5);
+//            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1Y, 12, 42.0);
+
+            //MathUtils.clamp(Globals.SampleAutonomousConfig.samp2X, -11, 2);
+            //MathUtils.clamp(Globals.SampleAutonomousConfig.samp2Y, -8, 8);
+
+
+            if (menu.isLocked() && !alreadyCompiled){
+                alreadyCompiled = true;
+
+                Globals.ALLIANCE_COLOR = Globals.SampleAutonomousConfig.allianceColor;
+
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X+72, Globals.SampleAutonomousConfig.samp1Y+72, Point.CARTESIAN), 1);
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X+72, Globals.SampleAutonomousConfig.samp2Y+72, Point.CARTESIAN), 2);
+
+                generatePaths();
+                generateSchedule();
+                robot.telemetryA.addLine("recompiled");
+            }
+            else if (!menu.isLocked()){
+                alreadyCompiled = false;
+                super.reset();
+            }
+            robot.telemetryA.addData("right trigger", operator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+        }
+    }
+
+
+    private void generatePaths(){
         paths.clear();
         //robot.follower.setStartingPose(allianceColor.convert(Globals.sampleAutoStartPose, Pose.class));
         robot.follower.setPose(allianceColor.convert(Globals.sampleAutoStartPose, Pose.class));
@@ -74,11 +136,11 @@ public class SixSampleAuto extends CommandOpMode {
                 robot.follower.pathBuilder()
                         .addPath(
                                 new BezierLine(
-                                        new Point(sampleAutoStartPose),
+                                        new Point(Globals.sampleAutoStartPose),
                                         new Point(15.351, 126.486, Point.CARTESIAN)
                                 )
                         )
-                        .setLinearHeadingInterpolation(sampleAutoStartPose.getHeading(), Math.toRadians(315))
+                        .setLinearHeadingInterpolation(Globals.sampleAutoStartPose.getHeading(), Math.toRadians(315))
                         .addPath(
                                 new BezierLine(
                                         new Point(15.351, 126.486, Point.CARTESIAN),
@@ -138,68 +200,6 @@ public class SixSampleAuto extends CommandOpMode {
 
 
     }
-    @Override
-    public void initialize() {
-        super.reset();
-
-        operator = new GamepadEx(gamepad2);
-
-        Globals.IS_AUTONOMOUS = true;
-        Globals.GRABBING_MODES.set(GRABBING_MODES.SAMPLE);
-
-        timer.reset();
-
-        robot.setTelemetry(telemetry);
-        robot.telemetryA.setDisplayFormat(Telemetry.DisplayFormat.HTML);
-        sleep(500);
-        menu = new ConfigMenu(operator, robot);
-        menu.setConfigurationObject(new Globals.SampleAutonomousConfig());
-        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(menu::backupCurrentField);
-
-        robot.init(hardwareMap);
-
-
-        robot.follower.setMaxPower(1);
-
-        preloadSampleCyclePathGen = new PreloadSampleCycleGenerator()
-                .setAlliance(allianceColor)
-                .setFollower(robot.follower);
-
-        subSampleCyclePathGen = new SubSampleCycleGenerator()
-                .setAlliance(allianceColor)
-                .setFollower(robot.follower);
-
-        robot.reset();
-        robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN);
-
-        while(opModeInInit()){
-            menu.periodic();
-//            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1X, Globals.sampleAutoStartPose.getX(), 12.5);
-//            MathUtils.clamp(Globals.SampleAutonomousConfig.samp1Y, 12, 42.0);
-
-            //MathUtils.clamp(Globals.SampleAutonomousConfig.samp2X, -11, 2);
-            //MathUtils.clamp(Globals.SampleAutonomousConfig.samp2Y, -8, 8);
-
-
-            if (menu.isLocked() && !alreadyCompiled){
-                alreadyCompiled = true;
-
-                ALLIANCE_COLOR = SampleAutonomousConfig.allianceColor;
-
-                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X+72, Globals.SampleAutonomousConfig.samp1Y+72, Point.CARTESIAN), 1);
-                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X+72, Globals.SampleAutonomousConfig.samp2Y+72, Point.CARTESIAN), 2);
-
-                generatePaths();
-                generateSchedule();
-                robot.telemetryA.addLine("recompiled");
-            }
-            else if (!menu.isLocked()){
-                alreadyCompiled = false;
-                super.reset();
-            }
-            robot.telemetryA.addData("right trigger", operator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
-        }
-    }
 
     private void generateSchedule() {
         schedule(
@@ -235,7 +235,7 @@ public class SixSampleAuto extends CommandOpMode {
                                             )
                                     )
                             ),
-                            new WaitCommand(SampleAutonomousConfig.waitOZinSeconds*1000),
+                            new WaitCommand(Globals.SampleAutonomousConfig.waitOZinSeconds*1000),
                             new ManualSampleIntakeCommand(robot),
                             new TransferCommand(robot),
 
@@ -252,7 +252,7 @@ public class SixSampleAuto extends CommandOpMode {
                             new DepositSampleCommand(robot)
                             ),
                             new InstantCommand(),
-                            ()->SampleAutonomousConfig.grabSecondPreload
+                            ()->Globals.SampleAutonomousConfig.grabSecondPreload
                         ),
 
                         // Pickup inside sample

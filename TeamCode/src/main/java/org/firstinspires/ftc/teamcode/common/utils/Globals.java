@@ -17,10 +17,17 @@ public class Globals {
 
     public static Pose END_OF_AUTO_POSE = new Pose(36, 36, Math.toRadians(90));
 
-    public static class SampleAutonomousConfig{
-        public static AllianceColor allianceColor = AllianceColor.BLUE;
+
+    public static class SpecAutonomousConfig  {
+        public static Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
+        public static Globals.GRABBING_MODES grabbingMode = GRABBING_MODES.SPECIMEN;
+    }
+
+    public static class SampleAutonomousConfig  {
+        public static Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
+        public static Globals.GRABBING_MODES grabbingMode = GRABBING_MODES.SAMPLE;
         public static boolean grabSecondPreload = false;
-//        public static int numSubCycles = 1;
+        //        public static int numSubCycles = 1;
         public static double samp1X = -6;
         public static double samp1Y = 12;
         public static double samp2X = -6;
@@ -29,6 +36,7 @@ public class Globals {
         public static long waitOZinSeconds = 0;
 //        public static double samp2X = 0;
 //        public static double samp2Y = 0;
+
     }
 
 

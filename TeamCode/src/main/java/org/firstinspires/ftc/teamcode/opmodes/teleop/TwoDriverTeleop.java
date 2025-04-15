@@ -18,9 +18,11 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
@@ -91,16 +93,16 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.swapYellow();
 
         // TESTING: AUTO PICKUP
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-//                .whenPressed(
-//                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0).alongWith(
-//                                new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
-//                        )
-//                );
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-//                .whenPressed(
-//                        new CVIntakeCommand(robot, "red")
-//                );
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0).alongWith(
+                                new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
+                        )
+                );
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new CVIntakeCommand(robot, "red")
+                );
 
         // GENERAL RESET
         operator.getGamepadButton(GamepadKeys.Button.SQUARE)
@@ -507,14 +509,14 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
         robot.telemetryA.addData("runtime", timer.seconds());
 
-        robot.vision.detect(COLOR_SAMPLE_FILTERING);
+        robot.vision.detect("red");
         if(!robot.vision.samples().isEmpty()) {
             robot.telemetryA.addLine("samples found");
             float[] offsets = robot.vision.selected();
             Sample result = robot.vision.selectedSample();
             if (result != null) {
-                robot.telemetryA.addData("Closest result (Pixels): ", result.x() + ", " + result.y());
-                robot.telemetryA.addData("Closest result (Offset): ", offsets[0] + ", " + offsets[1] + ", " + offsets[2]);
+                robot.telemetryA.addData("Closest result (Pixels): ", String.format("%.1f, %.1f",result.x(), result.y()));
+                robot.telemetryA.addData("Closest result (Offset): ", String.format("%.1f, %.1f, %.1f", offsets[0], offsets[1], offsets[2]));
                 robot.telemetryA.addData("Closest result color: ", result.color());
             }
         }

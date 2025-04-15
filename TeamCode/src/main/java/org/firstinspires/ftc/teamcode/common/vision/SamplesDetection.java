@@ -120,12 +120,12 @@ public class SamplesDetection  {
     public void detect(String color) {
 
         selectColor(color);
-        mLogger.addLine(""+mColor);
+        mLogger.addLine("**DETECT COLOR** "+mColor);
 
         if (mMode == Mode.DETECT) {
 
             List<Sample> detections = mDetection.process();
-            mLogger.addLine("" + detections.size());
+            //mLogger.addLine("" + detections.size());
             if (!detections.isEmpty()) {
                 mOngoing.clear();
                 for (Sample sample : detections) {
@@ -134,8 +134,13 @@ public class SamplesDetection  {
                     sample.distanceY(-ground[0] + sCameraYOffset);
                     mOngoing.add(sample);
                 }
-                mOngoing.sort(Comparator.comparingDouble(s -> mergedRanking((Sample) s, mColor)));
-                mLogger.addLine("Switching to orientation");
+                mOngoing.sort(Comparator.comparingDouble(s -> mergedRanking(s, mColor)));
+
+                mOngoing.subList(1, mOngoing.size()).clear();
+
+                mLogger.addData("**LIST SIZE** ", mOngoing.size());
+
+//                mLogger.addLine("Switching to orientation");
                 mOrientation.start(mOngoing);
                 mMode = Mode.ORIENT;
             }
@@ -143,7 +148,9 @@ public class SamplesDetection  {
         else if (mMode == Mode.ORIENT) {
             List<Sample> oriented = mOrientation.process();
             if (!oriented.isEmpty()) {
-                mLogger.addLine("Switching back to detection");
+                mLogger.addData("**SELECT ORIENTED SIZE** ", mColor);
+
+//                mLogger.addLine("Switching back to detection");
                 mConsolidated.clear();
                 mConsolidated.addAll(oriented);
                 mSelected = mConsolidated.get(0);
@@ -153,7 +160,7 @@ public class SamplesDetection  {
             }
         }
 
-        mLogger.addLine("Processing image " + mImageIndex);
+//        mLogger.addLine("Processing image " + mImageIndex);
         mImageIndex++;
     }
 
@@ -165,6 +172,14 @@ public class SamplesDetection  {
 
     private static double confidenceRanking(Sample s) {
         return s.confidence();
+    }
+
+    private static double mergedRankingOnClaw(Sample s, Sample.Color color) {
+        double result = 10000;
+        if(s.color() == color || color == Sample.Color.UNKNOWN) {
+            result = s.distanceY();
+        }
+        return result;
     }
 
     private static double mergedRanking(Sample s, Sample.Color color) {
@@ -251,7 +266,7 @@ public class SamplesDetection  {
         result.append("</ul>\n");
         result.append("</details>\n");
 
-        mLogger.addLine(result.toString());
+        //mLogger.addLine(result.toString());
     }
 
     public void stop() {

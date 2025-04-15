@@ -56,7 +56,7 @@ public class LimelightObjectDetection {
     public void                             start() {
 
         if(mWebcam != null) {
-            mLogger.addLine("starting object detection pipeline");
+//            mLogger.addLine("starting object detection pipeline");
             mWebcam.pipelineSwitch(mPipeline);
             mWebcam.start();
         }
