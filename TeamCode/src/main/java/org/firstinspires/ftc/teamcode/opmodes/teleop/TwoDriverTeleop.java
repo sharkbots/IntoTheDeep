@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
@@ -227,7 +228,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(
-                                new ManualSampleIntakeCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                new IntakeSampleCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
                                         .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
                                         .andThen(new TransferCommand(robot))
 //                                            new ParallelRaceGroup(
@@ -250,7 +251,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(
-                                new ManualSampleIntakeCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                new IntakeSampleCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
                                         .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
                                         .andThen(
                                                 new ParallelRaceGroup(
