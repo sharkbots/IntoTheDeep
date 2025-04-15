@@ -18,9 +18,10 @@ import org.firstinspires.ftc.teamcode.common.commandbase.HoldPointCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
+import org.firstinspires.ftc.teamcode.common.vision.Sample;
 
 public class CVIntakeCommand extends SequentialCommandGroup {
-    public CVIntakeCommand(Robot robot, String color) {
+    public CVIntakeCommand(Robot robot, Sample.Color color) {
         // Build the command sequence
         super(
                 //new InstantCommand(()->robot.visionPortal.setProcessorEnabled(robot.sampleDetectionPipeline, false)),
@@ -28,7 +29,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                 new RunCommand(
                         ()-> robot.vision.detect(color))
                         // .withTimeout(2000) // TODO: activate when all is  so that it is fully protected against infinite loop
-                        .interruptOn(() -> !robot.vision.samples().isEmpty()),
+                        .interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color ).withTimeout(3000),
                 //new InstantCommand(()-> Globals.FREEZE_CAMERA_FRAME = true),
                 new ParallelCommandGroup(
                         new DeferredCommand(()-> new HoverCommand(robot,
@@ -44,30 +45,28 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                                 ),
                                 new InstantCommand(()->robot.follower.startTeleopDrive())
                         ),null)
-                )
-
-                /***********
-                ,
-                //new WaitCommand(3000),
-                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.INTAKE),
-                new WaitCommand(30),
-//                new InstantCommand(()-> {
-//                    robot.telemetryA.addData("about to close claw (cv intake)", 0);
-//                    robot.telemetryA.update();}),
-                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.CLOSED)),
+                ),
+                new IntakeSampleCommand(robot)
 //
-//                new InstantCommand(()->{
-//                    robot.telemetryA.addData("claw closed (cv intake)", 0);
-//                    robot.telemetryA.update();
-//                }),
-                // Step 6: Wait and transition to HOVERING_WITH_SAMPLE
-                new WaitCommand(230),
-//
-//                new InstantCommand(()-> {
-//                    robot.telemetryA.addData("about to pivot up (cv intake)", 0);
-//                    robot.telemetryA.update();}),
-                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL)
-                ***********/
+//                //new WaitCommand(3000),
+//                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.INTAKE),
+//                new WaitCommand(30),
+////                new InstantCommand(()-> {
+////                    robot.telemetryA.addData("about to close claw (cv intake)", 0);
+////                    robot.telemetryA.update();}),
+//                new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.CLOSED)),
+////
+////                new InstantCommand(()->{
+////                    robot.telemetryA.addData("claw closed (cv intake)", 0);
+////                    robot.telemetryA.update();
+////                }),
+//                // Step 6: Wait and transition to HOVERING_WITH_SAMPLE
+//                new WaitCommand(230),
+////
+////                new InstantCommand(()-> {
+////                    robot.telemetryA.addData("about to pivot up (cv intake)", 0);
+////                    robot.telemetryA.update();}),
+//                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL)
 
 
 

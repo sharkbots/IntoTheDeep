@@ -57,7 +57,10 @@ public class HoldPointCommand extends CommandBase {
         Vector ffTargetVector = new Vector(targetMagnitude+Globals.HOLDPOINT_MANUAL_FEEDFORWARD, targetVector.getTheta());
         robotPose.add(new Pose(ffTargetVector.getXComponent(), ffTargetVector.getYComponent(), 0));
 
+
+
         FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.2, 0, 0.01, 0);
+
         FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.3605;
         FollowerConstants.useSecondaryTranslationalPID = false;
 

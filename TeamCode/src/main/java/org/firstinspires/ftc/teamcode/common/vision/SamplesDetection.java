@@ -79,14 +79,15 @@ public class SamplesDetection  {
 
     }
     
-    private void                             selectColor(String color) {
+    private void                             selectColor(Sample.Color color) {
+        mColor = color;
 
-        mColor = Sample.Color.UNKNOWN;
-        if(color != null) {
-            if (color.equals("red")) { mColor = Sample.Color.RED; }
-            else if (color.equals("blue")) { mColor = Sample.Color.BLUE; }
-            else if (color.equals("yellow")) { mColor = Sample.Color.YELLOW; }
-        }
+        //mColor = Sample.Color.UNKNOWN;
+//        if(color != null) {
+//            if (color.equals("red")) { mColor = Sample.Color.RED; }
+//            else if (color.equals("blue")) { mColor = Sample.Color.BLUE; }
+//            else if (color.equals("yellow")) { mColor = Sample.Color.YELLOW; }
+//        }
     }
 
     public List<Sample> samples() { return mConsolidated; }
@@ -117,7 +118,7 @@ public class SamplesDetection  {
     /**
      * Detect new samples
      */
-    public void detect(String color) {
+    public void detect(Sample.Color color) {
 
         selectColor(color);
         mLogger.addLine("**DETECT COLOR** "+mColor);

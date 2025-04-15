@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.common.vision.Sample;
 @TeleOp(name = "SamplesDetectionTest", group = "Test")
 public class SamplesDetectionTest extends LinearOpMode {
 
-    static public  String                       sColor = "yellow";
+    static public Sample.Color sColor = Sample.Color.YELLOW;
 
     private SamplesDetection                    mDetection;
 

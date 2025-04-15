@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
+import org.firstinspires.ftc.teamcode.common.vision.Sample;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.PreloadSampleCycleGenerator;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SubSampleCycleGenerator;
 
@@ -348,7 +349,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 )
                         ),
                         new WaitCommand(1500),
-                        new CVIntakeCommand(robot, "yellow"),
+                        new CVIntakeCommand(robot, Sample.Color.YELLOW),
 
                         // Deposit 5th sample from sub
                         new FollowPathChainCommand(robot.follower, paths.get(8)).alongWith(
@@ -372,7 +373,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 )
                         ),
                         new WaitCommand(1500),
-                        new CVIntakeCommand(robot, "yellow"),
+                        new CVIntakeCommand(robot, Sample.Color.YELLOW),
 
                         // Deposit 6th sample from sub
                         new FollowPathChainCommand(robot.follower, paths.get(10)).alongWith(

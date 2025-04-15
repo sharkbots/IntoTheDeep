@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Sample {
 
     public enum Color {
-        RED,
+        RED(),
         BLUE,
         YELLOW,
         UNKNOWN

@@ -19,7 +19,7 @@ public class Globals {
 
 
     public static class SpecAutonomousConfig  {
-        public static Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
+        public static Globals.AllianceColor allianceColor = Globals.AllianceColor.RED;
         public static Globals.GRABBING_MODES grabbingMode = GRABBING_MODES.SPECIMEN;
     }
 

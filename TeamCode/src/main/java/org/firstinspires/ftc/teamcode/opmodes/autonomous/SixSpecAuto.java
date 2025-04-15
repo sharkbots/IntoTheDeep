@@ -5,8 +5,11 @@ import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenC
 import static org.firstinspires.ftc.teamcode.opmodes.autonomous.Assets.SpecimenCycleGenerator.pickupLocation;
 
 
+import android.graphics.Color;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.FollowerConstants;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -24,6 +27,8 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
+import com.pedropathing.follower.FollowerConstants;
+
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
@@ -92,13 +97,22 @@ public class SixSpecAuto extends CommandOpMode {
 
         robot.reset();
 
+        robot.intake.setExtendoTargetTicks(0);
+        robot.intake.setPivotState(IntakeSubsystem.PivotState.FULLY_RETRACTED);
+        robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN);
+        robot.intake.setClawRotationDegrees(0);
+        //robot.reset();
+        robot.lift.updateState(LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP);
+        robot.lift.setLiftTargetPosTicks(150);
+        robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED);
+
         while(opModeInInit()){
             menu.periodic();
 
             if (menu.isLocked() && !alreadyCompiled){
                 alreadyCompiled = true;
 
-                Globals.ALLIANCE_COLOR = Globals.SampleAutonomousConfig.allianceColor;
+                Globals.ALLIANCE_COLOR = Globals.SpecAutonomousConfig.allianceColor;
 
                 generatePaths();
                 generateSchedule();
@@ -111,14 +125,7 @@ public class SixSpecAuto extends CommandOpMode {
             robot.telemetryA.addData("right trigger", operator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
         }
 
-        robot.intake.setExtendoTargetTicks(0);
-        robot.intake.setPivotState(IntakeSubsystem.PivotState.FULLY_RETRACTED);
-        robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN);
-        robot.intake.setClawRotationDegrees(0);
-        //robot.reset();
-        robot.lift.updateState(LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP);
-        robot.lift.setLiftTargetPosTicks(150);
-        robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED);
+
 
     }
 
@@ -369,12 +376,13 @@ public class SixSpecAuto extends CommandOpMode {
 
                         // Intake sample from sub
                         new DepositSpecimenCommand(robot).andThen(
+                                new WaitCommand(200),
                                 new ParallelCommandGroup(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED),
-                                        new HoverCommand(robot, 300).andThen(
-                                                new IntakeSampleCommand(robot)
-                                        ),
-                                        new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? "blue":"red")
+//                                        new HoverCommand(robot, 300).andThen(
+//                                                new IntakeSampleCommand(robot)
+//                                        )
+                                        new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED)
                                 )
                         ),
                         // pickup spec 2
@@ -551,6 +559,7 @@ public class SixSpecAuto extends CommandOpMode {
         robot.telemetryA.addData("Lift target", robot.liftActuator.getTargetPosition());
         robot.telemetryA.addData("Lift motor powers", robot.liftActuator.getPower());
         robot.telemetryA.addData("t value (general loop)", robot.follower.getCurrentTValue());
+        robot.telemetryA.addData("~~PIDF~~", FollowerConstants.translationalPIDFCoefficients.toString());
 
         FtcDashboard.getInstance().sendImage(robot.vision.draw(320,240));
         if(!robot.vision.samples().isEmpty())

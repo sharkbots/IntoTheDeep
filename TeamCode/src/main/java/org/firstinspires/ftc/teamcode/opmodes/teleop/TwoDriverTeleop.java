@@ -101,7 +101,9 @@ public class TwoDriverTeleop extends CommandOpMode {
                 );
         operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(
-                        new CVIntakeCommand(robot, "red")
+                        new CVIntakeCommand(robot, Sample.Color.RED).andThen(
+                                new TransferCommand(robot)
+                        )
                 );
 
         // GENERAL RESET
@@ -509,7 +511,7 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.telemetryA.addData("heading", Math.toDegrees(currentHeading));
         robot.telemetryA.addData("runtime", timer.seconds());
 
-        robot.vision.detect("red");
+        robot.vision.detect(Sample.Color.RED);
         if(!robot.vision.samples().isEmpty()) {
             robot.telemetryA.addLine("samples found");
             float[] offsets = robot.vision.selected();
