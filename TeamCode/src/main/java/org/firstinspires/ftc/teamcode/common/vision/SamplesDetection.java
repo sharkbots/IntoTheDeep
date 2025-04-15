@@ -185,7 +185,7 @@ public class SamplesDetection  {
     private static double mergedRanking(Sample s, Sample.Color color) {
         double result = 10000;
         if(s.color() == color || color == Sample.Color.UNKNOWN) {
-            result = s.distanceY();
+            result = Math.sqrt(s.distanceX()*s.distanceX()+s.distanceY()*s.distanceY());
         }
         return result;
     }
