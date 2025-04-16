@@ -194,8 +194,8 @@ public class SixSpecAuto extends CommandOpMode {
                                 // Line 5
                                 new BezierCurve(
                                         new Point(50.216, 21.100, Point.CARTESIAN),
-                                        new Point(51.946, 6.243, Point.CARTESIAN),
-                                        new Point(25.314, 11.400, Point.CARTESIAN)
+                                        new Point(55.946, 5.243, Point.CARTESIAN),
+                                        new Point(25.314-2, 11.400, Point.CARTESIAN)
                                 )
                         )
 //                        .setZeroPowerAccelerationMultiplier(2)
@@ -203,7 +203,7 @@ public class SixSpecAuto extends CommandOpMode {
                         .addPath(
                                 // Line 6
                                 new BezierLine(
-                                        new Point(25.314, 11.400, Point.CARTESIAN),
+                                        new Point(25.314-2, 11.400, Point.CARTESIAN),
                                         new Point(49.216, 10.811, Point.CARTESIAN)
                                 )
                         )
@@ -215,12 +215,13 @@ public class SixSpecAuto extends CommandOpMode {
                                         new Point(49.216, 7.300, Point.CARTESIAN)
                                 )
                         )
+                        .setPathEndTValueConstraint(0.98)
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 new BezierCurve(
                                         new Point(49.216, 7.300, Point.CARTESIAN),
-                                        new Point(24.18, 5.61),
-                                        new Point(33.25, 12),
+                                        new Point(14.18-5-2, 5.61),
+                                        new Point(26, 12),
                                         new Point(pickupLocation.getX(), 12)
                                 )
                         )
@@ -376,7 +377,7 @@ public class SixSpecAuto extends CommandOpMode {
 
                         // Intake sample from sub
                         new DepositSpecimenCommand(robot).andThen(
-                                new WaitCommand(200),
+                                new WaitCommand(400),
                                 new ParallelCommandGroup(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED),
 //                                        new HoverCommand(robot, 300).andThen(
@@ -431,18 +432,18 @@ public class SixSpecAuto extends CommandOpMode {
                                 )
                         ),
 
-                        // deposit spec 2
-
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-                        new DepositSpecimenCommand(robot),
-
-
-                        // spec 3
-                        // Push all 3 into sub
-                        new FollowPathChainCommand(robot.follower, paths.get(2))
-                                .alongWith(
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
-                                ),
+                        new ParallelCommandGroup(
+                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
+                                // spec 5
+                                new SequentialCommandGroup(
+                                        new WaitCommand(300),
+                                        new FollowPathChainCommand(robot.follower, paths.get(2))
+                                                .alongWith(
+                                                        new WaitCommand(200).andThen(new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)),
+                                                        new WaitCommand(50).andThen(new DepositSpecimenCommand(robot))
+                                                )
+                                )
+                        ),
                         new IntakeSpecimenAutoCommand(robot),
 
                         // Deposit spec 3
@@ -465,14 +466,19 @@ public class SixSpecAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP)
                                 )
                         ),
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-                        new DepositSpecimenCommand(robot),
+                        new ParallelCommandGroup(
+                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
+                                // spec 4
+                                new SequentialCommandGroup(
+                                        new WaitCommand(300),
+                                        new FollowPathChainCommand(robot.follower, paths.get(3))
+                                                .alongWith(
+                                                        new WaitCommand(200).andThen(new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)),
+                                                        new WaitCommand(50).andThen(new DepositSpecimenCommand(robot))
+                                                )
+                                )
+                        ),
 
-                        // spec 4
-                        new FollowPathChainCommand(robot.follower, paths.get(3))
-                                .alongWith(
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
-                                ),
 
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new IntakeSpecimenAutoCommand(robot).alongWith(
@@ -488,14 +494,20 @@ public class SixSpecAuto extends CommandOpMode {
                                                 )
                                 )
                         ),
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-                        new DepositSpecimenCommand(robot),
 
-                        // spec 5
-                        new FollowPathChainCommand(robot.follower, paths.get(5))
-                                .alongWith(
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
-                                ),
+                        new ParallelCommandGroup(
+                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
+                                // spec 5
+                                new SequentialCommandGroup(
+                                        new WaitCommand(300),
+                                        new FollowPathChainCommand(robot.follower, paths.get(5))
+                                                .alongWith(
+                                                        new WaitCommand(200).andThen(new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)),
+                                                        new WaitCommand(50).andThen(new DepositSpecimenCommand(robot))
+                                                )
+                                )
+                        ),
+
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
 
                         new IntakeSpecimenAutoCommand(robot).alongWith(
@@ -511,14 +523,18 @@ public class SixSpecAuto extends CommandOpMode {
                                                 )
                                 )
                         ),
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-                        new DepositSpecimenCommand(robot),
-
-                        // spec 6
-                        new FollowPathChainCommand(robot.follower, paths.get(7))
-                                .alongWith(
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
-                                ),
+                        new ParallelCommandGroup(
+                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
+                                // spec 5
+                                new SequentialCommandGroup(
+                                        new WaitCommand(300),
+                                        new FollowPathChainCommand(robot.follower, paths.get(7))
+                                                .alongWith(
+                                                        new WaitCommand(200).andThen(new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)),
+                                                        new WaitCommand(50).andThen(new DepositSpecimenCommand(robot))
+                                                )
+                                )
+                        ),
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
 
                         new IntakeSpecimenAutoCommand(robot).alongWith(

@@ -105,6 +105,12 @@ public class SamplesDetection  {
 
     public Sample selectedSample() { return mSelected; }
 
+    public void clear() {
+        mOngoing.clear();
+        mConsolidated.clear();
+        mSelected = null;
+        mImageIndex = 0;
+    }
     /**
      * Start sample detection
      */

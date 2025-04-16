@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
@@ -113,6 +114,8 @@ public class SixSampleAuto extends CommandOpMode {
 
                 subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp1X+72, Globals.SampleAutonomousConfig.samp1Y+72, Point.CARTESIAN), 1);
                 subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X+72, Globals.SampleAutonomousConfig.samp2Y+72, Point.CARTESIAN), 2);
+                subSampleCyclePathGen.addSubSampleLocation(new Pose(Globals.SampleAutonomousConfig.samp2X+72, Globals.SampleAutonomousConfig.samp2Y+72, Point.CARTESIAN), 3);
+
 
                 generatePaths();
                 generateSchedule();
@@ -149,7 +152,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(315))
-                        .setPathEndTimeoutConstraint(0.9)
+                        //.setPathEndTValueConstraint()
                         .build()
         );
 
@@ -172,6 +175,10 @@ public class SixSampleAuto extends CommandOpMode {
         // PATH 9&10 - sample from sub
         paths.add(subSampleCyclePathGen.getSubPickupPath(2));
         paths.add(subSampleCyclePathGen.getSubDepositPath(2));
+
+        // PATH 11&12 - sample from sub
+        paths.add(subSampleCyclePathGen.getSubPickupPath(3));
+        paths.add(subSampleCyclePathGen.getSubDepositPath(3));
 
         // PATH x - park
         paths.add(
@@ -274,7 +281,6 @@ public class SixSampleAuto extends CommandOpMode {
                         // Deposit inside sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(600),
                                         new FollowPathChainCommand(robot.follower, paths.get(2)).disableUseIsBusy()
                                                 .setCompletionThreshold(0.9)
                                 )
@@ -302,7 +308,7 @@ public class SixSampleAuto extends CommandOpMode {
                         // Deposit middle sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(600),
+                                        new WaitCommand(200),
                                         new FollowPathChainCommand(robot.follower, paths.get(4)).disableUseIsBusy()
                                                 .setCompletionThreshold(0.9)
                                 )
@@ -330,7 +336,6 @@ public class SixSampleAuto extends CommandOpMode {
                         // Deposit outside sample
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(600),
                                         new FollowPathChainCommand(robot.follower, paths.get(6)).disableUseIsBusy()
                                                 .setCompletionThreshold(0.9)
                                 )
@@ -348,7 +353,7 @@ public class SixSampleAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-                        new WaitCommand(1500),
+                        new WaitCommand(500),
                         new CVIntakeCommand(robot, Sample.Color.YELLOW),
 
                         // Deposit 5th sample from sub
@@ -372,7 +377,7 @@ public class SixSampleAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-                        new WaitCommand(1500),
+                        new WaitCommand(500),
                         new CVIntakeCommand(robot, Sample.Color.YELLOW),
 
                         // Deposit 6th sample from sub
@@ -385,18 +390,32 @@ public class SixSampleAuto extends CommandOpMode {
 
                         ),
                         new WaitCommand(150),
+                        new DepositSampleCommand(robot),
+
+                        // Pickup 7th sample from sub
+                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
+                        new FollowPathChainCommand(robot.follower, paths.get(11)).alongWith(
+                                new SequentialCommandGroup(
+                                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0),
+                                        new WaitCommand(500),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
+                                )
+                        ),
+                        new CVIntakeCommand(robot, Sample.Color.YELLOW),
+
+                        // Deposit 6th sample from sub
+                        new FollowPathChainCommand(robot.follower, paths.get(12)).alongWith(
+                                new SequentialCommandGroup(
+                                        new TransferCommand(robot),
+                                        new WaitCommand(200),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
+                                )
+
+                        ),
+                        new WaitCommand(150),
                         new DepositSampleCommand(robot)
 
 
-
-//                        // Park
-//                        new InstantCommand(()-> robot.follower.setMaxPower(1)),
-//                        new FollowPathChainCommand(robot.follower, paths.get(7)).setHoldEnd(false).alongWith(
-//                                new SequentialCommandGroup(
-//                                        new WaitCommand(500),
-//                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
-//                                )
-//                        )
                 )
             );
     }
@@ -404,6 +423,19 @@ public class SixSampleAuto extends CommandOpMode {
     @Override
     public void run(){
         super.run();
+
+        FtcDashboard.getInstance().sendImage(robot.vision.draw(320,240));
+        if(!robot.vision.samples().isEmpty())
+        {
+            robot.telemetryA.addLine("Samples found");
+            float[] offsets = robot.vision.selected();
+            Sample result = robot.vision.selectedSample();
+            if (result != null) {
+                robot.telemetryA.addData("Closest result (Pixels): ", String.format("%.1f, %.1f",result.x(), result.y()));
+                robot.telemetryA.addData("Closest result (Offset): ", String.format("%.1f, %.1f, %.1f", offsets[0], offsets[1], offsets[2]));
+                robot.telemetryA.addData("Closest result color: ", result.color());
+            }
+        }
 
         robot.telemetryA.addData("Robot Pose", robot.follower.getPose());
         double loop = System.nanoTime();

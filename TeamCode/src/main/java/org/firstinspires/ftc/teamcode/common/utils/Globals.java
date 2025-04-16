@@ -11,7 +11,7 @@ public class Globals {
 
     // Sample autonomous poses
     public static final Pose sampleAutoStartPose = new Pose(6.595, 111.355, Math.toRadians(270));
-    public static final Pose bucketPose = new Pose(12.386+1.4, 128.573, Math.toRadians(315));
+    public static final Pose bucketPose = new Pose(12.786-1, 129.573+1, Math.toRadians(315));
     // Specimen auto pose
     public static final Pose specAutoStartPose = new Pose(6.465, 63.715, Math.toRadians(0));
 
@@ -28,10 +28,12 @@ public class Globals {
         public static Globals.GRABBING_MODES grabbingMode = GRABBING_MODES.SAMPLE;
         public static boolean grabSecondPreload = false;
         //        public static int numSubCycles = 1;
-        public static double samp1X = -6;
+        public static double samp1X = -4;
         public static double samp1Y = 12;
-        public static double samp2X = -6;
+        public static double samp2X = -8;
         public static double samp2Y = 12;
+        public static double samp3X = -8;
+        public static double samp3Y = 12;
 
         public static long waitOZinSeconds = 0;
 //        public static double samp2X = 0;

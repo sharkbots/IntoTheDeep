@@ -29,7 +29,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                 new RunCommand(
                         ()-> robot.vision.detect(color))
                         // .withTimeout(2000) // TODO: activate when all is  so that it is fully protected against infinite loop
-                        .interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color ).withTimeout(3000),
+                        .interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color ).withTimeout(500),
                 //new InstantCommand(()-> Globals.FREEZE_CAMERA_FRAME = true),
                 new ParallelCommandGroup(
                         new DeferredCommand(()-> new HoverCommand(robot,
@@ -46,7 +46,8 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                                 new InstantCommand(()->robot.follower.startTeleopDrive())
                         ),null)
                 ),
-                new IntakeSampleCommand(robot)
+                new IntakeSampleCommand(robot),
+                new InstantCommand(()-> robot.vision.clear())
 //
 //                //new WaitCommand(3000),
 //                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.INTAKE),

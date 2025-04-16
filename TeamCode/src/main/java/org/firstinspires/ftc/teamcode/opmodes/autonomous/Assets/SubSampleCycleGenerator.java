@@ -50,10 +50,12 @@ public class SubSampleCycleGenerator {
         builder.addPath(new BezierCurve(
                         allianceColor.convert(bucketLocation, Point.class),
                         new Point(subSampleLocations.get(cycleNum-1).getX(), 117.5),
-                        new Point(subSampleLocations.get(cycleNum-1).getX(), 91.5)
+                        new Point(subSampleLocations.get(cycleNum-1).getX(), 92)
                 ))
-                .setTangentHeadingInterpolation()
-                .setPathEndTimeoutConstraint(0.99);
+                .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(270))
+                .setPathEndTValueConstraint(0.94)
+                //.setPathEndTimeoutConstraint(0.97)
+                .setZeroPowerAccelerationMultiplier(2);
         return builder.build();
     }
 
@@ -64,10 +66,11 @@ public class SubSampleCycleGenerator {
         PathBuilder builder = follower.pathBuilder();
 
         builder.addPath(new BezierCurve(
-                new Point(subSampleLocations.get(cycleNum-1).getX(), 91.5),
+                new Point(subSampleLocations.get(cycleNum-1).getX(), 92),
                 new Point(subSampleLocations.get(cycleNum-1).getX(), 117.5),
                 allianceColor.convert(bucketLocation, Point.class)
-        )).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315));
+        )).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
+                .setPathEndTValueConstraint(0.98);
 
         return builder.build();
 
