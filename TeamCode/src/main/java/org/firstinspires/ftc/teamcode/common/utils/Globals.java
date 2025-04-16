@@ -251,7 +251,7 @@ public class Globals {
     public static int HIGH_SPECIMEN_TELEOP_HEIGHT = 1250;
     public static int PUSHING_SPECIMEN_HEIGHT = 650;
     public static int LVL1_ASCENT_HEIGHT = 825;
-    public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2000;
-    public static int ENDGAME_ASCENT_HEIGHT = 1100;
-    public static int POST_BUZZER_HANG_RELEASE_HEIGHT = 1550; // 1600 before, which tilted the robot
+    public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2030;
+    public static int ENDGAME_ASCENT_HEIGHT = 1110+120+100;
+    public static int POST_BUZZER_HANG_RELEASE_HEIGHT = 1550+120-50; // 1600 before, which tilted the robot
 }

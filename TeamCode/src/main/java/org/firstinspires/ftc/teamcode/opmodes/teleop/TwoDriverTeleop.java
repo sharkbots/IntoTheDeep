@@ -67,7 +67,7 @@ public class TwoDriverTeleop extends CommandOpMode {
     private boolean hangDone = false;
     private boolean readyToLetGo = false;
 
-    private int matchLength = 120;
+    private int matchLength = 10;
     private int increaseCounter = 0;
 
 

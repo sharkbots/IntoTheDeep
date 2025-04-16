@@ -219,6 +219,7 @@ public class SixSpecAuto extends CommandOpMode {
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 new BezierCurve(
+                                        new Point(49.216, 7.300, Point.CARTESIAN),
                                         new Point(14.18-5-2, 5.61),
                                         new Point(26, 12),
                                         new Point(pickupLocation.getX(), 12)
