@@ -11,7 +11,7 @@ public class Globals {
 
     // Sample autonomous poses
     public static final Pose sampleAutoStartPose = new Pose(6.595, 111.355, Math.toRadians(270));
-    public static final Pose bucketPose = new Pose(12.786-1, 129.573+1, Math.toRadians(315));
+    public static final Pose bucketPose = new Pose(12.786, 129.573, Math.toRadians(315));
     // Specimen auto pose
     public static final Pose specAutoStartPose = new Pose(6.465, 63.715, Math.toRadians(0));
 
@@ -250,7 +250,7 @@ public class Globals {
     public static int HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT = 950;
     public static int HIGH_SPECIMEN_TELEOP_HEIGHT = 1250;
     public static int PUSHING_SPECIMEN_HEIGHT = 650;
-    public static int LVL1_ASCENT_HEIGHT = 825;
+    public static int LVL1_ASCENT_HEIGHT = 825+55*6;
     public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2030;
     public static int ENDGAME_ASCENT_HEIGHT = 1110+120+100;
     public static int POST_BUZZER_HANG_RELEASE_HEIGHT = 1550+120-50; // 1600 before, which tilted the robot

@@ -29,24 +29,27 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                 new RunCommand(
                         ()-> robot.vision.detect(color))
                         // .withTimeout(2000) // TODO: activate when all is  so that it is fully protected against infinite loop
-                        .interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color ).withTimeout(500),
+                        .interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color ).withTimeout(1000),
                 //new InstantCommand(()-> Globals.FREEZE_CAMERA_FRAME = true),
-                new ParallelCommandGroup(
-                        new DeferredCommand(()-> new HoverCommand(robot,
-                                (robot.vision.selected()[0] - Globals.INTAKE_MINIMUM_EXTENSION) * Globals.EXTENDO_TICKS_PER_INCH), null),
-                        new DeferredCommand(()-> new SetIntakeCommand(robot,
-                                IntakeSubsystem.PivotState.INTAKE, (double)(robot.vision.selected()[2])), null),
+                new SequentialCommandGroup(
+                        new ParallelCommandGroup(
+                                new DeferredCommand(()-> new HoverCommand(robot,
+                                        (robot.vision.selected()[0] - Globals.INTAKE_MINIMUM_EXTENSION) * Globals.EXTENDO_TICKS_PER_INCH), null),
+                                new DeferredCommand(()-> new SetIntakeCommand(robot,
+                                        IntakeSubsystem.PivotState.INTAKE, (double)(robot.vision.selected()[2])), null),
 
-                        new DeferredCommand(()-> new SequentialCommandGroup(
-                                new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
-                                        new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
-                                        MathFunctions.rotatePose(new Pose(-robot.vision.selected()[1],
-                                                0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
-                                ),
-                                new InstantCommand(()->robot.follower.startTeleopDrive())
-                        ),null)
-                ),
-                new IntakeSampleCommand(robot),
+                                new DeferredCommand(()-> new SequentialCommandGroup(
+                                        new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(
+                                                new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading()),
+                                                MathFunctions.rotatePose(new Pose(-robot.vision.selected()[1],
+                                                        0, 0), robot.follower.getPose().getHeading()-Math.PI/2, false))
+                                        ),
+                                        new InstantCommand(()->robot.follower.startTeleopDrive())
+                                ),null)
+                        ),
+                        new IntakeSampleCommand(robot)
+                ).interruptOn(()-> robot.vision.selectedSample()!= null && robot.vision.selectedSample().color() != color),
+
                 new InstantCommand(()-> robot.vision.clear())
 //
 //                //new WaitCommand(3000),

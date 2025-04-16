@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.google.ar.core.exceptions.SessionUnsupportedException;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.RunCommand;
@@ -180,14 +182,14 @@ public class SixSampleAuto extends CommandOpMode {
         paths.add(subSampleCyclePathGen.getSubPickupPath(3));
         paths.add(subSampleCyclePathGen.getSubDepositPath(3));
 
-        // PATH x - park
+        // PATH 13 - park
         paths.add(
                 robot.follower.pathBuilder()
                         .addPath(
                                 // Line 6
                                 new BezierCurve(
-                                        allianceColor.convert(new Point(12.386, 128.573, Point.CARTESIAN)),
-                                        allianceColor.convert(new Point(56.348, 114.207, Point.CARTESIAN))
+                                        Globals.bucketPose,
+                                        new Pose(56.348, 114.207)
                                 )
                         )
                         .setTangentHeadingInterpolation()
@@ -270,7 +272,7 @@ public class SixSampleAuto extends CommandOpMode {
                             new SequentialCommandGroup(
                                     new WaitCommand(300),
                                     new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                            new HoverCommand(robot, 900+403.2-112.5)
+                                            new HoverCommand(robot, 900+403.2-112.5-100)
                                     )
                             )
                         ),
@@ -297,7 +299,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 900+403.2-112.5)
+                                                new HoverCommand(robot, 900+403.2-112.5-100)
                                         )
                                 )
                         ),
@@ -325,7 +327,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 1050+403.2+150-112.5, 30.0)
+                                                new HoverCommand(robot, 1050+403.2+150-112.5-75, 30.0)
                                         )
                                 )
                         ),
@@ -354,7 +356,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 )
                         ),
                         new WaitCommand(500),
-                        new CVIntakeCommand(robot, Sample.Color.YELLOW),
+                        new DeferredCommand(()->new CVIntakeCommand(robot, Sample.Color.YELLOW), null),
 
                         // Deposit 5th sample from sub
                         new FollowPathChainCommand(robot.follower, paths.get(8)).alongWith(
@@ -378,7 +380,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 )
                         ),
                         new WaitCommand(500),
-                        new CVIntakeCommand(robot, Sample.Color.YELLOW),
+                        new DeferredCommand(()->new CVIntakeCommand(robot, Sample.Color.YELLOW), null),
 
                         // Deposit 6th sample from sub
                         new FollowPathChainCommand(robot.follower, paths.get(10)).alongWith(
@@ -392,6 +394,14 @@ public class SixSampleAuto extends CommandOpMode {
                         new WaitCommand(150),
                         new DepositSampleCommand(robot),
 
+                        new FollowPathChainCommand(robot.follower, paths.get(13)).alongWith(
+                                new SequentialCommandGroup(
+                                        new WaitCommand(500),
+                                        new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
+                                )
+                        )
+
+                        /*
                         // Pickup 7th sample from sub
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
                         new FollowPathChainCommand(robot.follower, paths.get(11)).alongWith(
@@ -415,6 +425,7 @@ public class SixSampleAuto extends CommandOpMode {
                         new WaitCommand(150),
                         new DepositSampleCommand(robot)
 
+                         */
 
                 )
             );
