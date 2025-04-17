@@ -168,15 +168,15 @@ public class SixSpecAuto extends CommandOpMode {
                                         new Point(37.500, 63.720, Point.CARTESIAN),
                                         new Point(27.676, 45.622, Point.CARTESIAN),
                                         new Point(44.757, 31.100, Point.CARTESIAN),
-                                        new Point(56.216, 31.100, Point.CARTESIAN)
+                                        new Point(51.216, 31.100, Point.CARTESIAN)
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 3
                                 new BezierCurve(
-                                        new Point(56.216, 31.100, Point.CARTESIAN),
-                                        new Point(51.946, 19.243, Point.CARTESIAN),
+                                        new Point(51.216, 31.100, Point.CARTESIAN),
+                                        new Point(51.946, 15.243, Point.CARTESIAN),
                                         new Point(25.314, 21.400, Point.CARTESIAN)
                                 )
                         )
@@ -189,6 +189,7 @@ public class SixSpecAuto extends CommandOpMode {
                                         new Point(50.216, 21.100, Point.CARTESIAN)
                                 )
                         )
+                        .setZeroPowerAccelerationMultiplier(2)
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 5
@@ -207,6 +208,7 @@ public class SixSpecAuto extends CommandOpMode {
                                         new Point(49.216, 10.811, Point.CARTESIAN)
                                 )
                         )
+                        .setZeroPowerAccelerationMultiplier(2)
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 // Line 7

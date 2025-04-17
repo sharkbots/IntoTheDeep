@@ -110,6 +110,7 @@ public class SamplesDetection  {
         mConsolidated.clear();
         mSelected = null;
         mImageIndex = 0;
+        mMode = Mode.DETECT;
     }
     /**
      * Start sample detection
