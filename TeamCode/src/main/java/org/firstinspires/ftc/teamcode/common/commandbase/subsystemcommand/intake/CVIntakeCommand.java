@@ -26,11 +26,9 @@ public class CVIntakeCommand extends SequentialCommandGroup {
         super(
                 //new InstantCommand(()->robot.visionPortal.setProcessorEnabled(robot.sampleDetectionPipeline, false)),
                 //new InstantCommand(()->robot.sampleDetectionPipeline.freeze(true)),
-                new RunCommand(
-                        ()-> robot.vision.detect(color))
-                        // .withTimeout(2000) // TODO: activate when all is  so that it is fully protected against infinite loop
-                        .interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color ).withTimeout(1000),
-                //new InstantCommand(()-> Globals.FREEZE_CAMERA_FRAME = true),
+                new RepeatCommand(
+                        new InstantCommand(()->robot.vision.detect(color))
+                ).interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color).withTimeout(10000),
                 new SequentialCommandGroup(
                         new ParallelCommandGroup(
                                 new DeferredCommand(()-> new HoverCommand(robot,
@@ -49,6 +47,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                         ),
                         new IntakeSampleCommand(robot)
                 ).interruptOn(()-> robot.vision.selectedSample()!= null && robot.vision.selectedSample().color() != color),
+
 
                 new InstantCommand(()-> robot.vision.clear())
 //

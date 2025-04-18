@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.R
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.teamcode.common.vision.Sample;
 
@@ -67,7 +68,7 @@ public class TwoDriverTeleop extends CommandOpMode {
     private boolean hangDone = false;
     private boolean readyToLetGo = false;
 
-    private int matchLength = 10;
+    private int matchLength = 120;
     private int increaseCounter = 0;
 
 
@@ -100,6 +101,60 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
                         )
                 );
+        // Zazaaaaaaa
+
+        // Sample grab (sample mode)
+        /*
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
+                                        .andThen(new TransferCommand(robot))
+                                        .interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                ,
+                                new InstantCommand(),
+                                () ->!HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
+                                        && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE
+                        )
+                );
+
+        // sample grab (spec mode)
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
+                                        .andThen(
+                                                new ParallelRaceGroup(
+                                                        new TransferCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                                                .andThen(
+                                                                        new SequentialCommandGroup(
+                                                                                new WaitCommand(130),
+                                                                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
+                                                                                        .alongWith(
+                                                                                                new WaitCommand(400),
+                                                                                                new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN)),
+                                                                                                new InstantCommand(() -> INTAKE_JUST_CANCELLED = false)
+                                                                                        )
+                                                                        )
+                                                                ),
+                                                        new WaitUntilCommand(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                                                .andThen(new InstantCommand(() -> INTAKE_JUST_CANCELLED = true))
+                                                )
+                                        )
+                                ,
+                                new InstantCommand(),
+                                () -> !HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
+                                        && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN
+                        )
+                );
+
+
+         */
+
+
+
         operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(
                         new CVIntakeCommand(robot, Sample.Color.YELLOW).andThen(
@@ -231,14 +286,6 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 new IntakeSampleCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
                                         .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
                                         .andThen(new TransferCommand(robot))
-//                                            new ParallelRaceGroup(
-//                                                    new TransferCommand(robot).andThen(
-//                                                            new InstantCommand(()-> INTAKE_JUST_CANCELLED = false)
-//                                                    ),
-//                                            new WaitUntilCommand(()->operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get()).andThen(
-//                                                    new InstantCommand(()-> INTAKE_JUST_CANCELLED = true))
-//                                            )
-//                                        )
                                     .interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
                                 ,
                                 new InstantCommand(),

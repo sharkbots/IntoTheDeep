@@ -130,7 +130,9 @@ public class LiftSubsystem extends SubsystemWrapper {
                 else return HIGH_SPECIMEN_TELEOP_HEIGHT;
             case PUSHING_SPECIMEN: return PUSHING_SPECIMEN_HEIGHT;
             case DEPOSIT_LOW_BUCKET: return LOW_BUCKET_HEIGHT;
-            case DEPOSIT_HIGH_BUCKET: return HIGH_BUCKET_HEIGHT;
+            case DEPOSIT_HIGH_BUCKET:
+                if (IS_AUTONOMOUS) return HIGH_BUCKET__AUTO_HEIGHT;
+                else return HIGH_BUCKET_HEIGHT;
             case LVL1_ASCENT: return LVL1_ASCENT_HEIGHT;
             case LVL2_ASCENT_SETUP: return ENDGAME_ASCENT_SETUP_HEIGHT;
             case LVL2_ASCENT_DOWN: return ENDGAME_ASCENT_HEIGHT;
@@ -167,7 +169,8 @@ public class LiftSubsystem extends SubsystemWrapper {
             case PUSHING_SPECIMEN: return DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
-                return DEPOSIT_CLAW_PIVOT_BUCKET_POS;
+                if (IS_AUTONOMOUS) return DEPOSIT_CLAW_PIVOT_AUTONOMOUS_BUCKET_POS;
+                else return DEPOSIT_CLAW_PIVOT_BUCKET_POS;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
     }
@@ -195,7 +198,8 @@ public class LiftSubsystem extends SubsystemWrapper {
             case PUSHING_SPECIMEN: return DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS;
             case DEPOSIT_LOW_BUCKET:
             case DEPOSIT_HIGH_BUCKET:
-                return DEPOSIT_ARM_PIVOT_BUCKET_POS;
+                if (IS_AUTONOMOUS) return DEPOSIT_ARM_PIVOT_AUTONOMOUS_BUCKET_POS;
+                else return DEPOSIT_ARM_PIVOT_BUCKET_POS;
             default: throw new IllegalArgumentException("Unknown LiftState: " + state);
         }
     }

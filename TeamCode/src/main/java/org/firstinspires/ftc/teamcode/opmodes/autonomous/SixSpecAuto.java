@@ -17,6 +17,7 @@ import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.RunCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
@@ -186,7 +187,7 @@ public class SixSpecAuto extends CommandOpMode {
                                 // Line 4
                                 new BezierLine(
                                         new Point(25.314, 21.400, Point.CARTESIAN),
-                                        new Point(50.216, 21.100, Point.CARTESIAN)
+                                        new Point(50.216-3-7, 21.100, Point.CARTESIAN)
                                 )
                         )
                         .setZeroPowerAccelerationMultiplier(2)
@@ -194,9 +195,10 @@ public class SixSpecAuto extends CommandOpMode {
                         .addPath(
                                 // Line 5
                                 new BezierCurve(
-                                        new Point(50.216, 21.100, Point.CARTESIAN),
-                                        new Point(55.946, 5.243, Point.CARTESIAN),
-                                        new Point(25.314-2, 11.400, Point.CARTESIAN)
+                                        new Point(50.216-3-7, 21.100, Point.CARTESIAN),
+                                        new Point(68.108, 3.243+2+2, Point.CARTESIAN),
+                                        //new Point(55.946, 5.243, Point.CARTESIAN),
+                                        new Point(23.314, 11.400, Point.CARTESIAN)
                                 )
                         )
 //                        .setZeroPowerAccelerationMultiplier(2)
@@ -204,8 +206,8 @@ public class SixSpecAuto extends CommandOpMode {
                         .addPath(
                                 // Line 6
                                 new BezierLine(
-                                        new Point(25.314-2, 11.400, Point.CARTESIAN),
-                                        new Point(49.216, 10.811, Point.CARTESIAN)
+                                        new Point(23.314, 11.400, Point.CARTESIAN),
+                                        new Point(49.216-2, 10.811, Point.CARTESIAN)
                                 )
                         )
                         .setZeroPowerAccelerationMultiplier(2)
@@ -213,15 +215,15 @@ public class SixSpecAuto extends CommandOpMode {
                         .addPath(
                                 // Line 7
                                 new BezierLine(
-                                        new Point(49.216, 10.811, Point.CARTESIAN),
-                                        new Point(49.216, 7.300, Point.CARTESIAN)
+                                        new Point(49.216-2, 10.811, Point.CARTESIAN),
+                                        new Point(52+3, 6.300, Point.CARTESIAN)
                                 )
                         )
                         .setPathEndTValueConstraint(0.98)
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .addPath(
                                 new BezierCurve(
-                                        new Point(49.216, 7.300, Point.CARTESIAN),
+                                        new Point(52+3, 6.300, Point.CARTESIAN),
                                         new Point(14.18-5-2, 5.61),
                                         new Point(26, 12),
                                         new Point(pickupLocation.getX(), 12)
@@ -231,7 +233,7 @@ public class SixSpecAuto extends CommandOpMode {
                         .setPathEndTValueConstraint(0.97)
                         //.addParametricCallback(0.7, ()-> robot.follower.setMaxPower(0.7))
                         //.setPathEndVelocityConstraint(3)
-                        .setZeroPowerAccelerationMultiplier(3)
+                        .setZeroPowerAccelerationMultiplier(3.5)
 //                        .addPath(
 //                                // Line 8
 //                                new BezierLine(
@@ -379,7 +381,7 @@ public class SixSpecAuto extends CommandOpMode {
 
                         // Intake sample from sub
                         new DepositSpecimenCommand(robot).andThen(
-                                new WaitCommand(400),
+                                new WaitCommand(800),
                                 new ParallelCommandGroup(
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED),
 //                                        new HoverCommand(robot, 300).andThen(
@@ -388,16 +390,22 @@ public class SixSpecAuto extends CommandOpMode {
                                         new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED)
                                 )
                         ),
-                        // pickup spec 2
-                        new TransferCommand(robot),
                         new ParallelCommandGroup(
-                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN).andThen(
-                                        new WaitCommand(300).alongWith(
-                                                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0)
-                                        ),
-                                        new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.OPEN))
+                                new TransferCommand(robot).andThen(
+                                        new ParallelCommandGroup(
+                                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
+                                                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0),
+                                                new SequentialCommandGroup(
+                                                        new WaitCommand(400),
+                                                        new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.OPEN))
+
+                                                )
+                                        )
                                 ),
-                                new DeferredCommand(()->
+                                new SequentialCommandGroup(
+                                        new WaitUntilCommand(()->robot.intake.getExtendoPosTicks() < 900),
+                                        new WaitCommand(100),
+                                        new DeferredCommand(()->
                                         // Pickup second spec
                                         new FollowPathChainCommand(robot.follower,
                                                 robot.follower.pathBuilder().addPath(
@@ -415,9 +423,39 @@ public class SixSpecAuto extends CommandOpMode {
                                                         .setZeroPowerAccelerationMultiplier(3.5)
                                                         //.addParametricCallback(0.8, ()-> robot.follower.setMaxPower(0.7))
                                                         .build()
-                                        )
-                                        , null)
+                                        ), null))
+
                         ),
+//                        // pickup spec 2
+//                        new TransferCommand(robot),
+//                        new ParallelCommandGroup(
+//                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN).andThen(
+//                                        new WaitCommand(300).alongWith(
+//                                                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0)
+//                                        ),
+//                                        new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.OPEN))
+//                                ),
+//                                new DeferredCommand(()->
+//                                        // Pickup second spec
+//                                        new FollowPathChainCommand(robot.follower,
+//                                                robot.follower.pathBuilder().addPath(
+//                                                                new BezierCurve(
+//                                                                        robot.follower.getPose(),
+//                                                                        new Pose(30.44,  robot.follower.getPose().getY()),
+//                                                                        new Pose(45.3, pickupLocation.getY()),
+//                                                                        allianceColor.convert(pickupLocation, Pose.class)
+//                                                                )
+//                                                        )
+//                                                        .setPathEndTValueConstraint(0.95)
+//                                                        .setConstantHeadingInterpolation(Math.toRadians(0))
+//                                                        //.setPathEndVelocityConstraint(3)
+//                                                        .setPathEndHeadingConstraint(Math.toRadians(3))
+//                                                        .setZeroPowerAccelerationMultiplier(3.5)
+//                                                        //.addParametricCallback(0.8, ()-> robot.follower.setMaxPower(0.7))
+//                                                        .build()
+//                                        )
+//                                        , null)
+//                        ),
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
 
                         new IntakeSpecimenAutoCommand(robot).alongWith(

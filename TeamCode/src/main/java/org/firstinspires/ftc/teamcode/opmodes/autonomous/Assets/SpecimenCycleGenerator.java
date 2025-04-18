@@ -71,7 +71,7 @@ public class SpecimenCycleGenerator {
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .setPathEndTValueConstraint(0.97)
                 //.addParametricCallback(0.7, ()-> follower.setMaxPower(0.7))
-                .setZeroPowerAccelerationMultiplier(3.5);
+                .setZeroPowerAccelerationMultiplier(4.25);
 
         return builder
                 .build();
@@ -95,18 +95,18 @@ public class SpecimenCycleGenerator {
                     .setZeroPowerAccelerationMultiplier(5)
                     .setPathEndHeadingConstraint(Math.toRadians(3));
         }
-//        else if (cycleNum == 5){
-//            builder.addPath(
-//                            new BezierCurve(
-//                                    allianceColor.convert(pickupLocation, Point.class),
-//                                    new Point(depositLocation.getX()-5, depositLocation.getY()-constantCycleShift-cycleNum*depositGap),
-//                                    new Point(depositLocation.getX()-5, depositLocation.getY()-constantCycleShift-cycleNum*depositGap),
-//                                    allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-constantCycleShift-cycleNum*depositGap))))
-//                    .setConstantHeadingInterpolation(Math.toRadians(0))
-//                    .setPathEndTValueConstraint(0.95)
-//                    .setZeroPowerAccelerationMultiplier(5)
-//                    .setPathEndHeadingConstraint(Math.toRadians(3));
-//        }
+        else if (cycleNum == 5){
+            builder.addPath(
+                            new BezierCurve(
+                                    allianceColor.convert(pickupLocation, Point.class),
+                                    new Point(depositLocation.getX()-5, depositLocation.getY()-constantCycleShift-cycleNum*depositGap),
+                                    new Point(depositLocation.getX()-5, depositLocation.getY()-constantCycleShift-cycleNum*depositGap),
+                                    allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-constantCycleShift-cycleNum*depositGap))))
+                    .setConstantHeadingInterpolation(Math.toRadians(0))
+                    .setPathEndTValueConstraint(0.95)
+                    .setZeroPowerAccelerationMultiplier(5)
+                    .setPathEndHeadingConstraint(Math.toRadians(3));
+        }
         else builder.addPath(
                         new BezierLine(
                                 allianceColor.convert(pickupLocation, Point.class),
