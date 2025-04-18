@@ -53,7 +53,7 @@ public class PreloadSampleCycleGenerator {
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(insideSampleLocation, Point.class)))
                     .setLinearHeadingInterpolation(bucketLocation.getHeading(), insideSampleLocation.getHeading())
-                    .setZeroPowerAccelerationMultiplier(3);
+                    .setZeroPowerAccelerationMultiplier(2);
 
         else if (sampleLocation == SampleLocation.MIDDLE)
             builder.addPath(new BezierLine(
