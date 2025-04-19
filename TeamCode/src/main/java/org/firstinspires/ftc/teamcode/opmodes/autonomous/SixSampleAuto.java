@@ -189,18 +189,11 @@ public class SixSampleAuto extends CommandOpMode {
                                 // Line 6
                                 new BezierCurve(
                                         Globals.bucketPose,
-                                        new Pose(56.348, 114.207)
+                                        new Pose(62.486, 116.324, Point.CARTESIAN),
+                                        new Pose(59.243, 92.541, Point.CARTESIAN)
                                 )
                         )
-                        .setTangentHeadingInterpolation()
-                        .addPath(
-                                // Line 7
-                                new BezierLine(
-                                        allianceColor.convert(new Point(56.348, 114.207, Point.CARTESIAN)),
-                                        allianceColor.convert(new Point(62.054, 91.527, Point.CARTESIAN))
-                                )
-                        )
-                        .setConstantHeadingInterpolation(Math.toRadians(90))
+                        .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(270))
                         .addParametricCallback(0.7, ()-> robot.follower.setMaxPower(0.3))
                         .setPathEndTValueConstraint(0.99)
                         .setPathEndTimeoutConstraint(250)
@@ -229,8 +222,9 @@ public class SixSampleAuto extends CommandOpMode {
                                     )
                                 ),
 
-                        new WaitCommand(200),
+                        new WaitCommand(600),
                         new DepositSampleCommand(robot),
+                        new WaitCommand(200),
 
                         // Pickup OZ sample
                         new ConditionalCommand(
@@ -364,8 +358,10 @@ public class SixSampleAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
                                 )
                         ),
-                        new WaitCommand(250),
+                        new WaitCommand(600),
                         new DepositSampleCommand(robot),
+                        new WaitCommand(150),
+
                   //      new InstantCommand(() -> {robot.vision.stop();robot.vision.start();})
 
 
@@ -390,8 +386,9 @@ public class SixSampleAuto extends CommandOpMode {
                                 )
 
                         ),
-                        new WaitCommand(150),
+                        new WaitCommand(600),
                         new DepositSampleCommand(robot),
+                        new WaitCommand(150),
 
                         new FollowPathChainCommand(robot.follower, paths.get(13)).alongWith(
                                 new SequentialCommandGroup(
@@ -434,7 +431,7 @@ public class SixSampleAuto extends CommandOpMode {
     public void run(){
         super.run();
 
-        FtcDashboard.getInstance().sendImage(robot.vision.draw(320,240));
+        //FtcDashboard.getInstance().sendImage(robot.vision.draw(320,240));
         if(!robot.vision.samples().isEmpty())
         {
             robot.telemetryA.addLine("Samples found");

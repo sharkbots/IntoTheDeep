@@ -203,30 +203,50 @@ public class SixSpecAuto extends CommandOpMode {
                         )
 //                        .setZeroPowerAccelerationMultiplier(2)
                         .setConstantHeadingInterpolation(Math.toRadians(0))
+//                        .addPath(
+//                                // Line 6
+//                                new BezierLine(
+//                                        new Point(23.314, 11.400, Point.CARTESIAN),
+//                                        new Point(49.216-2, 10.811, Point.CARTESIAN)
+//                                )
+//                        )
+//                        .setZeroPowerAccelerationMultiplier(2)
+//                        .setConstantHeadingInterpolation(Math.toRadians(0))
+//                        .addPath(
+//                                // Line 7
+//                                new BezierLine(
+//                                        new Point(49.216-2, 10.811, Point.CARTESIAN),
+//                                        new Point(52+3, 6.300, Point.CARTESIAN)
+//                                )
+//                        )
+//                        .setPathEndTValueConstraint(0.98)
+//                        .setConstantHeadingInterpolation(Math.toRadians(0))
+//
+//                        .addPath(
+//                                new BezierCurve(
+//                                        new Point(52+3, 6.300, Point.CARTESIAN),
+//                                        new Point(14.18-5-2, 5.61),
+//                                        new Point(26, 12),
+//                                        new Point(pickupLocation.getX(), 12)
+//                                )
+//                        )
                         .addPath(
-                                // Line 6
-                                new BezierLine(
-                                        new Point(23.314, 11.400, Point.CARTESIAN),
-                                        new Point(49.216-2, 10.811, Point.CARTESIAN)
-                                )
-                        )
-                        .setZeroPowerAccelerationMultiplier(2)
-                        .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .addPath(
-                                // Line 7
-                                new BezierLine(
-                                        new Point(49.216-2, 10.811, Point.CARTESIAN),
-                                        new Point(52+3, 6.300, Point.CARTESIAN)
-                                )
-                        )
-                        .setPathEndTValueConstraint(0.98)
-                        .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .addPath(
+                                // Line 1
                                 new BezierCurve(
-                                        new Point(52+3, 6.300, Point.CARTESIAN),
-                                        new Point(14.18-5-2, 5.61),
-                                        new Point(26, 12),
-                                        new Point(pickupLocation.getX(), 12)
+                                        new Point(23.100, 11.400, Point.CARTESIAN),
+                                        new Point(55.568, 13.622, Point.CARTESIAN),
+                                        new Point(55.000, 6.300, Point.CARTESIAN)
+                                )
+                        )
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .setZeroPowerAccelerationMultiplier(2)
+                        .addPath(
+                                // Line 2
+                                new BezierCurve(
+                                        new Point(55, 6.3, Point.CARTESIAN),
+                                        new Point(7.180, 7.800, Point.CARTESIAN),
+                                        new Point(33.000, 12.000, Point.CARTESIAN),
+                                        new Point(pickupLocation.getX(), 12.000, Point.CARTESIAN)
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))

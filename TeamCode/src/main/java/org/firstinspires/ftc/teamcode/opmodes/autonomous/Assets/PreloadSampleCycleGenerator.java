@@ -53,23 +53,25 @@ public class PreloadSampleCycleGenerator {
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(insideSampleLocation, Point.class)))
                     .setLinearHeadingInterpolation(bucketLocation.getHeading(), insideSampleLocation.getHeading())
-                    .setZeroPowerAccelerationMultiplier(2);
+                    .setZeroPowerAccelerationMultiplier(2)
+                    .addParametricCallback(0.3, () -> follower.setMaxPower(0.4));
 
         else if (sampleLocation == SampleLocation.MIDDLE)
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(middleSampleLocation, Point.class)))
                     .setLinearHeadingInterpolation(bucketLocation.getHeading(), middleSampleLocation.getHeading())
-                    .setZeroPowerAccelerationMultiplier(2);
+                    .setZeroPowerAccelerationMultiplier(2)
+                    .addParametricCallback(0.6, () -> follower.setMaxPower(0.6));
 
         else if (sampleLocation == SampleLocation.OUTSIDE)
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(outsideSampleLocation, Point.class)))
                     .setLinearHeadingInterpolation(bucketLocation.getHeading(), outsideSampleLocation.getHeading())
-                    .setZeroPowerAccelerationMultiplier(2);
+                    .setZeroPowerAccelerationMultiplier(2)
+                    .addParametricCallback(0.6, () -> follower.setMaxPower(0.6));
 
-        builder.addParametricCallback(0.6, () -> follower.setMaxPower(0.6));
         return builder.build();
     }
 

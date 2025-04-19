@@ -32,8 +32,6 @@ public class Globals {
         public static double samp1Y = 12;
         public static double samp2X = -8;
         public static double samp2Y = 12;
-        public static double samp3X = -8;
-        public static double samp3Y = 12;
 
         public static long waitOZinSeconds = 0;
 //        public static double samp2X = 0;
