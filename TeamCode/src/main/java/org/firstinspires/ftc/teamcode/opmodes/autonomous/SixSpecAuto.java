@@ -177,7 +177,7 @@ public class SixSpecAuto extends CommandOpMode {
                                 // Line 3
                                 new BezierCurve(
                                         new Point(51.216, 31.100, Point.CARTESIAN),
-                                        new Point(51.946, 15.243, Point.CARTESIAN),
+                                        new Point(51.946, 15.243+4, Point.CARTESIAN),
                                         new Point(25.314, 21.400, Point.CARTESIAN)
                                 )
                         )
@@ -196,7 +196,7 @@ public class SixSpecAuto extends CommandOpMode {
                                 // Line 5
                                 new BezierCurve(
                                         new Point(50.216-3-7, 21.100, Point.CARTESIAN),
-                                        new Point(68.108, 3.243+2+2, Point.CARTESIAN),
+                                        new Point(68.108, 3.243+2+2+2, Point.CARTESIAN),
                                         //new Point(55.946, 5.243, Point.CARTESIAN),
                                         new Point(23.314, 11.400, Point.CARTESIAN)
                                 )
@@ -234,8 +234,8 @@ public class SixSpecAuto extends CommandOpMode {
                                 // Line 1
                                 new BezierCurve(
                                         new Point(23.100, 11.400, Point.CARTESIAN),
-                                        new Point(55.568, 13.622, Point.CARTESIAN),
-                                        new Point(55.000, 6.300, Point.CARTESIAN)
+                                        new Point(55.568, 13.622+3, Point.CARTESIAN),
+                                        new Point(55.000-5, 6.300, Point.CARTESIAN)
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -243,7 +243,7 @@ public class SixSpecAuto extends CommandOpMode {
                         .addPath(
                                 // Line 2
                                 new BezierCurve(
-                                        new Point(55, 6.3, Point.CARTESIAN),
+                                        new Point(55-5, 6.3, Point.CARTESIAN),
                                         new Point(7.180, 7.800, Point.CARTESIAN),
                                         new Point(33.000, 12.000, Point.CARTESIAN),
                                         new Point(pickupLocation.getX(), 12.000, Point.CARTESIAN)
@@ -413,7 +413,9 @@ public class SixSpecAuto extends CommandOpMode {
                         new ParallelCommandGroup(
                                 new TransferCommand(robot).andThen(
                                         new ParallelCommandGroup(
-                                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN),
+                                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN).alongWith(
+                                                        new InstantCommand(()->robot.depositClawRotationServo.setPosition(0.84))
+                                                ),
                                                 new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0),
                                                 new SequentialCommandGroup(
                                                         new WaitCommand(400),

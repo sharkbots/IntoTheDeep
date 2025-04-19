@@ -217,7 +217,7 @@ public class LiftSubsystem extends SubsystemWrapper {
                 return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
             case INTAKE_SPECIMEN:
                 if (IS_AUTONOMOUS) return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
-                else return DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_POS;
+                else return DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_TELEOP_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
             case DEPOSIT_HIGH_SPECIMEN:

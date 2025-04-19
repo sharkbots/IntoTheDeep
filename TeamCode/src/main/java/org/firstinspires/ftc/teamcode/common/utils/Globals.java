@@ -233,7 +233,8 @@ public class Globals {
 
     // Deposit Claw Rotation
     public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.89; //0.3365
-    public static double DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_POS = 0.87; //0.3365
+    public static double DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_TELEOP_POS = 0.87; //0.3365
+    public static double DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_AUTO_POS = 0.84; //0.3365
     public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.615; //0.0575
     public static double DEPOSIT_CLAW_ROTATION_AUTONOMOUS_BUCKET_SCORING_POS = 0.89; //0.0575
     public static double DEPOSIT_CLAW_ROTATION_LOW_BUCKET_SCORING_POS = 0.615;

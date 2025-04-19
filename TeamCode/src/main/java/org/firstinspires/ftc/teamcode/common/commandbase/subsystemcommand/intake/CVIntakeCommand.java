@@ -28,7 +28,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                 //new InstantCommand(()->robot.sampleDetectionPipeline.freeze(true)),
                 new RepeatCommand(
                         new InstantCommand(()->robot.vision.detect(color))
-                ).interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color).withTimeout(10000),
+                ).interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color).withTimeout(1000),
                 new SequentialCommandGroup(
                         new ParallelCommandGroup(
                                 new DeferredCommand(()-> new HoverCommand(robot,
