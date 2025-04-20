@@ -144,6 +144,7 @@ public class Globals {
     public static boolean INTAKING_SPECIMENS = false;
     public static boolean HOLDING_SPECIMEN = false;
     public static boolean INTAKE_JUST_CANCELLED = false;
+    public static boolean SPEC_DUMPING_MODE = false;
 
     public static boolean IS_DT_MANUAL_CONTROL = false;
     public static boolean IS_DT_AUTO_ALIGNING = false;
@@ -169,7 +170,7 @@ public class Globals {
     // Intake Arm Pivot
     public static double INTAKE_ARM_PIVOT_SUBMERSIBLE_SCAN_POS = 0.4;
     public static double INTAKE_ARM_PIVOT_TRANSFER_POS = 0.29;
-    public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.24; // TODO: update
+    public static double INTAKE_ARM_PIVOT_HOVER_WITH_SAMPLE_POS = 0.3; // TODO: update
     public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_POS = 0.65;
     public static double INTAKE_ARM_PIVOT_HOVER_INTAKE_MANUAL_POS = 0.21;
     public static double INTAKE_ARM_PIVOT_INTAKE_POS = 0.11; // 0.79
@@ -180,7 +181,7 @@ public class Globals {
     public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_POS = 0.735; //0.79
     public static double INTAKE_CLAW_PIVOT_HOVER_INTAKE_MANUAL_POS = 0.615;
     public static double INTAKE_CLAW_PIVOT_INTAKE_POS = 0.53;
-    public static double INTAKE_CLAW_PIVOT_HOLDING_POS = 0.8; // TODO: update
+    public static double INTAKE_CLAW_PIVOT_HOLDING_POS = 0.45; // TODO: update
 
     // Intake Claw Rotation
     public static double INTAKE_CLAW_ROTATION_TRANSFER_POS = 0.53;
@@ -244,7 +245,7 @@ public class Globals {
 
     public static int MAX_SLIDES_EXTENSION = 2070;
     public static int HOLDING_SPECIMEN_HEIGHT = 100;
-    public static int LOW_BUCKET_HEIGHT = 800;
+    public static int LOW_BUCKET_HEIGHT = 900;
     public static int HIGH_BUCKET_HEIGHT = 2000;
     public static int HIGH_BUCKET__AUTO_HEIGHT = 1925;
 

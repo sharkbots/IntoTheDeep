@@ -40,6 +40,8 @@ import org.firstinspires.ftc.teamcode.common.vision.Sample;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
+import java.util.Set;
+
 @Config
 @TeleOp(name = "Two Driver Teleop", group = "1 Teleop")
 public class TwoDriverTeleop extends CommandOpMode {
@@ -94,73 +96,6 @@ public class TwoDriverTeleop extends CommandOpMode {
 //        robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
 //        robot.swapYellow();
 
-        // TESTING: AUTO PICKUP
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0).alongWith(
-                                new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
-                        )
-                );
-        // Zazaaaaaaa
-
-        // Sample grab (sample mode)
-        /*
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
-                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
-                                        .andThen(new TransferCommand(robot))
-                                        .interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
-                                ,
-                                new InstantCommand(),
-                                () ->!HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
-                                        && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE
-                        )
-                );
-
-        // sample grab (spec mode)
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
-                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
-                                        .andThen(
-                                                new ParallelRaceGroup(
-                                                        new TransferCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
-                                                                .andThen(
-                                                                        new SequentialCommandGroup(
-                                                                                new WaitCommand(130),
-                                                                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
-                                                                                        .alongWith(
-                                                                                                new WaitCommand(400),
-                                                                                                new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN)),
-                                                                                                new InstantCommand(() -> INTAKE_JUST_CANCELLED = false)
-                                                                                        )
-                                                                        )
-                                                                ),
-                                                        new WaitUntilCommand(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
-                                                                .andThen(new InstantCommand(() -> INTAKE_JUST_CANCELLED = true))
-                                                )
-                                        )
-                                ,
-                                new InstantCommand(),
-                                () -> !HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
-                                        && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN
-                        )
-                );
-
-
-         */
-
-
-
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(
-                        new CVIntakeCommand(robot, Sample.Color.YELLOW).andThen(
-                                new TransferCommand(robot)
-                        )
-                );
 
         // GENERAL RESET
         operator.getGamepadButton(GamepadKeys.Button.SQUARE)
@@ -286,6 +221,14 @@ public class TwoDriverTeleop extends CommandOpMode {
                                 new IntakeSampleCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
                                         .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
                                         .andThen(new TransferCommand(robot))
+//                                            new ParallelRaceGroup(
+//                                                    new TransferCommand(robot).andThen(
+//                                                            new InstantCommand(()-> INTAKE_JUST_CANCELLED = false)
+//                                                    ),
+//                                            new WaitUntilCommand(()->operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get()).andThen(
+//                                                    new InstantCommand(()-> INTAKE_JUST_CANCELLED = true))
+//                                            )
+//                                        )
                                     .interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
                                 ,
                                 new InstantCommand(),
@@ -581,6 +524,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.telemetryA.addData("intaking specimens", INTAKING_SPECIMENS);
         robot.telemetryA.addData("holding sample", HOLDING_SAMPLE);
         robot.telemetryA.addData("holding specimen", HOLDING_SPECIMEN);
+        robot.telemetryA.addData("dumping spec mode: ", SPEC_DUMPING_MODE);
         //robot.telemetryA.addData("robot voltage", robot.follower.getVoltage());
 
 

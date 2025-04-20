@@ -7,6 +7,7 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 public class IntakeSampleCommand extends SequentialCommandGroup {
     public IntakeSampleCommand(Robot robot) {
