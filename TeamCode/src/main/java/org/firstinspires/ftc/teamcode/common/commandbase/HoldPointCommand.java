@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.common.commandbase;
 
-import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Vector2d;
+import com.pedropathing.util.CustomPIDFCoefficients;
+import com.seattlesolvers.solverslib.command.CommandBase;
+import com.seattlesolvers.solverslib.geometry.Pose2d;
+import com.seattlesolvers.solverslib.geometry.Vector2d;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
@@ -56,6 +57,16 @@ public class HoldPointCommand extends CommandBase {
         Vector ffTargetVector = new Vector(targetMagnitude+Globals.HOLDPOINT_MANUAL_FEEDFORWARD, targetVector.getTheta());
         robotPose.add(new Pose(ffTargetVector.getXComponent(), ffTargetVector.getYComponent(), 0));
 
+
+
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.2, 0, 0.01, 0);
+
+        FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.3605;
+        FollowerConstants.useSecondaryTranslationalPID = false;
+
+
+
+
         follower.holdPoint(robotPose);
 
         robot.telemetryA.addData("target magnitude", targetMagnitude);
@@ -73,10 +84,23 @@ public class HoldPointCommand extends CommandBase {
         if (timer.milliseconds() > timeout){
             Globals.IS_DT_AUTO_ALIGNING = false;
             if (dynMode) point = null;
+
+//            FollowerConstants.translationalPIDFCoefficients.setCoefficients(.1, 0, .01, 0);
+//            FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.0005;
+//            FollowerConstants.useSecondaryTranslationalPID = true;
+
             return true;
         }
         else {
             return false;
         }
+    }
+
+    @Override
+    public void end(boolean interrupted){
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(.1, 0, .01, 0);
+        FollowerConstants.secondaryTranslationalPIDFFeedForward = 0.0005;
+        FollowerConstants.useSecondaryTranslationalPID = true;
+
     }
 }

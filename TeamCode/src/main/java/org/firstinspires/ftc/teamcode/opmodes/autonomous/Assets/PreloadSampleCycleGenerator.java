@@ -12,9 +12,9 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class PreloadSampleCycleGenerator {
     public Pose bucketLocation = Globals.bucketPose;
     private Pose cycleBucketLocation = new Pose(bucketLocation.getX()+2, bucketLocation.getY()+2, Math.toRadians(315));
-    private Pose insideSampleLocation = new Pose(24, 120, Math.toRadians(0));
-    private Pose middleSampleLocation = new Pose(24, 130, Math.toRadians(0));
-    private Pose outsideSampleLocation = new Pose(24, 130, Math.toRadians(30));
+    private Pose insideSampleLocation = new Pose(24, 119, Math.toRadians(0));
+    private Pose middleSampleLocation = new Pose(24, 129, Math.toRadians(0));
+    private Pose outsideSampleLocation = new Pose(28.74, 124.3, Math.toRadians(51.77-2));
 
 
     private Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;
@@ -52,22 +52,27 @@ public class PreloadSampleCycleGenerator {
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(insideSampleLocation, Point.class)))
-                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), insideSampleLocation.getHeading());
+                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), insideSampleLocation.getHeading())
+                    .setZeroPowerAccelerationMultiplier(2)
+                    .addParametricCallback(0.3, () -> follower.setMaxPower(0.4));
 
         else if (sampleLocation == SampleLocation.MIDDLE)
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
                     allianceColor.convert(middleSampleLocation, Point.class)))
-                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), middleSampleLocation.getHeading());
+                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), middleSampleLocation.getHeading())
+                    .setZeroPowerAccelerationMultiplier(2)
+                    .addParametricCallback(0.6, () -> follower.setMaxPower(0.6));
 
         else if (sampleLocation == SampleLocation.OUTSIDE)
             builder.addPath(new BezierLine(
                     allianceColor.convert(bucketLocation, Point.class),
-                    allianceColor.convert(middleSampleLocation, Point.class)))
-                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), outsideSampleLocation.getHeading());
+                    allianceColor.convert(outsideSampleLocation, Point.class)))
+                    .setLinearHeadingInterpolation(bucketLocation.getHeading(), outsideSampleLocation.getHeading())
+                    .setZeroPowerAccelerationMultiplier(2)
+                    .addParametricCallback(0.6, () -> follower.setMaxPower(0.6));
 
-        builder.addParametricCallback(0.6, () -> follower.setMaxPower(0.6));
-        return builder.setZeroPowerAccelerationMultiplier(1).build();
+        return builder.build();
     }
 
     public PathChain getBucketPath(SampleLocation sampleLocation) throws IllegalStateException {

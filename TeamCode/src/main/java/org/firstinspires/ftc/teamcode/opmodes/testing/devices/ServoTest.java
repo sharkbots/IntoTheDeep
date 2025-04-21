@@ -5,8 +5,8 @@ import static android.os.SystemClock.sleep;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,12 +20,11 @@ import org.firstinspires.ftc.teamcode.common.utils.wrappers.ServoWrapper;
 import java.util.ArrayList;
 
 @Config
-@Disabled
-@TeleOp(name = "ServoTest")
+@TeleOp(name = "ServoTest", group="2 tests")
 public class ServoTest extends OpMode {
     private ServoWrapper intakeArmPivotLeftServo, intakeArmPivotRightServo, intakeClawPivotServo,
-            intakeClawServo, intakeClawRotationServo, intakeClawLED;
-    private ServoWrapper depositPivotServo, depositClawServo, depositClawRotationServo;
+            intakeClawServo, intakeClawRotationServo;
+    private ServoWrapper depositArmPivotTopServo, depositArmPivotBottomServo, depositClawPivotServo, depositClawServo, depositClawRotationServo;
 
     private ArrayList<ServoWrapper> servos = new ArrayList<>();
 
@@ -49,13 +48,12 @@ public class ServoTest extends OpMode {
         gamepadEx = new GamepadEx(gamepad1);
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
 
-        intakeClawLED = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeClawLED"));
-
         intakeArmPivotLeftServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotLeftServo"));
+        intakeArmPivotLeftServo.setDirection(ServoWrapper.Direction.REVERSE);
+        intakeArmPivotLeftServo.setOffset(0.99);
         servos.add(intakeArmPivotLeftServo);
 
         intakeArmPivotRightServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeArmPivotRightServo"));
-        intakeArmPivotRightServo.setDirection(Servo.Direction.REVERSE);
         servos.add(intakeArmPivotRightServo);
 
         intakeClawPivotServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeClawPivotServo"));
@@ -67,8 +65,16 @@ public class ServoTest extends OpMode {
         intakeClawRotationServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("intakeClawRotationServo"));
         servos.add(intakeClawRotationServo);
 
-        depositPivotServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositPivotServo"));
-        servos.add(depositPivotServo);
+
+        depositArmPivotTopServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositArmPivotTopServo"));
+        servos.add(depositArmPivotTopServo);
+
+        depositArmPivotBottomServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositArmPivotBottomServo"));
+        //depositArmPivotBottomServo.setOffset(0.01);
+        servos.add(depositArmPivotBottomServo);
+
+        depositClawPivotServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositClawPivotServo"));
+        servos.add(depositClawPivotServo);
 
         depositClawServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositClawServo"));
         servos.add(depositClawServo);
@@ -76,24 +82,24 @@ public class ServoTest extends OpMode {
         depositClawRotationServo = new ServoWrapper((ServoImplEx) hardwareMap.servo.get("depositClawRotationServo"));
         servos.add(depositClawRotationServo);
 
-        intakeArmPivotLeftEnc = hardwareMap.analogInput.get("intakeArmPivotLeftEncoder");
-        intakeArmPivotLeftEncoder = new AbsoluteAnalogEncoder(intakeArmPivotLeftEnc)
-                .zero(0.0)
-                .setWraparound(false);
-        analogEncoders.add(intakeArmPivotLeftEncoder);
-
-        intakeArmPivotRightEnc = hardwareMap.analogInput.get("intakeArmPivotRightEncoder");
-        intakeArmPivotRightEncoder = new AbsoluteAnalogEncoder(intakeArmPivotRightEnc)
-                .zero(0.0)
-                .setInverted(true)
-                .setWraparound(false);
-        analogEncoders.add(intakeArmPivotRightEncoder);
-
-        intakeClawPivotEnc = hardwareMap.analogInput.get("intakeClawPivotEncoder");
-        intakeClawPivotEncoder = new AbsoluteAnalogEncoder(intakeClawPivotEnc)
-                .zero(0.0)
-                .setWraparound(false);
-        analogEncoders.add(intakeClawPivotEncoder);
+//        intakeArmPivotLeftEnc = hardwareMap.analogInput.get("intakeArmPivotLeftEncoder");
+//        intakeArmPivotLeftEncoder = new AbsoluteAnalogEncoder(intakeArmPivotLeftEnc)
+//                .zero(0.0)
+//                .setWraparound(false);
+//        analogEncoders.add(intakeArmPivotLeftEncoder);
+//
+//        intakeArmPivotRightEnc = hardwareMap.analogInput.get("intakeArmPivotRightEncoder");
+//        intakeArmPivotRightEncoder = new AbsoluteAnalogEncoder(intakeArmPivotRightEnc)
+//                .zero(0.0)
+//                .setInverted(true)
+//                .setWraparound(false);
+//        analogEncoders.add(intakeArmPivotRightEncoder);
+//
+//        intakeClawPivotEnc = hardwareMap.analogInput.get("intakeClawPivotEncoder");
+//        intakeClawPivotEncoder = new AbsoluteAnalogEncoder(intakeClawPivotEnc)
+//                .zero(0.0)
+//                .setWraparound(false);
+//        analogEncoders.add(intakeClawPivotEncoder);
 
         for (ServoWrapper servo : servos) {
             servo.resolveName(hardwareMap);
@@ -131,17 +137,17 @@ public class ServoTest extends OpMode {
             //targetPos = 0.0;
         }
 
-        if(gamepadEx.wasJustPressed(GamepadKeys.Button.B)){
-            clawLEDPWMDisabled = !clawLEDPWMDisabled;
-            if (clawLEDPWMDisabled){
-                intakeClawLED.setPwmDisable();
-                sleep(250);
-            }
-            else{
-                intakeClawLED.setPwmEnable();
-                sleep(250);
-            }
-        }
+//        if(gamepadEx.wasJustPressed(GamepadKeys.Button.B)){
+//            clawLEDPWMDisabled = !clawLEDPWMDisabled;
+//            if (clawLEDPWMDisabled){
+//                intakeClawLED.setPwmDisable();
+//                sleep(250);
+//            }
+//            else{
+//                intakeClawLED.setPwmEnable();
+//                sleep(250);
+//            }
+//        }
 
         // Adjust servo position with Left/Right bumpers
         if (gamepadEx.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
@@ -155,7 +161,7 @@ public class ServoTest extends OpMode {
 
         // Display telemetry
         telemetry.addData("Servo", servos.get(servoID).getConfigName());
-        telemetry.addData("Position", targetPos);
+        telemetry.addData("Position", servos.get(servoID).getPosition());
         telemetry.addData("Holding position", holdPosition);
 
         for (AbsoluteAnalogEncoder enc : analogEncoders){

@@ -13,7 +13,12 @@ public class ServoWrapper implements Servo {
     private ServoImplEx servo;
     private String name;
     private double offset = 0.0;
+    private Direction direction = Direction.FORWARD;
 
+    public enum Direction{
+        FORWARD,
+        REVERSE
+    }
 
     public ServoWrapper(ServoImplEx servo) {
         this.servo = servo;
@@ -80,18 +85,27 @@ public class ServoWrapper implements Servo {
     }
 
     @Override
-    public void setDirection(Direction direction) {
+    public void setDirection(Servo.Direction direction) {
         this.servo.setDirection(direction);
     }
 
     @Override
-    public Direction getDirection() {
-        return this.servo.getDirection();
+    public Servo.Direction getDirection() {
+        return null;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 
     @Override
     public void setPosition(double position) {
-        this.servo.setPosition(position - offset);
+        if (direction == Direction.FORWARD){
+            this.servo.setPosition(position - offset);
+        }
+        else {
+            this.servo.setPosition(-(position - offset));
+        }
     }
 
     @Override

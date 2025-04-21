@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift;
 
-import com.arcrobotics.ftclib.command.ConditionalCommand;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
@@ -18,13 +17,20 @@ public class LiftCommand extends SequentialCommandGroup {
                 new ConditionalCommand(
                         new InstantCommand(() -> robot.liftActuator.updateFeedforward(LIFT_RESET_FEEDFORWARD)),
                         new InstantCommand(() -> robot.liftActuator.updateFeedforward(DEFAULT_LIFT_FEEDFORWARD)),
-                        () -> (state == LiftSubsystem.LiftState.RETRACTED || state == LiftSubsystem.LiftState.INTAKE_SPECIMEN)),
+                        () -> (state == LiftSubsystem.LiftState.INTAKE_SPECIMEN || state == LiftSubsystem.LiftState.RETRACTED)),
                 new ConditionalCommand(
                         new InstantCommand(() -> robot.liftActuator.updateFeedforward(LIFT_NEAR_RESET_FEEDFORWARD)),
                         new InstantCommand(),
                         () -> (state == LiftSubsystem.LiftState.HOLDING_SPECIMEN)),
 
-                new InstantCommand(() -> robot.lift.updateState(state)),
+                new InstantCommand(() -> robot.lift.updateState(state))
+                        .alongWith(
+                                new ConditionalCommand(
+                                        new WaitCommand(200).andThen(new InstantCommand(()-> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN))),
+                                        new InstantCommand(),
+                                        ()-> state == LiftSubsystem.LiftState.DEPOSIT_LOW_BUCKET || state == LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET
+                                )
+                        ),
 
                 new ConditionalCommand(
                         new SequentialCommandGroup(
@@ -51,7 +57,7 @@ public class LiftCommand extends SequentialCommandGroup {
 //                })
 
                         new WaitUntilCommand(()->robot.lift.liftReached()),
-                        () -> state == LiftSubsystem.LiftState.RETRACTED || state == LiftSubsystem.LiftState.INTAKE_SPECIMEN
+                        () ->state == LiftSubsystem.LiftState.INTAKE_SPECIMEN || state == LiftSubsystem.LiftState.RETRACTED
                 )
 
                 );

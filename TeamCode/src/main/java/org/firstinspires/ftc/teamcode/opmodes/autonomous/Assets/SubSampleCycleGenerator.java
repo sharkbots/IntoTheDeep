@@ -40,7 +40,7 @@ public class SubSampleCycleGenerator {
         }
         else subSampleLocations.set(cycleNum-1, subSampleLocation);
     }
-    
+
     public PathChain getSubPickupPath(int cycleNum) throws IllegalStateException{
         if (follower == null)
             throw new IllegalStateException("The generator's follower wasn't set");
@@ -48,11 +48,14 @@ public class SubSampleCycleGenerator {
         PathBuilder builder = follower.pathBuilder();
 
         builder.addPath(new BezierCurve(
-                allianceColor.convert(bucketLocation, Point.class),
-                new Point(subSampleLocations.get(cycleNum-1))
-        ))
-                .setTangentHeadingInterpolation()
-                .setPathEndTimeoutConstraint(0.95);
+                        allianceColor.convert(bucketLocation, Point.class),
+                        new Point(subSampleLocations.get(cycleNum-1).getX(), 117.5),
+                        new Point(subSampleLocations.get(cycleNum-1).getX(), 92)
+                ))
+                .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(270))
+                .setPathEndTValueConstraint(0.94)
+                //.setPathEndTimeoutConstraint(0.97)
+                .setZeroPowerAccelerationMultiplier(2);
         return builder.build();
     }
 
@@ -63,12 +66,44 @@ public class SubSampleCycleGenerator {
         PathBuilder builder = follower.pathBuilder();
 
         builder.addPath(new BezierCurve(
-                new Point(subSampleLocations.get(cycleNum-1)),
+                new Point(subSampleLocations.get(cycleNum-1).getX(), 92),
+                new Point(subSampleLocations.get(cycleNum-1).getX(), 117.5),
                 allianceColor.convert(bucketLocation, Point.class)
         )).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
-                .addTemporalCallback(0.8, ()-> follower.setMaxPower(0.7));
+                .setPathEndTValueConstraint(0.98);
 
         return builder.build();
 
     }
+
+//    public PathChain getSubPickupPath(int cycleNum) throws IllegalStateException{
+//        if (follower == null)
+//            throw new IllegalStateException("The generator's follower wasn't set");
+//
+//        PathBuilder builder = follower.pathBuilder();
+//
+//        builder.addPath(new BezierCurve(
+//                allianceColor.convert(bucketLocation, Point.class),
+//                new Point(subSampleLocations.get(cycleNum-1))
+//        ))
+//                .setTangentHeadingInterpolation()
+//                .setPathEndTimeoutConstraint(0.95);
+//        return builder.build();
+//    }
+//
+//    public PathChain getSubDepositPath(int cycleNum) throws IllegalStateException{
+//        if (follower == null)
+//            throw new IllegalStateException("The generator's follower wasn't set");
+//
+//        PathBuilder builder = follower.pathBuilder();
+//
+//        builder.addPath(new BezierCurve(
+//                new Point(subSampleLocations.get(cycleNum-1)),
+//                allianceColor.convert(bucketLocation, Point.class)
+//        )).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
+//                .addTemporalCallback(0.8, ()-> follower.setMaxPower(0.7));
+//
+//        return builder.build();
+//
+//    }
 }

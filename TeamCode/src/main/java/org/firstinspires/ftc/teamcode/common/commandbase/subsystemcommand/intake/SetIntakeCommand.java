@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake;
 
-import com.arcrobotics.ftclib.command.CommandBase;
+import com.seattlesolvers.solverslib.command.CommandBase;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
@@ -53,10 +53,14 @@ public class SetIntakeCommand extends CommandBase {
 
         // If targetRotationDegrees is provided, set the claw rotation to the specified angle
         if (clawTargetRotationDegrees != null) {
-            robot.intake.setClawRotationDegrees(clawTargetRotationDegrees);
+            if (clawTargetRotationDegrees == 0.0){
+                robot.intake.setClawRotation(pivotState);
+            }
+            else {
+                robot.intake.setClawRotationDegrees(clawTargetRotationDegrees);
+            }
         } else {
-            // Otherwise, use the pivot state to set the claw rotation
-            robot.intake.setClawRotation(pivotState);
+            // do nothing
         }
 
         // Set the pivot state for the arm and claw

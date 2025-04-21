@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.commandbase;
 
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 public class DriftCorrectionCommand extends SequentialCommandGroup {
 }

@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.common.drive.pedroPathing.constants;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.localization.*;
 import com.pedropathing.localization.constants.*;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+@Config
 public class LConstants {
     static {
         PinpointConstants.forwardY = -60.05000/25.4; // -60.05000

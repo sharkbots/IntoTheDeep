@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.opmodes.testing.devices;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 @Disabled
-@TeleOp(name = "LiftSubsystemTest")
+@TeleOp(name = "LiftSubsystemTest", group="2 tests")
 public class LiftSubsystemTest extends CommandOpMode {
 
     private double loopTime = 0.0;

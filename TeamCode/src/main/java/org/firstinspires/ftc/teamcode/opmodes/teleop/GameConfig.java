@@ -1,55 +1,31 @@
-package org.firstinspires.ftc.teamcode.opmodes.testing;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.seattlesolvers.solverslib.gamepad.GamepadEx;
-import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
-import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
+import org.firstinspires.ftc.teamcode.common.utils.Menu.ConfigMenu;
 
-@Disabled
-@TeleOp(name = "A CONFIG MENU", group="1 Teleop")
-public class ConfigMenuTest extends LinearOpMode {
+@TeleOp(name = "game config", group="1 Teleop")
+public class GameConfig extends LinearOpMode {
 
     //AutoBase.Coordinates c;
     GamepadEx gamepadEx2;
     ConfigMenu menu;
+    Robot robot = Robot.getInstance();
 
-    public enum QUADRANT {
-        CHAMBER_BASKET,
-        CHAMBER_MIDDLE,
-        CHAMBER_OBSZONE,
-        CENTER_BASKET,
-        CENTER_MIDDLE,
-        CENTER_OBSZONE
-    };
-
-    public enum ALLIANCE {
-        BLUE,
-        RED
-    };
-
-    class TEST {
-
-        boolean bool = false;
-        int integer = 0;
-        float fl = 0.0f;
-        double dbl = 0.0;
-        QUADRANT quadrant = QUADRANT.CHAMBER_BASKET;
-        ALLIANCE alliance = ALLIANCE.BLUE;
-
-    }
     public void Setup() {
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         sleep(500);
         gamepadEx2 = new GamepadEx(gamepad2);
-        menu = new ConfigMenu(gamepadEx2, Robot.getInstance());
-        menu.setConfigurationObject(new TEST());
+        robot.setTelemetry(telemetry);
+        menu = new ConfigMenu(gamepadEx2, robot);
+        menu.setConfigurationObject(new Globals.SampleAutonomousConfig());
 
         while(!isStarted() && !isStopRequested()){
         }
