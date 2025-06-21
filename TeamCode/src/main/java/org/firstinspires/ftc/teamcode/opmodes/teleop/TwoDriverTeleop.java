@@ -338,7 +338,13 @@ public class TwoDriverTeleop extends CommandOpMode {
         // Deposit high rung setup
         operator.getGamepadButton(GamepadKeys.Button.TRIANGLE)
                 .whenPressed(new ConditionalCommand(
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP),
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP).alongWith(
+                                new SequentialCommandGroup(
+                                        new InstantCommand(()->robot.depositClawServo.setPosition(0.63)),
+                                        new WaitCommand(700),
+                                        new InstantCommand(()-> robot.depositClawServo.setPosition(DEPOSIT_CLAW_MICRO_OPEN_POS))
+                                )
+                        ),
                         new InstantCommand(),
                         () -> robot.lift.getLiftState() == LiftSubsystem.LiftState.HOLDING_SPECIMEN ||
                         robot.lift.getLiftState() == LiftSubsystem.LiftState.PUSHING_SPECIMEN)
@@ -432,15 +438,22 @@ public class TwoDriverTeleop extends CommandOpMode {
             notifiedEndgame = true;
         }
 
+        int maxExtendoPower = 250;
+        double clawRotationFactor = 3.5;
+        if (gamepad2.left_trigger > 0.95){
+            maxExtendoPower = maxExtendoPower / 2;
+            clawRotationFactor = clawRotationFactor / 1.25;
+        }
+
         if (Math.abs(gamepad2.left_stick_x)>= 0.2 && robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL){
-            robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees() + gamepad2.left_stick_x*3.5);
+            robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees() + gamepad2.left_stick_x*clawRotationFactor);
         }
 
         // manual extendo control
         //robot.extendoActuator.disableManualPower();
         if (Math.abs(gamepad2.right_stick_y)>= 0.2 && INTAKING_SAMPLES){
             robot.intake.setExtendoTargetTicks((int)(robot.intake.getExtendoPosTicks()+
-                    MathUtils.extendoJoystickScalar(-gamepad2.right_stick_y, 0.025, 0.4, 0.2, 0.98, 0.6, 1.5, 250)));
+                    MathUtils.extendoJoystickScalar(-gamepad2.right_stick_y, 0.025, 0.4, 0.3, 0.99999, 0.6, 1.5, maxExtendoPower)));
         }
 
         // emergency lift override

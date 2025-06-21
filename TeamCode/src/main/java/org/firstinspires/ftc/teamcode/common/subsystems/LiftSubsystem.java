@@ -211,10 +211,10 @@ public class LiftSubsystem extends SubsystemWrapper {
         switch (state) {
             case RETRACTED:
             case LVL1_ASCENT:
-            case HOLDING_SPECIMEN:
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
                 return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
+            case HOLDING_SPECIMEN:
             case INTAKE_SPECIMEN:
                 if (IS_AUTONOMOUS) return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
                 else return DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_TELEOP_POS;
@@ -225,7 +225,7 @@ public class LiftSubsystem extends SubsystemWrapper {
                 if (IS_AUTONOMOUS){
                     return DEPOSIT_CLAW_ROTATION_SPECIMEN_SCORING_AUTONOMOUS_POS;
                 }
-                else return DEPOSIT_CLAW_ROTATION_TRANSFER_POS;
+                else return DEPOSIT_CLAW_ROTATION_SPECIMEN_SCORING_POS;
             case DEPOSIT_LOW_BUCKET:
                 return DEPOSIT_CLAW_ROTATION_LOW_BUCKET_SCORING_POS;
             case DEPOSIT_HIGH_BUCKET:
