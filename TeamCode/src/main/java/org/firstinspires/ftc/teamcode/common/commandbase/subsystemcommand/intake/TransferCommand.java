@@ -28,7 +28,7 @@ public class TransferCommand extends SequentialCommandGroup {
                         new SetIntakeCommand(robot, IntakeSubsystem.PivotState.TRANSFER, 0.0),
                         ()-> delayRotation
                 ),
-                new WaitUntilCommand(() -> robot.intake.extendoReached() || robot.intake.getExtendoPosTicks() < 30),
+                new WaitUntilCommand(() -> robot.intake.extendoReached() || robot.intake.getExtendoPosTicks() < 50),
                 new WaitCommand(200),
                 new ConditionalCommand(
                         new InstantCommand(()-> robot.intake.setClawRotation(IntakeSubsystem.PivotState.TRANSFER)),
