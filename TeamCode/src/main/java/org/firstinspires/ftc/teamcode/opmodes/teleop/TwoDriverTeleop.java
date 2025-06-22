@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static com.qualcomm.robotcore.hardware.Gamepad.LED_DURATION_CONTINUOUS;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
@@ -18,12 +17,9 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ManualSampleIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
@@ -34,13 +30,12 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.R
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
-import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.teamcode.common.vision.Sample;
 
 import static org.firstinspires.ftc.teamcode.common.utils.Globals.*;
 
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Config
 @TeleOp(name = "Two Driver Teleop", group = "1 Teleop")
@@ -273,7 +268,9 @@ public class TwoDriverTeleop extends CommandOpMode {
         // Deposit high basket setup
         operator.getGamepadButton(GamepadKeys.Button.CIRCLE)
                 .whenPressed(new ConditionalCommand(
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET),
+                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(new InstantCommand(
+                                ()-> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN)
+                        )),
                         new InstantCommand(), () -> HOLDING_SAMPLE && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE)
                 );
 
@@ -340,9 +337,10 @@ public class TwoDriverTeleop extends CommandOpMode {
                 .whenPressed(new ConditionalCommand(
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_RUNG_SETUP).alongWith(
                                 new SequentialCommandGroup(
+                                        new WaitCommand(300),
                                         new InstantCommand(()->robot.depositClawServo.setPosition(0.63)),
-                                        new WaitCommand(700),
-                                        new InstantCommand(()-> robot.depositClawServo.setPosition(DEPOSIT_CLAW_MICRO_OPEN_POS))
+                                        new WaitCommand(400),
+                                        new InstantCommand(()-> robot.depositClawServo.setPosition(0.66))
                                 )
                         ),
                         new InstantCommand(),
@@ -350,11 +348,12 @@ public class TwoDriverTeleop extends CommandOpMode {
                         robot.lift.getLiftState() == LiftSubsystem.LiftState.PUSHING_SPECIMEN)
                 );
 
+        AtomicBoolean readyToReleaseSpec = new AtomicBoolean(false);
         // Deposit specimen: 1. Hang it
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(
-                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN)
+                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN).withTimeout(250).andThen(new InstantCommand(()-> readyToReleaseSpec.set(true)))
                                         .alongWith(
                                                 new InstantCommand(()-> {
                                                     gamepad1.rumble(200);
@@ -372,7 +371,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                 .whenReleased(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        new WaitUntilCommand(()->robot.lift.liftReached()),
+                                        new WaitUntilCommand(readyToReleaseSpec::get),
                                         new DepositSpecimenCommand(robot),
                                         new WaitCommand(200),
                                         new ResetLiftCommand(robot).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).get())
@@ -451,9 +450,14 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         // manual extendo control
         //robot.extendoActuator.disableManualPower();
-        if (Math.abs(gamepad2.right_stick_y)>= 0.2 && INTAKING_SAMPLES){
+        if (Math.abs(gamepad2.right_stick_y)>= 0.025 && INTAKING_SAMPLES){
             robot.intake.setExtendoTargetTicks((int)(robot.intake.getExtendoPosTicks()+
                     MathUtils.extendoJoystickScalar(-gamepad2.right_stick_y, 0.025, 0.4, 0.3, 0.99999, 0.6, 1.5, maxExtendoPower)));
+        }
+
+        // manual lift control when depositing samples
+        if (Math.abs(gamepad2.left_stick_y)>= 0.2 && robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET){
+            robot.lift.setLiftTargetPosTicks(((int)(robot.liftActuator.getPosition()-gamepad2.left_stick_y*15)));
         }
 
         // emergency lift override

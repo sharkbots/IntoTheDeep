@@ -16,6 +16,7 @@ import java.util.Comparator;
 import android.graphics.Bitmap;
 
 /* Qualcomm includes */
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /* FTC Controller includes */
@@ -115,12 +116,20 @@ public class SamplesDetection  {
     /**
      * Start sample detection
      */
-    public void start() {
+    public void init() {
+
         mDetection.start();
         mImageIndex = 0;
         mCalibration.initialize();
+        mLogger.addLine("Initialized, switch to pipeline 0");
         mMode = Mode.DETECT;
+        mDetection.reset(0);
     }
+
+    public void start() {
+        mDetection.reset();
+    }
+
 
     /**
      * Detect new samples
@@ -167,6 +176,8 @@ public class SamplesDetection  {
                 mOngoing.clear();
             }
         }
+
+        this.log();
 
 //        mLogger.addLine("Processing image " + mImageIndex);
         mImageIndex++;

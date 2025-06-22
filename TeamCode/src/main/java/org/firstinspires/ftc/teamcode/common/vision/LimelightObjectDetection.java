@@ -50,6 +50,21 @@ public class LimelightObjectDetection {
         return (results != null);
     }
 
+    public void                             reset(int pipeline) {
+
+        if(mWebcam != null) {
+//            mLogger.addLine("starting object detection pipeline");
+            mWebcam.pipelineSwitch(pipeline);
+        }
+    }
+    public void                             reset() {
+
+        if(mWebcam != null) {
+//            mLogger.addLine("starting object detection pipeline");
+            mWebcam.pipelineSwitch(mPipeline);
+        }
+    }
+
     /**
      * Start camera streaming
      */

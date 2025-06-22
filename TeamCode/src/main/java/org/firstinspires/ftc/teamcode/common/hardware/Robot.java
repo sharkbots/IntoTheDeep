@@ -170,7 +170,7 @@ public class Robot extends SubsystemWrapper{
         vision = new SamplesDetection("Limelight3A",hardwareMap,this.telemetryA);
 
 //        if (IS_AUTONOMOUS) {
-            vision.start();
+            vision.init();
 //        }
 
         // DRIVETRAIN
@@ -296,10 +296,6 @@ public class Robot extends SubsystemWrapper{
         intake = new IntakeSubsystem();
         lift = new LiftSubsystem();
         addSubsystem(intake, lift);
-
-        if (IS_AUTONOMOUS){
-            vision.start();
-        }
 
 //        if (IS_AUTONOMOUS) {
 //            // TODO: CATCH EXCEPTION TO NOT INIT CAMERA IF ITS NOT FOUND
