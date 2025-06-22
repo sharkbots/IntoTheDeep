@@ -31,6 +31,12 @@ apply plugin: 'org.team11260.fast-load-plugin'
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 24
+    }
+
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
@@ -76,4 +82,7 @@ dependencies {
 
     // Fast load
     implementation 'org.team11260:fast-load:0.1.2'
+
+    // FTC Control
+    implementation "com.bylazar:ftcontrol:0.6.6"
 }
