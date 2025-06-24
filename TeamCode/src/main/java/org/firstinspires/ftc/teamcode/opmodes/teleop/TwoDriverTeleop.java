@@ -247,7 +247,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                                                                                 new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
                                                                                         .alongWith(
                                                                                                 new WaitCommand(400),
-                                                                                                new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.MICRO_OPEN)),
+                                                                                                new InstantCommand(() -> robot.depositClawServo.setPosition(0.67)),
                                                                                                 new InstantCommand(() -> INTAKE_JUST_CANCELLED = false)
                                                                                         )
                                                                         )
@@ -457,7 +457,8 @@ public class TwoDriverTeleop extends CommandOpMode {
 
         // manual lift control when depositing samples
         if (Math.abs(gamepad2.left_stick_y)>= 0.2 && robot.lift.liftState == LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET){
-            robot.lift.setLiftTargetPosTicks(((int)(robot.liftActuator.getPosition()-gamepad2.left_stick_y*15)));
+            double factor = gamepad2.left_stick_y < 0 ? 45 : 25;
+            robot.lift.setLiftTargetPosTicks(((int)(robot.liftActuator.getPosition()-gamepad2.left_stick_y*factor)));
         }
 
         // emergency lift override

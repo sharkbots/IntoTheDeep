@@ -14,6 +14,7 @@ public class LiftSubsystem extends SubsystemWrapper {
     public LiftState liftState = LiftState.RETRACTED;
     public ClawState clawState = ClawState.OPEN;
 
+    public boolean huggingSpecDeposit = false;
     public boolean isResetting = false;
     private int liftTargetTicks = 0;
 
@@ -123,10 +124,16 @@ public class LiftSubsystem extends SubsystemWrapper {
                 return HOLDING_SPECIMEN_HEIGHT;
             case DEPOSIT_LOW_SPECIMEN: return LOW_SPECIMEN_HEIGHT;
             case DEPOSIT_HIGH_RUNG_SETUP:
-                if (IS_AUTONOMOUS) return HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT;
+                if (IS_AUTONOMOUS){
+                    if (huggingSpecDeposit) return HIGH_SPECIMEN_HUGGING_SETUP_HEIGHT;
+                    else return HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT;
+                }
                 else return HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT;
             case DEPOSIT_HIGH_SPECIMEN:
-                if (IS_AUTONOMOUS) return HIGH_SPECIMEN_AUTONOMOUS_HEIGHT;
+                if (IS_AUTONOMOUS){
+                    if (huggingSpecDeposit) return HIGH_SPECIMEN_HUGGING_HEIGHT;
+                    else return HIGH_SPECIMEN_AUTONOMOUS_HEIGHT;
+                }
                 else return HIGH_SPECIMEN_TELEOP_HEIGHT;
             case PUSHING_SPECIMEN: return PUSHING_SPECIMEN_HEIGHT;
             case DEPOSIT_LOW_BUCKET: return LOW_BUCKET_HEIGHT;
@@ -157,12 +164,14 @@ public class LiftSubsystem extends SubsystemWrapper {
                 return DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS;
             case DEPOSIT_HIGH_RUNG_SETUP:
                 if (IS_AUTONOMOUS){
+                    if (huggingSpecDeposit) return DEPOSIT_CLAW_PIVOT_HUGGING_SPECIMEN_SCORING_SETUP_POS;
                     return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_AUTONOMOUS_POS;
                 }
                 else return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_TELEOP_POS;
             case DEPOSIT_LOW_SPECIMEN:
             case DEPOSIT_HIGH_SPECIMEN:
                 if (IS_AUTONOMOUS){
+                    if (huggingSpecDeposit) return DEPOSIT_CLAW_PIVOT_HUGGING_SPECIMEN_SCORING_POS;
                     return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS;
                 }
                 else return DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_TELEOP_POS;
@@ -192,7 +201,8 @@ public class LiftSubsystem extends SubsystemWrapper {
             case DEPOSIT_HIGH_SPECIMEN:
             case DEPOSIT_HIGH_RUNG_SETUP:
                 if (IS_AUTONOMOUS){
-                    return DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS;
+                    if (huggingSpecDeposit) return DEPOSIT_ARM_PIVOT_HUGGING_SPECIMEN_SCORING_POS;
+                    else return DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS;
                 }
                 else return DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_TELEOP_POS;
             case PUSHING_SPECIMEN: return DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS;

@@ -17,10 +17,26 @@ public class Globals {
 
     public static Pose END_OF_AUTO_POSE = new Pose(36, 36, Math.toRadians(90));
 
+    public static double seamsToInches(double seams){
+        if (seams == 0) return 0.0;
+        else if (Math.abs(seams) <= 0.5) return Math.signum(seams)*3.0/8;
+        else if (Math.abs(seams) <= 1.0) return Math.signum(seams)*6.0/8;
+        else return 1.875 + 18.0/16 * (seams-1);
+    }
+
 
     public static class SpecAutonomousConfig  {
         public static Globals.AllianceColor allianceColor = Globals.AllianceColor.RED;
         public static Globals.GRABBING_MODES grabbingMode = GRABBING_MODES.SPECIMEN;
+
+        public static double samp1X = 0;
+        public static double samp1Y = 12;
+        public static int samp1Angle = 0;
+
+        public static double samp2X = 0;
+        public static double samp2Y = 12;
+        public static int samp2Angle = 0;
+
     }
 
     public static class SampleAutonomousConfig  {
@@ -151,7 +167,7 @@ public class Globals {
     public static double HOLDPOINT_MANUAL_FEEDFORWARD = 0.5;
 
     // Size of robot (in inches)
-    public static double ROBOT_LENGTH = 13.1;
+    public static double ROBOT_LENGTH = 12.8;
     public static double ROBOT_WIDTH = 12.8;
 
     public static double CV_INTAKE_MAX_VELOCITY = 1.0;
@@ -211,6 +227,7 @@ public class Globals {
     public static double DEPOSIT_ARM_PIVOT_AUTONOMOUS_BUCKET_POS = 0.6;
     public static double DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS = 0.77;
     public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS = 0.29;
+    public static double DEPOSIT_ARM_PIVOT_HUGGING_SPECIMEN_SCORING_POS = 0.41;
     public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_TELEOP_POS = 0.35;
     public static double DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS = 0.34;
 
@@ -222,6 +239,8 @@ public class Globals {
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS = 0.64; // 0.64
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_AUTONOMOUS_POS = 0.55;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS = 0.49;
+    public static double DEPOSIT_CLAW_PIVOT_HUGGING_SPECIMEN_SCORING_SETUP_POS = 0.47;
+    public static double DEPOSIT_CLAW_PIVOT_HUGGING_SPECIMEN_SCORING_POS = 0.41;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_TELEOP_POS = 0.55;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_TELEOP_POS = 0.57;
     public static double DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS = 0.5;
@@ -230,12 +249,12 @@ public class Globals {
     public static double DEPOSIT_CLAW_OPEN_POS = 0.38;
     public static double DEPOSIT_CLAW_OPEN_TRANSFER_POS = 0.47;
     public static double DEPOSIT_CLAW_CLOSED_POS = 0.70;
-    public static double DEPOSIT_CLAW_MICRO_OPEN_POS = 0.66;
+    public static double DEPOSIT_CLAW_MICRO_OPEN_POS = 0.65;
 
     // Deposit Claw Rotation
     public static double DEPOSIT_CLAW_ROTATION_TRANSFER_POS = 0.89; //0.3365
     public static double DEPOSIT_CLAW_ROTATION_SPECIMEN_SCORING_POS = 0.3365; //0.3365
-    public static double DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_TELEOP_POS = 0.3365; //0.87;
+    public static double DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_TELEOP_POS = 0.3365-0.02; //0.87;
     public static double DEPOSIT_CLAW_ROTATION_SAMPLE_OZ_DROP_AUTO_POS = 0.84; //0.3365
     public static double DEPOSIT_CLAW_ROTATION_TELEOP_BUCKET_SCORING_POS = 0.89; //0.615;
     public static double DEPOSIT_CLAW_ROTATION_AUTONOMOUS_BUCKET_SCORING_POS = 0.89; //0.0575
@@ -253,6 +272,8 @@ public class Globals {
     public static int LOW_SPECIMEN_HEIGHT = 85;
     public static int HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT = 885;
     public static int HIGH_SPECIMEN_AUTONOMOUS_HEIGHT = 480;
+    public static int HIGH_SPECIMEN_HUGGING_SETUP_HEIGHT = 730;
+    public static int HIGH_SPECIMEN_HUGGING_HEIGHT = 360;
     public static int HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT = 830; // 1000
     public static int HIGH_SPECIMEN_TELEOP_HEIGHT = 1150; // 1350
     public static int PUSHING_SPECIMEN_HEIGHT = 650;
