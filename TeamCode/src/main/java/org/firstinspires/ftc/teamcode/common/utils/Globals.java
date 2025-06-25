@@ -31,11 +31,11 @@ public class Globals {
 
         public static double samp1X = 0;
         public static double samp1Y = 12;
-        public static int samp1Angle = 0;
+        public static double samp1Angle = 0;
 
         public static double samp2X = 0;
         public static double samp2Y = 12;
-        public static int samp2Angle = 0;
+        public static double samp2Angle = 0;
 
     }
 
@@ -212,7 +212,7 @@ public class Globals {
     // Extendo
     public static int MAX_EXTENDO_EXTENSION = 2120;
     public static int EXTENDO_FEEDFORWARD_TRIGGER_THRESHOLD = 1300;
-    public static double INTAKE_MINIMUM_EXTENSION = 2;
+    public static double INTAKE_MINIMUM_EXTENSION = 2+1.25;
 
     // 2143 ticks / 21.26 inch --> 100.7996 ticks / 1 inch
     public static double EXTENDO_TICKS_PER_INCH = 100.8;
@@ -223,24 +223,26 @@ public class Globals {
     // Bottom servo is 0.01 less than top servo
     // Range (with top servo): 0.75 (wall pickup) --> 0.2 (out the front)
     public static double DEPOSIT_ARM_PIVOT_TRANSFER_POS = 0.315;
+    public static double DEPOSIT_ARM_PIVOT_LVL1_ASCENT_POS = 0.29;
     public static double DEPOSIT_ARM_PIVOT_BUCKET_POS = 0.6; //0.65;
     public static double DEPOSIT_ARM_PIVOT_AUTONOMOUS_BUCKET_POS = 0.6;
     public static double DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS = 0.77;
     public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS = 0.29;
-    public static double DEPOSIT_ARM_PIVOT_HUGGING_SPECIMEN_SCORING_POS = 0.41;
+    public static double DEPOSIT_ARM_PIVOT_HUGGING_SPECIMEN_SCORING_POS = 0.35;
     public static double DEPOSIT_ARM_PIVOT_SPECIMEN_SCORING_TELEOP_POS = 0.35;
     public static double DEPOSIT_ARM_PIVOT_PUSHING_SPECIMEN_POS = 0.34;
 
     // Deposit Claw Pivot
     // Full range: 0.40 --> 1.0
     public static double DEPOSIT_CLAW_PIVOT_TRANSFER_POS = 0.37;
+    public static double DEPOSIT_CLAW_PIVOT_LVL1_ASCENT_POS = 0.8;
     public static double DEPOSIT_CLAW_PIVOT_BUCKET_POS = 0.775; //0.8;
     public static double DEPOSIT_CLAW_PIVOT_AUTONOMOUS_BUCKET_POS = 0.705;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS = 0.64; // 0.64
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_AUTONOMOUS_POS = 0.55;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_AUTONOMOUS_POS = 0.49;
-    public static double DEPOSIT_CLAW_PIVOT_HUGGING_SPECIMEN_SCORING_SETUP_POS = 0.47;
-    public static double DEPOSIT_CLAW_PIVOT_HUGGING_SPECIMEN_SCORING_POS = 0.41;
+    public static double DEPOSIT_CLAW_PIVOT_HUGGING_SPECIMEN_SCORING_SETUP_POS = 0.40;
+    public static double DEPOSIT_CLAW_PIVOT_HUGGING_SPECIMEN_SCORING_POS = 0.40;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_SETUP_TELEOP_POS = 0.55;
     public static double DEPOSIT_CLAW_PIVOT_SPECIMEN_SCORING_TELEOP_POS = 0.57;
     public static double DEPOSIT_CLAW_PIVOT_PUSHING_SPECIMEN_POS = 0.5;
@@ -272,12 +274,12 @@ public class Globals {
     public static int LOW_SPECIMEN_HEIGHT = 85;
     public static int HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT = 885;
     public static int HIGH_SPECIMEN_AUTONOMOUS_HEIGHT = 480;
-    public static int HIGH_SPECIMEN_HUGGING_SETUP_HEIGHT = 730;
-    public static int HIGH_SPECIMEN_HUGGING_HEIGHT = 360;
+    public static int HIGH_SPECIMEN_HUGGING_SETUP_HEIGHT = 770+30+30+30+20+30;
+    public static int HIGH_SPECIMEN_HUGGING_HEIGHT = 360+30+30+30+20+30;
     public static int HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT = 830; // 1000
     public static int HIGH_SPECIMEN_TELEOP_HEIGHT = 1150; // 1350
     public static int PUSHING_SPECIMEN_HEIGHT = 650;
-    public static int LVL1_ASCENT_HEIGHT = 825+55*6;
+    public static int LVL1_ASCENT_HEIGHT = 500;
     public static int ENDGAME_ASCENT_SETUP_HEIGHT = 2060;
     public static int ENDGAME_ASCENT_HEIGHT = 1110+120+100;
     public static int POST_BUZZER_HANG_RELEASE_HEIGHT = 1550+120-50; // 1600 before, which tilted the robot

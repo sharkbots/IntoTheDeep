@@ -31,6 +31,8 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.commandbase.FollowPathChainCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
@@ -358,7 +360,9 @@ public class SixSpecAutoCV extends CommandOpMode {
 //                                        new HoverCommand(robot, 300).andThen(
 //                                                new IntakeSampleCommand(robot)
 //                                        )
-                                        new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED)
+                                        new HoverCommand(robot, 500).andThen(
+                                        new IntakeSampleCommand(robot))
+//                                        new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED)
                                 )
                         ),
                         new ParallelCommandGroup(
@@ -455,75 +459,75 @@ public class SixSpecAutoCV extends CommandOpMode {
 
 
 
-                        // new spec 3 deposit + samp 2 pickup
-                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-
-                        // Intake sample from sub
-                        new DepositSpecimenCommand(robot).andThen(
-                                new WaitCommand(100),
-                                new ParallelCommandGroup(
-                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED),
-//                                        new HoverCommand(robot, 300).andThen(
-//                                                new IntakeSampleCommand(robot)
+//                        // new spec 3 deposit + samp 2 pickup
+//                        new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
+//
+//                        // Intake sample from sub
+//                        new DepositSpecimenCommand(robot).andThen(
+//                                new WaitCommand(100),
+//                                new ParallelCommandGroup(
+//                                        new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED),
+////                                        new HoverCommand(robot, 300).andThen(
+////                                                new IntakeSampleCommand(robot)
+////                                        )
+//                                        new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED)
+//                                )
+//                        ),
+//                        new ParallelCommandGroup(
+//                                new TransferCommand(robot).andThen(
+//                                        new ParallelCommandGroup(
+//                                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN).alongWith(
+//                                                        new InstantCommand(()->robot.depositClawRotationServo.setPosition(0.84))
+//                                                ),
+//                                                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0),
+//                                                new SequentialCommandGroup(
+//                                                        new WaitCommand(400),
+//                                                        new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.OPEN))
+//
+//                                                )
 //                                        )
-                                        new CVIntakeCommand(robot, Globals.ALLIANCE_COLOR==Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED)
-                                )
-                        ),
-                        new ParallelCommandGroup(
-                                new TransferCommand(robot).andThen(
-                                        new ParallelCommandGroup(
-                                                new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN).alongWith(
-                                                        new InstantCommand(()->robot.depositClawRotationServo.setPosition(0.84))
-                                                ),
-                                                new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0),
-                                                new SequentialCommandGroup(
-                                                        new WaitCommand(400),
-                                                        new InstantCommand(()->robot.lift.setClawState(LiftSubsystem.ClawState.OPEN))
-
-                                                )
-                                        )
-                                ),
-                                new SequentialCommandGroup(
-                                        new WaitUntilCommand(()->robot.intake.getExtendoPosTicks() < 900),
-                                        new WaitCommand(100),
-                                        new DeferredCommand(()->
-                                                // Pickup second spec
-                                                new FollowPathChainCommand(robot.follower,
-                                                        robot.follower.pathBuilder().addPath(
-                                                                        new BezierCurve(
-                                                                                robot.follower.getPose(),
-                                                                                new Pose(30.44,  robot.follower.getPose().getY()),
-                                                                                new Pose(45.3, pickupLocation.getY()),
-                                                                                allianceColor.convert(pickupLocation, Pose.class)
-                                                                        )
-                                                                )
-                                                                .setPathEndTValueConstraint(0.95)
-                                                                .setConstantHeadingInterpolation(Math.toRadians(0))
-                                                                //.setPathEndVelocityConstraint(3)
-                                                                .setPathEndHeadingConstraint(Math.toRadians(3))
-                                                                .setZeroPowerAccelerationMultiplier(3.5)
-                                                                //.addParametricCallback(0.8, ()-> robot.follower.setMaxPower(0.7))
-                                                                .build()
-                                                ), null))
-
-                        ),
+//                                ),
+//                                new SequentialCommandGroup(
+//                                        new WaitUntilCommand(()->robot.intake.getExtendoPosTicks() < 900),
+//                                        new WaitCommand(100),
+//                                        new DeferredCommand(()->
+//                                                // Pickup second spec
+//                                                new FollowPathChainCommand(robot.follower,
+//                                                        robot.follower.pathBuilder().addPath(
+//                                                                        new BezierCurve(
+//                                                                                robot.follower.getPose(),
+//                                                                                new Pose(30.44,  robot.follower.getPose().getY()),
+//                                                                                new Pose(45.3, pickupLocation.getY()),
+//                                                                                allianceColor.convert(pickupLocation, Pose.class)
+//                                                                        )
+//                                                                )
+//                                                                .setPathEndTValueConstraint(0.95)
+//                                                                .setConstantHeadingInterpolation(Math.toRadians(0))
+//                                                                //.setPathEndVelocityConstraint(3)
+//                                                                .setPathEndHeadingConstraint(Math.toRadians(3))
+//                                                                .setZeroPowerAccelerationMultiplier(3.5)
+//                                                                //.addParametricCallback(0.8, ()-> robot.follower.setMaxPower(0.7))
+//                                                                .build()
+//                                                ), null))
+//
+//                        ),
 
 
 
 //
-//                        // old spec 3 deposit (no samp pickup)
-//                        new ParallelCommandGroup(
-//                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-//                                // spec 4
-//                                new SequentialCommandGroup(
-//                                        new WaitCommand(300),
-//                                        new FollowPathChainCommand(robot.follower, paths.get(3))
-//                                                .alongWith(
-//                                                        new WaitCommand(200).andThen(new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)),
-//                                                        new WaitCommand(50).andThen(new DepositSpecimenCommand(robot))
-//                                                )
-//                                )
-//                        ),
+                        // old spec 3 deposit (no samp pickup)
+                        new ParallelCommandGroup(
+                                new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
+                                // spec 4
+                                new SequentialCommandGroup(
+                                        new WaitCommand(300),
+                                        new FollowPathChainCommand(robot.follower, paths.get(3))
+                                                .alongWith(
+                                                        new WaitCommand(200).andThen(new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)),
+                                                        new WaitCommand(50).andThen(new DepositSpecimenCommand(robot))
+                                                )
+                                )
+                        ),
 
 
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),

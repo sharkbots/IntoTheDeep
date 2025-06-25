@@ -14,7 +14,7 @@ public class PreloadSampleCycleGenerator {
     private Pose cycleBucketLocation = new Pose(bucketLocation.getX()+2, bucketLocation.getY()+2, Math.toRadians(315));
     private Pose insideSampleLocation = new Pose(24, 119, Math.toRadians(0));
     private Pose middleSampleLocation = new Pose(24, 129, Math.toRadians(0));
-    private Pose outsideSampleLocation = new Pose(28.74, 124.3, Math.toRadians(51.77-2));
+    private Pose outsideSampleLocation = new Pose(28.74, 124.3, Math.toRadians(51.77-2-3));
 
 
     private Globals.AllianceColor allianceColor = Globals.AllianceColor.BLUE;

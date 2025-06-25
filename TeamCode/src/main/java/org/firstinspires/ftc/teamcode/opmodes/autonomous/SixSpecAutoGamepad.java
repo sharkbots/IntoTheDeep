@@ -151,12 +151,12 @@ public class SixSpecAutoGamepad extends CommandOpMode {
                                 // Line 1
                                 new BezierLine(
                                         allianceColor.convert(Globals.specAutoStartPose, Point.class),
-                                        new Point(49.25-Globals.ROBOT_LENGTH/2, subPickup1.getY(), Point.CARTESIAN)
+                                        new Point(49.25+0.5-Globals.ROBOT_LENGTH/2, subPickup1.getY(), Point.CARTESIAN)
                                         //allianceColor.convert(depositLocation, Point.class)
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .setZeroPowerAccelerationMultiplier(2.5)
+                        .setZeroPowerAccelerationMultiplier(2.75)
                         //.setPathEndVelocityConstraint(3)
                         //.setPathEndTimeoutConstraint(250)
                         //.addParametricCallback(0.7, ()-> robot.follower.setMaxPower(0.3))
@@ -251,50 +251,33 @@ public class SixSpecAutoGamepad extends CommandOpMode {
                                         new Point(55-5, 6.3, Point.CARTESIAN),
                                         new Point(7.180, 7.800, Point.CARTESIAN),
                                         new Point(33.000, 12.000, Point.CARTESIAN),
-                                        new Point(pickupLocation.getX(), 12.000, Point.CARTESIAN)
+                                        new Point(pickupLocation.getX()-0.5, 12.000, Point.CARTESIAN)
                                 )
                         )
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .setPathEndTValueConstraint(0.97)
                         //.addParametricCallback(0.7, ()-> robot.follower.setMaxPower(0.7))
                         //.setPathEndVelocityConstraint(3)
-                        .setZeroPowerAccelerationMultiplier(3.5)
-//                        .addPath(
-//                                // Line 8
-//                                new BezierLine(
-//                                        new Point(49.216, 7.300, Point.CARTESIAN),
-//                                        new Point(23.314, 7.300, Point.CARTESIAN)
-//                                )
-//                        )
-////                        .setZeroPowerAccelerationMultiplier(2)
-//                        .setConstantHeadingInterpolation(Math.toRadians(0))
-//                        .addPath(
-//                                // Line 9
-//                                new BezierLine(
-//                                        new Point(23.314, 7.300, Point.CARTESIAN),
-//                                        new Point(pickupLocation.getX()+2.5, 7.300+5, Point.CARTESIAN)
-//                                )
-//                        )
-//                        .addParametricCallback(0.7, ()->robot.follower.setMaxPower(0.6))
-//                        .setConstantHeadingInterpolation(Math.toRadians(0))
+
+                        .setZeroPowerAccelerationMultiplier(4.0)
                         .build()
         ); // path 2
 
 
         // pickup spec 4
-        paths.add(specimenCyclePaths.getPickupPathSpline(3));
+        paths.add(specimenCyclePaths.getPickupPathSpline(3, true));
 
         // depo spec 4
         paths.add(specimenCyclePaths.getDepositPathStrafe(3));
 
         // pickup spec 5
-        paths.add(specimenCyclePaths.getPickupPathSpline(4));
+        paths.add(specimenCyclePaths.getPickupPathSpline(4, true));
 
         // depo spec 5
         paths.add(specimenCyclePaths.getDepositPathStrafe(4));
 
         // pickup spec 6
-        paths.add(specimenCyclePaths.getPickupPathSpline(5));
+        paths.add(specimenCyclePaths.getPickupPathSpline(5, true));
 
         // depo spec 6
         paths.add(specimenCyclePaths.getDepositPathStrafe(5));
@@ -319,23 +302,20 @@ public class SixSpecAutoGamepad extends CommandOpMode {
 //        paths.add(specimenCyclePaths.getDepositPathStrafe(5));
 
 
+        // park
+        paths.add(
 
-//
-//        // park
-//        paths.add(
-//
-//                robot.follower.pathBuilder()
-//                        .addPath(
-//                                // Line 13
-//                                new BezierCurve(
-//                                        new Point(40.432, 61.720, Point.CARTESIAN),
-//                                        new Point(36.4, 61.72, Point.CARTESIAN),
-//                                        new Point(19.459, 42.811, Point.CARTESIAN)
-//                                )
-//                        )
-//                        .setTangentHeadingInterpolation()
-//                        .build()
-//        ); // path 9
+                robot.follower.pathBuilder()
+                        .addPath(
+                                // Line 13
+                                new BezierLine(
+                                        new Point(40.432, 61.720, Point.CARTESIAN),
+                                        new Point(19.459, 42.811, Point.CARTESIAN)
+                                )
+                        )
+                        .setTangentHeadingInterpolation()
+                        .build()
+        );// path 9
     }
 
     private void generateSchedule() {
@@ -370,7 +350,7 @@ public class SixSpecAutoGamepad extends CommandOpMode {
                                         new DeferredCommand(
                                                 ()->new HoverCommand(robot,
                                                         (subPickup1.getX() - robot.follower.getPose().getX() - Globals.ROBOT_LENGTH/2 - Globals.INTAKE_MINIMUM_EXTENSION)*Globals.EXTENDO_TICKS_PER_INCH,
-                                                        subPickup1.getHeading())
+                                                        Globals.SpecAutonomousConfig.samp1Angle)
                                                 , null
                                         ).andThen(
                                                 new IntakeSampleCommand(robot)
@@ -402,14 +382,15 @@ public class SixSpecAutoGamepad extends CommandOpMode {
                                                                         robot.follower.getPose(),
                                                                         new Pose(30.44,  robot.follower.getPose().getY()),
                                                                         new Pose(45.3, pickupLocation.getY()),
-                                                                        allianceColor.convert(pickupLocation, Pose.class)
+                                                                        new Pose(pickupLocation.getX()+1, pickupLocation.getY(), Point.CARTESIAN)
+                                                                        //allianceColor.convert(pickupLocation, Pose.class)
                                                                 )
                                                         )
-                                                        .setPathEndTValueConstraint(0.95)
+                                                        .setPathEndTValueConstraint(0.97)
                                                         .setConstantHeadingInterpolation(Math.toRadians(0))
                                                         //.setPathEndVelocityConstraint(3)
-                                                        .setPathEndHeadingConstraint(Math.toRadians(3))
-                                                        .setZeroPowerAccelerationMultiplier(3.5)
+                                                        //.setPathEndHeadingConstraint(Math.toRadians(3))
+                                                        .setZeroPowerAccelerationMultiplier(4)
                                                         //.addParametricCallback(0.8, ()-> robot.follower.setMaxPower(0.7))
                                                         .build()
                                         ), null))
@@ -612,7 +593,22 @@ public class SixSpecAutoGamepad extends CommandOpMode {
                                 )
                         ),
                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_SPECIMEN),
-                        new DepositSpecimenCommand(robot)
+                        new DepositSpecimenCommand(robot),
+
+                        new DeferredCommand(
+                                ()->new FollowPathChainCommand(robot.follower,
+                                        robot.follower.pathBuilder().addPath(
+                                                new BezierLine(
+                                                        robot.follower.getPose(),
+                                                        new Pose(13, 32, Point.CARTESIAN)
+                                                )
+                                        )
+                                                .setConstantHeadingInterpolation(Math.toRadians(0))
+                                                .build()
+                                )
+                                , null).alongWith(new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED))
+
+
 
                 )
         );

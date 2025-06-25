@@ -155,10 +155,11 @@ public class LiftSubsystem extends SubsystemWrapper {
     private double getClawPivotPosition(LiftState state) {
         switch (state) {
             case RETRACTED:
-            case LVL1_ASCENT:
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
                 return DEPOSIT_CLAW_PIVOT_TRANSFER_POS;
+            case LVL1_ASCENT:
+                return DEPOSIT_CLAW_PIVOT_LVL1_ASCENT_POS;
             case INTAKE_SPECIMEN:
             case HOLDING_SPECIMEN:
                 return DEPOSIT_CLAW_PIVOT_SPECIMEN_INTAKE_POS;
@@ -190,10 +191,11 @@ public class LiftSubsystem extends SubsystemWrapper {
     private double getArmPivotPosition(LiftState state) {
         switch (state) {
             case RETRACTED:
-            case LVL1_ASCENT:
             case LVL2_ASCENT_SETUP:
             case LVL2_ASCENT_DOWN:
                 return DEPOSIT_ARM_PIVOT_TRANSFER_POS;
+            case LVL1_ASCENT:
+                return DEPOSIT_ARM_PIVOT_LVL1_ASCENT_POS;
             case INTAKE_SPECIMEN:
             case HOLDING_SPECIMEN:
                 return DEPOSIT_ARM_PIVOT_SPECIMEN_INTAKE_POS;

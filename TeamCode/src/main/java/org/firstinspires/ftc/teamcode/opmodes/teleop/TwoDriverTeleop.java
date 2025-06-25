@@ -421,7 +421,7 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.read();
 
         if (timer == null){
-            robot.reset();
+            //robot.reset();
             robot.follower.startTeleopDrive();
 
             timer = new ElapsedTime();
@@ -437,11 +437,11 @@ public class TwoDriverTeleop extends CommandOpMode {
             notifiedEndgame = true;
         }
 
-        int maxExtendoPower = 250;
+        int maxExtendoPower = 125;
         double clawRotationFactor = 3.5;
         if (gamepad2.left_trigger > 0.95){
-            maxExtendoPower = maxExtendoPower / 2;
-            clawRotationFactor = clawRotationFactor / 1.25;
+            maxExtendoPower = maxExtendoPower * 2;
+           // clawRotationFactor = clawRotationFactor / 1.25;
         }
 
         if (Math.abs(gamepad2.left_stick_x)>= 0.2 && robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_NO_SAMPLE_MANUAL){
