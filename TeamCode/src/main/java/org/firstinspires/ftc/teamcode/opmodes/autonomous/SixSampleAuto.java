@@ -264,7 +264,7 @@ public class SixSampleAuto extends CommandOpMode {
                         new ParallelCommandGroup(
                             new FollowPathChainCommand(robot.follower, paths.get(1)).setHoldEnd(true),
                             new SequentialCommandGroup(
-                                    new WaitCommand(300-200),
+                                    new WaitCommand(300),
                                     new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
                                             new HoverCommand(robot, 1090.7+100)
                                     )
@@ -291,7 +291,7 @@ public class SixSampleAuto extends CommandOpMode {
                         new ParallelCommandGroup(
                                 new FollowPathChainCommand(robot.follower, paths.get(3)).setHoldEnd(true),
                                 new SequentialCommandGroup(
-                                        new WaitCommand(300-200),
+                                        new WaitCommand(300+200),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
                                                 new HoverCommand(robot, 1140.7+100)
                                         )
@@ -343,7 +343,7 @@ public class SixSampleAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(7)).alongWith(
                                 new SequentialCommandGroup(
                                         new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0),
-                                        new WaitCommand(500),
+                                        new WaitCommand(500-200),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
@@ -392,7 +392,7 @@ public class SixSampleAuto extends CommandOpMode {
 
                         new FollowPathChainCommand(robot.follower, paths.get(13)).alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(500),
+                                        new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
                                 )
                         )

@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.Point;
 
+import org.firstinspires.ftc.teamcode.common.vision.Sample;
+
 @Config
 public class Globals {
 
@@ -46,7 +48,7 @@ public class Globals {
         //        public static int numSubCycles = 1;
         public static double samp1X = -4;
         public static double samp1Y = 12;
-        public static double samp2X = -8;
+        public static double samp2X = -4;
         public static double samp2Y = 12;
 
         public static long waitOZinSeconds = 0;
@@ -152,6 +154,7 @@ public class Globals {
     public static double EXTENDO_FEEDFORWARD_RETRACTING = -0.0;
 
     public static AllianceColor ALLIANCE_COLOR;
+    public static Sample.Color GRABBING_COLOR;
     public static boolean IS_AUTONOMOUS = false;
     public static boolean COMING_FROM_AUTONOMOUS = false;
     public static boolean IS_FIELD_CENTRIC = false;

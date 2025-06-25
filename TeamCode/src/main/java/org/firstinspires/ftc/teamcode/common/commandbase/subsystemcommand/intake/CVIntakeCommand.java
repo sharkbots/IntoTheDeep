@@ -33,7 +33,7 @@ public class CVIntakeCommand extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                         new ParallelCommandGroup(
                                 new DeferredCommand(()-> new HoverCommand(robot,
-                                        (robot.vision.selected()[0] - Globals.INTAKE_MINIMUM_EXTENSION) * Globals.EXTENDO_TICKS_PER_INCH), null),
+                                        (robot.vision.selected()[0] - Globals.INTAKE_MINIMUM_EXTENSION+1.25) * Globals.EXTENDO_TICKS_PER_INCH), null),
                                 new InstantCommand(()->{
                                     robot.telemetryA.addData("Selected angle", (double)(robot.vision.selected()[2]));
                                     robot.telemetryA.update();

@@ -17,9 +17,11 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.CVIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.HoverCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.IntakeSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.ResetIntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.SetIntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.intake.TransferCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSampleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.DepositSpecimenCommand;
@@ -30,6 +32,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsystemcommand.lift.R
 import org.firstinspires.ftc.teamcode.common.hardware.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.common.utils.Globals;
 import org.firstinspires.ftc.teamcode.common.utils.math.MathUtils;
 import org.firstinspires.ftc.teamcode.common.vision.Sample;
 
@@ -88,9 +91,28 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.follower.setStartingPose(END_OF_AUTO_POSE);
         robot.follower.setPose(END_OF_AUTO_POSE);
 
-//        robot.setProcessorEnabled(robot.sampleDetectionPipeline, true);
-//        robot.swapYellow();
 
+        // TESTING: AUTO PICKUP
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(
+                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0).alongWith(
+                                new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
+                        )
+                );
+
+        // Sample grab (sample mode)
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new CVIntakeCommand(robot,  GRABBING_COLOR).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
+                                        .andThen(new TransferCommand(robot))
+                                        .interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+                                ,
+                                new InstantCommand(),
+                                () ->!HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
+                        )
+                );
 
         // GENERAL RESET
         operator.getGamepadButton(GamepadKeys.Button.SQUARE)
@@ -105,6 +127,7 @@ public class TwoDriverTeleop extends CommandOpMode {
                         new InstantCommand(() -> {
                             GRABBING_MODES.next();
                             UpdateOperatorGamepadColor();
+                            UpdateGrabbingColor();
                         })
                 );
 
@@ -165,31 +188,6 @@ public class TwoDriverTeleop extends CommandOpMode {
                         )
                 );
 
-
-//
-//        // Transfer (sample mode)
-//        operator.getGamepadButton(GamepadKeys.Button.CROSS)
-//                .whenPressed(
-//                        new ConditionalCommand(
-//                                new TransferCommand(robot),
-//                                new InstantCommand(),
-//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
-//                                        && GRABBING_MODES.current() == GRABBING_MODES.SAMPLE
-//                        )
-//                );
-//
-//        // Transfer (specimen mode)
-//        operator.getGamepadButton(GamepadKeys.Button.CROSS)
-//                .whenPressed(
-//                        new ConditionalCommand(
-//                                new TransferCommand(robot).andThen(
-//                                        new LiftCommand(robot, LiftSubsystem.LiftState.INTAKE_SPECIMEN)
-//                                ),
-//                                new InstantCommand(),
-//                                () -> robot.intake.pivotState == IntakeSubsystem.PivotState.HOVERING_WITH_SAMPLE
-//                                        && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN
-//                        )
-//                );
 
         // Drop off sample in OZ and setup specimen intake
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -411,6 +409,10 @@ public class TwoDriverTeleop extends CommandOpMode {
     private void UpdateOperatorGamepadColor() {
         int[] rgb = GRABBING_MODES.getControllerColor();
         gamepad2.setLedColor(rgb[0], rgb[1], rgb[2], LED_DURATION_CONTINUOUS);
+    }
+    private void UpdateGrabbingColor(){
+        if (GRABBING_MODES.current() == GRABBING_MODES.SAMPLE) GRABBING_COLOR = Sample.Color.YELLOW;
+        else if (GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN) GRABBING_COLOR = Globals.ALLIANCE_COLOR== Globals.AllianceColor.BLUE? Sample.Color.BLUE: Sample.Color.RED;
     }
 
     @Override
