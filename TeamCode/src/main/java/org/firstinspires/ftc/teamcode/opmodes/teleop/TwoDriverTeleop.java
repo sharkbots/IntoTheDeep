@@ -92,27 +92,27 @@ public class TwoDriverTeleop extends CommandOpMode {
         robot.follower.setPose(END_OF_AUTO_POSE);
 
 
-        // TESTING: AUTO PICKUP
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0).alongWith(
-                                new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
-                        )
-                );
-
-        // Sample grab (sample mode)
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new CVIntakeCommand(robot,  GRABBING_COLOR).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
-                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
-                                        .andThen(new TransferCommand(robot))
-                                        .interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
-                                ,
-                                new InstantCommand(),
-                                () ->!HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
-                        )
-                );
+//        // TESTING: AUTO PICKUP
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(
+//                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0).alongWith(
+//                                new InstantCommand(()-> robot.intake.setExtendoTargetTicks(0))
+//                        )
+//                );
+//
+//        // Sample grab (sample mode)
+//        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//                .whenPressed(
+//                        new ConditionalCommand(
+//                                new CVIntakeCommand(robot,  GRABBING_COLOR).interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+//                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200)))
+//                                        .andThen(new TransferCommand(robot))
+//                                        .interruptOn(() -> operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).get())
+//                                ,
+//                                new InstantCommand(),
+//                                () ->!HOLDING_SAMPLE && !HOLDING_SPECIMEN && !INTAKING_SPECIMENS
+//                        )
+//                );
 
         // GENERAL RESET
         operator.getGamepadButton(GamepadKeys.Button.SQUARE)
