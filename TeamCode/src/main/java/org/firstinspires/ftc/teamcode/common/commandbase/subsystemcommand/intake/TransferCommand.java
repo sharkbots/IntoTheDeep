@@ -19,31 +19,28 @@ public class TransferCommand extends SequentialCommandGroup {
 
     public TransferCommand(Robot robot, boolean delayRotation){
         super(
-                new InstantCommand(() -> Globals.INTAKING_SAMPLES = false),
-                new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN_TRANSFER)),
-                //new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
-                new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0)),
-                new ConditionalCommand(
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.TRANSFER),
-                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.TRANSFER, 0.0),
-                        ()-> delayRotation
-                ),
-                new WaitUntilCommand(() -> robot.intake.extendoReached() || robot.intake.getExtendoPosTicks() < 50),
-                new WaitCommand(200),
-                new ConditionalCommand(
-                        new InstantCommand(()-> robot.intake.setClawRotation(IntakeSubsystem.PivotState.TRANSFER)),
-                        new InstantCommand(),
-                        ()-> delayRotation
-                ),
+//                new InstantCommand(() -> Globals.INTAKING_SAMPLES = false),
+//                new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.OPEN_TRANSFER)),
+//                //new ClawRotationCommand(robot, IntakeSubsystem.ClawRotationState.TRANSFER),
 //                new InstantCommand(() -> robot.intake.setExtendoTargetTicks(0)),
-//                new WaitUntilCommand(() -> robot.intake.extendoReached()), /*prev wait 350*/
-                //new WaitCommand(20),
+//                new ConditionalCommand(
+//                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.TRANSFER),
+//                        new SetIntakeCommand(robot, IntakeSubsystem.PivotState.TRANSFER, 0.0),
+//                        ()-> delayRotation
+//                ),
+//                new WaitUntilCommand(() -> robot.intake.extendoReached() || robot.intake.getExtendoPosTicks() < 50),
+//                new WaitCommand(200),
+//                new ConditionalCommand(
+//                        new InstantCommand(()-> robot.intake.setClawRotation(IntakeSubsystem.PivotState.TRANSFER)),
+//                        new InstantCommand(),
+//                        ()-> delayRotation
+//                ),
+                new SetupForTransferCommand(robot),
+
                 new InstantCommand(() -> robot.lift.setClawState(LiftSubsystem.ClawState.CLOSED)),
                 new WaitCommand(60),
                 new InstantCommand(() -> {
                     robot.intake.setClawState(IntakeSubsystem.ClawState.OPEN);
-//                    robot.intakeArmPivotActuator.setTargetPosition(Globals.INTAKE_ARM_PIVOT_TRANSFER_POS + 0.0);
-//                    robot.intakeClawPivotServo.setPosition(Globals.INTAKE_CLAW_PIVOT_TRANSFER_POS + 0.0);
                 }),
                 new InstantCommand(() -> Globals.HOLDING_SAMPLE = true)
         );

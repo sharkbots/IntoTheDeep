@@ -172,7 +172,9 @@ public class TwoDriverTeleop extends CommandOpMode {
         operator.getGamepadButton(GamepadKeys.Button.CROSS)
                 .whenPressed(
                         new ConditionalCommand(
-                                new HoverCommand(robot,500),
+                                new HoverCommand(robot,500).alongWith(
+                                        //new InstantCommand(()-> robot.intakeClawServo.setPosition(Globals.INTAKE_CLAW_INTAKING_POS))
+                                ),
                                 new InstantCommand(),
                                 () -> !INTAKING_SAMPLES &&
                                         robot.intake.pivotState == IntakeSubsystem.PivotState.TRANSFER && GRABBING_MODES.current() == GRABBING_MODES.SPECIMEN)

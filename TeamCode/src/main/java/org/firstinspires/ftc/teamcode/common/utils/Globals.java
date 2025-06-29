@@ -208,9 +208,11 @@ public class Globals {
     public static double INTAKE_CLAW_ROTATION_FULLY_RIGHT_POS = 0.19;
 
     // Intake Claw
-    public static double INTAKE_CLAW_OPEN_POS = 0.49;
-    public static double INTAKE_CLAW_MICRO_OPEN_POS = 0.775;
-    public static double INTAKE_CLAW_CLOSED_POS = 0.8;
+    public static double INTAKE_CLAW_OPEN_POS = 0.6; //0.49;
+    public static double INTAKE_CLAW_MICRO_OPEN_POS = 0.38; //0.775;
+    public static double INTAKE_CLAW_CLOSED_POS = 0.365;//0.8;
+    public static double INTAKE_CLAW_INTAKING_POS = 0.6/*+0.05+0.025*/;
+
 
     // Extendo
     public static int MAX_EXTENDO_EXTENSION = 2120;
@@ -275,10 +277,10 @@ public class Globals {
     public static int HIGH_BUCKET__AUTO_HEIGHT = 1925;
 
     public static int LOW_SPECIMEN_HEIGHT = 85;
-    public static int HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT = 885;
+    public static int HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT = 885+50;
     public static int HIGH_SPECIMEN_AUTONOMOUS_HEIGHT = 480;
-    public static int HIGH_SPECIMEN_HUGGING_SETUP_HEIGHT = 770+30+30+30+20+30;
-    public static int HIGH_SPECIMEN_HUGGING_HEIGHT = 360+30+30+30+20+30;
+    public static int HIGH_SPECIMEN_HUGGING_SETUP_HEIGHT = 770+30+30+30+20+30+50+25;
+    public static int HIGH_SPECIMEN_HUGGING_HEIGHT = 360+30+30+30+20+30-50;
     public static int HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT = 830; // 1000
     public static int HIGH_SPECIMEN_TELEOP_HEIGHT = 1150; // 1350
     public static int PUSHING_SPECIMEN_HEIGHT = 650;
