@@ -11,7 +11,7 @@ import com.pedropathing.pathgen.Point;
 import org.firstinspires.ftc.teamcode.common.utils.Globals;
 
 public class SpecimenCycleGenerator {
-    public static Pose pickupLocation = new Pose(9.595, 32.342, Math.toRadians(180));
+    public static Pose pickupLocation = new Pose(9.595, 32.342, Math.toRadians(0));
     public static Pose intermediatePickupLocation = new Pose(pickupLocation.getX()+5, pickupLocation.getY(), pickupLocation.getHeading());
     public static Pose depositLocation = new Pose(40-1.5, 67.72/*+1.5+2*/, Math.toRadians(0));
     //public static Pose intermediateDepositLocation = new Pose(depositLocation.getX(), depositLocation.getY()-3, depositLocation.getHeading());
@@ -56,30 +56,68 @@ public class SpecimenCycleGenerator {
                 .build();
     }
 
-    public PathChain getPickupPathSpline(int cycleNum) throws IllegalStateException {
+    public PathChain getPickupPathSpline(int cycleNum){
+        return getPickupPathSpline(cycleNum, false);
+    }
+    public PathChain getPickupPathSpline(int cycleNum, boolean isManual) throws IllegalStateException {
         if (follower == null)
             throw new IllegalStateException("The generator's follower wasn't set");
 
         PathBuilder builder = follower.pathBuilder();
 
-        builder.addPath(
-                        new BezierCurve(
-                                allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-constantCycleShift-(cycleNum-1)*depositGap)),
-                                new Point(30.44, depositLocation.getY()-constantCycleShift-(cycleNum-1)*depositGap),
-                                new Point(45.3, pickupLocation.getY()),
-                                allianceColor.convert(pickupLocation, Point.class)))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .setPathEndTValueConstraint(0.97)
-                //.addParametricCallback(0.7, ()-> follower.setMaxPower(0.7))
-                .setZeroPowerAccelerationMultiplier(4.25);
+        if (isManual){
+            if (cycleNum == 5){
+                builder.addPath(
+                                new BezierCurve(
+                                        allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY() - constantCycleShift - (cycleNum - 1) * depositGap)),
+                                        new Point(30.44, depositLocation.getY() - constantCycleShift - (cycleNum - 1) * depositGap),
+                                        new Point(45.3, pickupLocation.getY()),
+                                        new Point(pickupLocation.getX() - 1-1.5+0.5, pickupLocation.getY(), Point.CARTESIAN)
+                                        // allianceColor.convert(pickupLocation, Point.class)
+                                ))
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .setPathEndTValueConstraint(0.97)
+                        //.addParametricCallback(0.7, ()-> follower.setMaxPower(0.7))
+                        .setZeroPowerAccelerationMultiplier(4.75+1-1-1);
+            }
+            else {
+                builder.addPath(
+                                new BezierCurve(
+                                        allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY() - constantCycleShift - (cycleNum - 1) * depositGap)),
+                                        new Point(30.44, depositLocation.getY() - constantCycleShift - (cycleNum - 1) * depositGap),
+                                        new Point(45.3, pickupLocation.getY()),
+                                        new Point(pickupLocation.getX() - 0.5+0.5, pickupLocation.getY(), Point.CARTESIAN)
+                                        // allianceColor.convert(pickupLocation, Point.class)
+                                ))
+                        .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .setPathEndTValueConstraint(0.97)
+                        //.addParametricCallback(0.7, ()-> follower.setMaxPower(0.7))
+                        .setZeroPowerAccelerationMultiplier(4.75+1-1-1);
+            }
+        }
+        else {
+            builder.addPath(
+                            new BezierCurve(
+                                    allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-constantCycleShift-(cycleNum-1)*depositGap)),
+                                    new Point(30.44, depositLocation.getY()-constantCycleShift-(cycleNum-1)*depositGap),
+                                    new Point(45.3, pickupLocation.getY()),
+                                    allianceColor.convert(pickupLocation, Point.class)))
+                    .setConstantHeadingInterpolation(Math.toRadians(0))
+                    .setPathEndTValueConstraint(0.97)
+                    //.addParametricCallback(0.7, ()-> follower.setMaxPower(0.7))
+                    .setZeroPowerAccelerationMultiplier(4.25);
+        }
+
 
         return builder
                 .build();
     }
 
 
-
-    public PathChain getDepositPathStrafe(int cycleNum) throws IllegalStateException {
+    public PathChain getDepositPathStrafe(int cycleNum){
+        return getDepositPathStrafe(cycleNum, false);
+    }
+    public PathChain getDepositPathStrafe(int cycleNum, boolean isManual) throws IllegalStateException {
         if (follower == null)
             throw new IllegalStateException("The generator's follower wasn't set");
 
@@ -89,7 +127,7 @@ public class SpecimenCycleGenerator {
             builder.addPath(
                             new BezierLine(
                                     allianceColor.convert(pickupLocation, Point.class),
-                                    allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-constantCycleShift-1.5-cycleNum*depositGap))))
+                                    allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY()-cycleNum*depositGap))))
                     .setConstantHeadingInterpolation(Math.toRadians(0))
                     .setPathEndTValueConstraint(0.95)
                     .setZeroPowerAccelerationMultiplier(5)
@@ -115,27 +153,11 @@ public class SpecimenCycleGenerator {
                 .setPathEndTValueConstraint(0.95)
                 .setZeroPowerAccelerationMultiplier(4);
 
-//        builder.addPath(
-//                new BezierCurve(
-//                        allianceColor.convert(pickupLocation, Point.class),
-//                        allianceColor.convert(new Point(20.738, 61.437, Point.CARTESIAN)),
-//                        allianceColor.convert(new Point(depositLocation.getX()-10, depositLocation.getY()-cycleNum*depositGap))))
-//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180));
-//
-//        builder.addPath(
-//                        new BezierLine(
-//                                allianceColor.convert(new Point(depositLocation.getX()-10, depositLocation.getY()-cycleNum*depositGap)),
-//                                allianceColor.convert(
-//                                        new Point(depositLocation.getX(), depositLocation.getY()-cycleNum*depositGap))))
-//                .setPathEndVelocityConstraint(3)
-//                .setPathEndTValueConstraint(0.99)
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .setPathEndTimeoutConstraint(250)
-//                .addParametricCallback(0.05, ()-> follower.setMaxPower(1.0));
-
         return builder
                 .build();
     }
+
+
 
     public PathChain getPickupPathStrafe(int cycleNum) throws IllegalStateException {
         if (follower == null)

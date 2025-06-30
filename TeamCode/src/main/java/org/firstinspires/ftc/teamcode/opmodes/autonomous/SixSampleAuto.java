@@ -222,42 +222,42 @@ public class SixSampleAuto extends CommandOpMode {
                                     )
                                 ),
 
-                        new WaitCommand(600),
+                        new WaitCommand(600-400),
                         new DepositSampleCommand(robot),
                         new WaitCommand(200),
 
-                        // Pickup OZ sample
-                        new ConditionalCommand(
-                            new SequentialCommandGroup(
-                            new InstantCommand(()-> robot.follower.setMaxPower(0.9)),
-                            new ParallelCommandGroup(
-                                    new FollowPathChainCommand(robot.follower, paths.get(8)).setHoldEnd(true),
-                                    new SequentialCommandGroup(
-                                            new WaitCommand(300),
-                                            new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                    new HoverCommand(robot, 100)
-                                            )
-                                    )
-                            ),
-                            new WaitCommand(Globals.SampleAutonomousConfig.waitOZinSeconds*1000),
-                            new IntakeSampleCommand(robot),
-                            new TransferCommand(robot),
-
-                            // Deposit OZ sample
-                            new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
-                                    new SequentialCommandGroup(
-                                            new WaitCommand(600),
-                                            new FollowPathChainCommand(robot.follower, paths.get(9)).disableUseIsBusy()
-                                                    .setCompletionThreshold(0.9)
-                                    )
-
-                            ),
-                            new WaitCommand(150),
-                            new DepositSampleCommand(robot)
-                            ),
-                            new InstantCommand(),
-                            ()->Globals.SampleAutonomousConfig.grabSecondPreload
-                        ),
+//                        // Pickup OZ sample
+//                        new ConditionalCommand(
+//                            new SequentialCommandGroup(
+//                            new InstantCommand(()-> robot.follower.setMaxPower(0.9)),
+//                            new ParallelCommandGroup(
+//                                    new FollowPathChainCommand(robot.follower, paths.get(8)).setHoldEnd(true),
+//                                    new SequentialCommandGroup(
+//                                            new WaitCommand(300),
+//                                            new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
+//                                                    new HoverCommand(robot, 100)
+//                                            )
+//                                    )
+//                            ),
+//                            new WaitCommand(Globals.SampleAutonomousConfig.waitOZinSeconds*1000),
+//                            new IntakeSampleCommand(robot),
+//                            new TransferCommand(robot),
+//
+//                            // Deposit OZ sample
+//                            new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET).alongWith(
+//                                    new SequentialCommandGroup(
+//                                            new WaitCommand(600),
+//                                            new FollowPathChainCommand(robot.follower, paths.get(9)).disableUseIsBusy()
+//                                                    .setCompletionThreshold(0.9)
+//                                    )
+//
+//                            ),
+//                            new WaitCommand(150),
+//                            new DepositSampleCommand(robot)
+//                            ),
+//                            new InstantCommand(),
+//                            ()->Globals.SampleAutonomousConfig.grabSecondPreload
+//                        ),
 
                         // Pickup inside sample
                         new InstantCommand(()-> robot.follower.setMaxPower(1)),
@@ -266,7 +266,7 @@ public class SixSampleAuto extends CommandOpMode {
                             new SequentialCommandGroup(
                                     new WaitCommand(300),
                                     new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                            new HoverCommand(robot, 900+403.2-112.5-100)
+                                            new HoverCommand(robot, 1090.7+100)
                                     )
                             )
                         ),
@@ -291,9 +291,9 @@ public class SixSampleAuto extends CommandOpMode {
                         new ParallelCommandGroup(
                                 new FollowPathChainCommand(robot.follower, paths.get(3)).setHoldEnd(true),
                                 new SequentialCommandGroup(
-                                        new WaitCommand(300),
+                                        new WaitCommand(300+200),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 900+403.2-112.5-100+50)
+                                                new HoverCommand(robot, 1140.7+100)
                                         )
                                 )
                         ),
@@ -321,7 +321,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 1050+403.2+150-112.5-75, 30.0)
+                                                new HoverCommand(robot, 1415.7-100, 44.77)
                                         )
                                 )
                         ),
@@ -343,11 +343,11 @@ public class SixSampleAuto extends CommandOpMode {
                         new FollowPathChainCommand(robot.follower, paths.get(7)).alongWith(
                                 new SequentialCommandGroup(
                                         new SetIntakeCommand(robot, IntakeSubsystem.PivotState.FULLY_RETRACTED, 0.0),
-                                        new WaitCommand(500),
+                                        new WaitCommand(500-200),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-                        new WaitCommand(500),
+                        //new WaitCommand(500),
                         new DeferredCommand(()->new CVIntakeCommand(robot, Sample.Color.YELLOW), null),
 
                         // Deposit 5th sample from sub
@@ -358,9 +358,9 @@ public class SixSampleAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.DEPOSIT_HIGH_BUCKET)
                                 )
                         ),
-                        new WaitCommand(600),
+                        new WaitCommand(600-300),
                         new DepositSampleCommand(robot),
-                        new WaitCommand(150),
+                        //new WaitCommand(150),
 
                   //      new InstantCommand(() -> {robot.vision.stop();robot.vision.start();})
 
@@ -374,7 +374,7 @@ public class SixSampleAuto extends CommandOpMode {
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED)
                                 )
                         ),
-                        new WaitCommand(500),
+                        //new WaitCommand(500),
                         new DeferredCommand(()->new CVIntakeCommand(robot, Sample.Color.YELLOW), null),
 
                         // Deposit 6th sample from sub
@@ -386,13 +386,13 @@ public class SixSampleAuto extends CommandOpMode {
                                 )
 
                         ),
-                        new WaitCommand(600),
+                        new WaitCommand(600-300),
                         new DepositSampleCommand(robot),
-                        new WaitCommand(150),
+                        //new WaitCommand(150),
 
                         new FollowPathChainCommand(robot.follower, paths.get(13)).alongWith(
                                 new SequentialCommandGroup(
-                                        new WaitCommand(500),
+                                        new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.LVL1_ASCENT)
                                 )
                         )

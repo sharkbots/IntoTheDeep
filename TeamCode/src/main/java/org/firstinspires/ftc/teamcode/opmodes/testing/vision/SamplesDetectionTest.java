@@ -36,6 +36,7 @@ public class SamplesDetectionTest extends LinearOpMode {
         try {
 
             mDetection = new SamplesDetection("Limelight3A", hardwareMap,FtcDashboard.getInstance().getTelemetry());
+            mDetection.init();
             mDetection.start();
             FtcDashboard.getInstance().getTelemetry().update();
 

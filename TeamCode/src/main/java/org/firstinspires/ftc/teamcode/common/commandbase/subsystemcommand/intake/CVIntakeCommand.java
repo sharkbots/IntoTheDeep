@@ -24,17 +24,23 @@ public class CVIntakeCommand extends SequentialCommandGroup {
     public CVIntakeCommand(Robot robot, Sample.Color color) {
         // Build the command sequence
         super(
+                new InstantCommand(()->robot.vision.start()),
                 //new InstantCommand(()->robot.visionPortal.setProcessorEnabled(robot.sampleDetectionPipeline, false)),
                 //new InstantCommand(()->robot.sampleDetectionPipeline.freeze(true)),
                 new RepeatCommand(
                         new InstantCommand(()->robot.vision.detect(color))
-                ).interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color).withTimeout(1000),
+                ).interruptOn(() -> !robot.vision.samples().isEmpty() && robot.vision.selectedSample().color() == color).withTimeout(10000),
                 new SequentialCommandGroup(
                         new ParallelCommandGroup(
                                 new DeferredCommand(()-> new HoverCommand(robot,
-                                        (robot.vision.selected()[0] - Globals.INTAKE_MINIMUM_EXTENSION) * Globals.EXTENDO_TICKS_PER_INCH), null),
-                                new DeferredCommand(()-> new SetIntakeCommand(robot,
-                                        IntakeSubsystem.PivotState.INTAKE, (double)(robot.vision.selected()[2])), null),
+                                        (robot.vision.selected()[0] - Globals.INTAKE_MINIMUM_EXTENSION+1.25) * Globals.EXTENDO_TICKS_PER_INCH), null),
+                                new InstantCommand(()->{
+                                    robot.telemetryA.addData("Selected angle", (double)(robot.vision.selected()[2]));
+                                    robot.telemetryA.update();
+                                }).andThen(
+                                        new DeferredCommand(()-> new SetIntakeCommand(robot,
+                                                IntakeSubsystem.PivotState.INTAKE, (double)(robot.vision.selected()[2])), null)
+                                ),
 
                                 new DeferredCommand(()-> new SequentialCommandGroup(
                                         new HoldPointCommand(robot.follower, () -> MathFunctions.addPoses(

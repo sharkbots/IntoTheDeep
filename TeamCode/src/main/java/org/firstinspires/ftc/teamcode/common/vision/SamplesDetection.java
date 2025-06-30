@@ -16,6 +16,7 @@ import java.util.Comparator;
 import android.graphics.Bitmap;
 
 /* Qualcomm includes */
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /* FTC Controller includes */
@@ -111,16 +112,25 @@ public class SamplesDetection  {
         mSelected = null;
         mImageIndex = 0;
         mMode = Mode.DETECT;
+        mDetection.reset(0);
     }
     /**
      * Start sample detection
      */
-    public void start() {
+    public void init() {
+
         mDetection.start();
         mImageIndex = 0;
         mCalibration.initialize();
+        mLogger.addLine("Initialized, switch to pipeline 0");
         mMode = Mode.DETECT;
+        mDetection.reset(0);
     }
+
+    public void start() {
+        mDetection.reset();
+    }
+
 
     /**
      * Detect new samples
@@ -137,6 +147,7 @@ public class SamplesDetection  {
             if (!detections.isEmpty()) {
                 mOngoing.clear();
                 for (Sample sample : detections) {
+                    FtcDashboard.getInstance().getTelemetry().addLine("After detection" + sample.x() + "," + sample.y());
                     float[] ground = mCalibration.computeGroundPosition(320 - sample.x(), sample.y());
                     sample.distanceX(ground[1]);
                     sample.distanceY(-ground[0] + sCameraYOffset);
@@ -148,8 +159,10 @@ public class SamplesDetection  {
 
                 mLogger.addData("**LIST SIZE** ", mOngoing.size());
 
-//                mLogger.addLine("Switching to orientation");
+                mLogger.addLine("Switching to orientation");
                 mOrientation.start(mOngoing);
+                FtcDashboard.getInstance().getTelemetry().addLine("Sent to orientation" + mOngoing.get(0).x() + "," + mOngoing.get(0).y());
+
                 mMode = Mode.ORIENT;
             }
         }
@@ -158,7 +171,7 @@ public class SamplesDetection  {
             if (!oriented.isEmpty()) {
                 mLogger.addData("**SELECT ORIENTED SIZE** ", mColor);
 
-//                mLogger.addLine("Switching back to detection");
+                mLogger.addLine("Switching back to detection");
                 mConsolidated.clear();
                 mConsolidated.addAll(oriented);
                 mSelected = mConsolidated.get(0);
@@ -168,7 +181,9 @@ public class SamplesDetection  {
             }
         }
 
-//        mLogger.addLine("Processing image " + mImageIndex);
+        this.log();
+
+        mLogger.addLine("Processing image " + mImageIndex);
         mImageIndex++;
     }
 
@@ -193,7 +208,9 @@ public class SamplesDetection  {
     private static double mergedRanking(Sample s, Sample.Color color) {
         double result = 10000;
         if(s.color() == color || color == Sample.Color.UNKNOWN) {
-            result = Math.sqrt(s.distanceX()*s.distanceX()+s.distanceY()*s.distanceY());
+            if((s.distanceX() >= 3) && (Math.abs(-s.distanceY() + sCameraYOffset) <= 4)) {
+                result = Math.sqrt(s.distanceX() * s.distanceX() + s.distanceY() * s.distanceY());
+            }
         }
         return result;
     }
@@ -274,7 +291,7 @@ public class SamplesDetection  {
         result.append("</ul>\n");
         result.append("</details>\n");
 
-        //mLogger.addLine(result.toString());
+        mLogger.addLine(result.toString());
     }
 
     public void stop() {

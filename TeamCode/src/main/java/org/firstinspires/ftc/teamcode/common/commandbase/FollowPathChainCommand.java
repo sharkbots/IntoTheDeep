@@ -50,6 +50,8 @@ public class FollowPathChainCommand extends CommandBase {
         return this;
     }
 
+
+
     public FollowPathChainCommand setCompletionThreshold(double threshold) {
         this.completionThreshold = threshold;
         return this;
@@ -91,6 +93,7 @@ public class FollowPathChainCommand extends CommandBase {
 //            robot.telemetryA.addData("FollowPathChainCommand - Is Finished", isFinished);
             robot.telemetryA.addData("Follower - Is Busy", follower.isBusy());
             robot.telemetryA.update();
+
             return isFinished;
 
         } else {

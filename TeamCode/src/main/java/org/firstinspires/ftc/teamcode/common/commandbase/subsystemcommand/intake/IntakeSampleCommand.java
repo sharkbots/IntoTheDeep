@@ -12,12 +12,14 @@ import org.firstinspires.ftc.teamcode.common.utils.Globals;
 public class IntakeSampleCommand extends SequentialCommandGroup {
     public IntakeSampleCommand(Robot robot) {
         super(
-                new InstantCommand(()->robot.intake.setPivotState(IntakeSubsystem.PivotState.INTAKE)),
+                //new InstantCommand(()->robot.intake.setPivotState(IntakeSubsystem.PivotState.INTAKE)),
+
                 new DeferredCommand(()->
                         new InstantCommand(()->robot.intake.setClawRotationDegrees(robot.intake.getClawRotationDegrees()))
                         , null
                 ),
-                new WaitCommand(80),
+                new InstantCommand(()->robot.intake.setPivotState(IntakeSubsystem.PivotState.INTAKE)),
+               // new WaitCommand(80),
                 new InstantCommand(() -> robot.intake.setClawState(IntakeSubsystem.ClawState.CLOSED)),
                 new WaitCommand(230)
         );

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /* Qualcomm includes */
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -84,6 +85,10 @@ public class LimelightObjectOrientation  {
         }
 
 //        mLogger.addLine(""+data.length);
+
+        mLogger.addLine("Sent to pipeline x" + data[2]);
+        mLogger.addLine("Sent to pipeline y" + data[3]);
+
 
         mWebcam.pipelineSwitch(mPipeline);
         mWebcam.start();
