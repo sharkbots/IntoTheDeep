@@ -72,13 +72,13 @@ public class SpecimenCycleGenerator {
                                         allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY() - constantCycleShift - (cycleNum - 1) * depositGap)),
                                         new Point(30.44, depositLocation.getY() - constantCycleShift - (cycleNum - 1) * depositGap),
                                         new Point(45.3, pickupLocation.getY()),
-                                        new Point(pickupLocation.getX() - 1-1.5, pickupLocation.getY(), Point.CARTESIAN)
+                                        new Point(pickupLocation.getX() - 1-1.5+0.5, pickupLocation.getY(), Point.CARTESIAN)
                                         // allianceColor.convert(pickupLocation, Point.class)
                                 ))
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .setPathEndTValueConstraint(0.97)
                         //.addParametricCallback(0.7, ()-> follower.setMaxPower(0.7))
-                        .setZeroPowerAccelerationMultiplier(4.75+1);
+                        .setZeroPowerAccelerationMultiplier(4.75+1-1-1);
             }
             else {
                 builder.addPath(
@@ -86,13 +86,13 @@ public class SpecimenCycleGenerator {
                                         allianceColor.convert(new Point(depositLocation.getX(), depositLocation.getY() - constantCycleShift - (cycleNum - 1) * depositGap)),
                                         new Point(30.44, depositLocation.getY() - constantCycleShift - (cycleNum - 1) * depositGap),
                                         new Point(45.3, pickupLocation.getY()),
-                                        new Point(pickupLocation.getX() - 0.5-1, pickupLocation.getY(), Point.CARTESIAN)
+                                        new Point(pickupLocation.getX() - 0.5+0.5, pickupLocation.getY(), Point.CARTESIAN)
                                         // allianceColor.convert(pickupLocation, Point.class)
                                 ))
                         .setConstantHeadingInterpolation(Math.toRadians(0))
                         .setPathEndTValueConstraint(0.97)
                         //.addParametricCallback(0.7, ()-> follower.setMaxPower(0.7))
-                        .setZeroPowerAccelerationMultiplier(4.75+1);
+                        .setZeroPowerAccelerationMultiplier(4.75+1-1-1);
             }
         }
         else {

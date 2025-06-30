@@ -321,7 +321,7 @@ public class SixSampleAuto extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
                                         new LiftCommand(robot, LiftSubsystem.LiftState.RETRACTED).alongWith(
-                                                new HoverCommand(robot, 1415.7-50, 30.0)
+                                                new HoverCommand(robot, 1415.7-100, 44.77)
                                         )
                                 )
                         ),

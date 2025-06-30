@@ -277,9 +277,9 @@ public class Globals {
     public static int HIGH_BUCKET__AUTO_HEIGHT = 1925;
 
     public static int LOW_SPECIMEN_HEIGHT = 85;
-    public static int HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT = 885+50;
+    public static int HIGH_SPECIMEN_SETUP_AUTONOMOUS_HEIGHT = 885-10;
     public static int HIGH_SPECIMEN_AUTONOMOUS_HEIGHT = 480;
-    public static int HIGH_SPECIMEN_HUGGING_SETUP_HEIGHT = 770+30+30+30+20+30+50+25;
+    public static int HIGH_SPECIMEN_HUGGING_SETUP_HEIGHT = 770+30+30+30+20+30+50;
     public static int HIGH_SPECIMEN_HUGGING_HEIGHT = 360+30+30+30+20+30-50;
     public static int HIGH_SPECIMEN_SETUP_TELEOP_HEIGHT = 830; // 1000
     public static int HIGH_SPECIMEN_TELEOP_HEIGHT = 1150; // 1350
